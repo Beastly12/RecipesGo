@@ -106,7 +106,7 @@ Resources:
       Description: Lambda function that runs after user successfully signs up to add them to dynamodb
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref UsersTable
+            TableName: !Ref MainTable
         - Statement:
             Effect: Allow
             Action:
