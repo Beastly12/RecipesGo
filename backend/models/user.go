@@ -14,7 +14,7 @@ const (
 	UserSkPrefix = "PROFILE"
 )
 
-type user struct {
+type User struct {
 	Userid      string `dynamodbav:"pk" json:"userid"`
 	Description string `dynamodbav:"sk"`
 	Username    string `dynamodbav:"username" json:"username"`
@@ -23,8 +23,8 @@ type user struct {
 }
 
 // Returns a new user struct with the id and name provided
-func NewUser(userid, username string) *user {
-	return &user{
+func NewUser(userid, username string) *User {
+	return &User{
 		Userid:      userid,
 		Description: UserSkPrefix,
 		Username:    username,
@@ -34,7 +34,7 @@ func NewUser(userid, username string) *user {
 }
 
 // Takes in a user struct and returns a dynamo database item for user
-func UserStructToDbItem(u user) *map[string]types.AttributeValue {
+func (u User) ToDatabaseFormat() *map[string]types.AttributeValue {
 	u.Userid = utils.AddPrefix(u.Userid, UserPkPrefix)
 
 	item, err := attributevalue.MarshalMap(u)
@@ -47,8 +47,8 @@ func UserStructToDbItem(u user) *map[string]types.AttributeValue {
 }
 
 // Takes dynamo database items and tries to convert them to user structs
-func DbItemsToUserStructs(items *[]map[string]types.AttributeValue) (*[]user, error) {
-	var users []user
+func DbItemsToUserStructs(items *[]map[string]types.AttributeValue) (*[]User, error) {
+	var users []User
 	if err := attributevalue.UnmarshalListOfMaps(*items, &users); err != nil {
 		log.Println("An error occurred while trying to unmarshal list of database items to user structs")
 		return nil, err

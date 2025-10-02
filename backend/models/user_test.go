@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewUser(t *testing.T) {
-	expect := &user{
+	expect := &User{
 		Userid:      "123",
 		Description: "PROFILE",
 		Username:    "test",
@@ -24,7 +24,7 @@ func TestNewUser(t *testing.T) {
 }
 
 func TestUserStructToDbItem(t *testing.T) {
-	result := UserStructToDbItem(*NewUser("123", "test"))
+	result := *NewUser("123", "test").ToDatabaseFormat()
 	expect := map[string]types.AttributeValue{
 		"pk":       &types.AttributeValueMemberS{Value: "USER#123"},
 		"sk":       &types.AttributeValueMemberS{Value: "PROFILE"},
@@ -33,12 +33,12 @@ func TestUserStructToDbItem(t *testing.T) {
 		"bio":      &types.AttributeValueMemberS{Value: ""},
 	}
 
-	if len(*result) != len(expect) {
-		t.Errorf("Expected %v keys but got %v instead", len(expect), len(*result))
+	if len(result) != len(expect) {
+		t.Errorf("Expected %v keys but got %v instead", len(expect), len(result))
 	}
 
 	for key, expVal := range expect {
-		val, exists := (*result)[key]
+		val, exists := (result)[key]
 		if !exists {
 			t.Errorf("Missing key: %v", key)
 			continue
@@ -67,7 +67,7 @@ func TestDbItemsToUserStructs(t *testing.T) {
 		},
 	}
 
-	expected := user{
+	expected := User{
 		Userid:      "123",
 		Description: "PROFILE",
 		Username:    "test",
