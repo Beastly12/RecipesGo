@@ -17,17 +17,17 @@ const (
 type User struct {
 	Userid      string `dynamodbav:"pk" json:"userid"`
 	Description string `dynamodbav:"sk"`
-	Username    string `dynamodbav:"username" json:"username"`
+	Nickname    string `dynamodbav:"nickname" json:"nickname"`
 	DpUrl       string `dynamodbav:"dpUrl" json:"dpUrl"`
 	Bio         string `dynamodbav:"bio" json:"bio"`
 }
 
 // Returns a new user struct with the id and name provided
-func NewUser(userid, username string) *User {
+func NewUser(userid, nickname string) *User {
 	return &User{
 		Userid:      userid,
 		Description: UserSkPrefix,
-		Username:    username,
+		Nickname:    nickname,
 		DpUrl:       "",
 		Bio:         "",
 	}

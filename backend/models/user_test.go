@@ -11,7 +11,7 @@ func TestNewUser(t *testing.T) {
 	expect := &User{
 		Userid:      "123",
 		Description: "PROFILE",
-		Username:    "test",
+		Nickname:    "test",
 		DpUrl:       "",
 		Bio:         "",
 	}
@@ -28,7 +28,7 @@ func TestUserStructToDbItem(t *testing.T) {
 	expect := map[string]types.AttributeValue{
 		"pk":       &types.AttributeValueMemberS{Value: "USER#123"},
 		"sk":       &types.AttributeValueMemberS{Value: "PROFILE"},
-		"username": &types.AttributeValueMemberS{Value: "test"},
+		"nickname": &types.AttributeValueMemberS{Value: "test"},
 		"dpUrl":    &types.AttributeValueMemberS{Value: ""},
 		"bio":      &types.AttributeValueMemberS{Value: ""},
 	}
@@ -61,7 +61,7 @@ func TestDbItemsToUserStructs(t *testing.T) {
 		{
 			"pk":       &types.AttributeValueMemberS{Value: "USER#123"},
 			"sk":       &types.AttributeValueMemberS{Value: "PROFILE"},
-			"username": &types.AttributeValueMemberS{Value: "test"},
+			"nickname": &types.AttributeValueMemberS{Value: "test"},
 			"dpUrl":    &types.AttributeValueMemberS{Value: "cdn.pic.com"},
 			"bio":      &types.AttributeValueMemberS{Value: "i love food"},
 		},
@@ -70,7 +70,7 @@ func TestDbItemsToUserStructs(t *testing.T) {
 	expected := User{
 		Userid:      "123",
 		Description: "PROFILE",
-		Username:    "test",
+		Nickname:    "test",
 		DpUrl:       "cdn.pic.com",
 		Bio:         "i love food",
 	}
