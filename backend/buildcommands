@@ -1,0 +1,6 @@
+# add main.go files to build in the build dirs
+docker build --build-arg BUILD_DIRS="" -t RecipeGo .
+docker create --name extract-builder RecipeGo
+rm -rf ./bin
+docker cp extract-builder:/app/bin ./bin
+docker rm extract-builder
