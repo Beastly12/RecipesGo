@@ -65,10 +65,6 @@ Resources:
           AttributeDataType: String
           Required: true
           Mutable: true
-        - Name: name
-          AttributeDataType: String
-          Required: true
-          Mutable: true
         
   CognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
@@ -105,14 +101,14 @@ Resources:
                 - !Ref CognitoUserPoolClient
 
   # to add newly created user to dynamo db
-  AddUser:
+  PreSignUp:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub AddUserFunc-${EnvironmentName}
-      CodeUri: bin/add_user/add_user.zip
+      FunctionName: !Sub PreSignup-${EnvironmentName}
+      CodeUri: bin/pre_signup/pre_signup.zip
       Handler: bootstrap
       Architectures: [arm64]
-      Description: Lambda function that runs after user successfully signs up to add them to dynamodb
+      Description: Lambda function that runs to auto verify user after they sign up
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref MainTable
@@ -128,3 +124,22 @@ Resources:
           Properties:
             UserPool: !Ref CognitoUserPool
             Trigger: PreSignUp
+
+  # to add newly created user to dynamo db
+  PostSignUp:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub PostSignup-${EnvironmentName}
+      CodeUri: bin/post_signup/post_signup.zip
+      Handler: bootstrap
+      Architectures: [arm64]
+      Description: Lambda function that runs after auto verifying user and adds them to dynamodb
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MainTable
+      Events:
+        CognitoTrigger:
+          Type: Cognito
+          Properties:
+            UserPool: !Ref CognitoUserPool
+            Trigger: PostConfirmation
