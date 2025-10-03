@@ -5,6 +5,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
@@ -73,4 +74,29 @@ func (deps *DynamoHelper) AddNewRecipe(recipe *models.Recipe) error {
 	}
 
 	return nil
+}
+
+func (deps *DynamoHelper) GetAllRecipes() (*[]models.Recipe, error) {
+	input := &dynamodb.QueryInput{
+		TableName:        &deps.TableName,
+		IndexName:        aws.String("NicknameIndex"),
+		FilterExpression: aws.String("pk = :pk"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":pk": &types.AttributeValueMemberS{Value: models.RecipesSkPrefix},
+		},
+	}
+
+	items, err := deps.DbClient.Query(deps.Ctx, input)
+	if err != nil {
+		log.Println("failed to get all recipes from db")
+		return nil, err
+	}
+
+	recipes, rErr := models.DatabaseItemsToRecipeStructs(&items.Items)
+	if rErr != nil {
+		log.Println("An error occurred while trying to convert db recipe items to recipe structs")
+		return nil, rErr
+	}
+
+	return recipes, nil
 }

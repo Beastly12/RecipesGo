@@ -160,9 +160,29 @@ Resources:
         ApiRequest:
           Type: HttpApi
           Properties:
-            Path: /recipe
+            Path: /recipes
             Method: POST
             ApiId: !Ref RecipeApi
             Auth:
               Authorizer: CognitoAuthorizer
+
+  # to add new recipe to db
+  GetRecipes:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub GetRecipes-${EnvironmentName}
+      CodeUri: bin/get_recipe/get_recipe.zip
+      Handler: bootstrap
+      Architectures: [arm64]
+      Description: Lambda function that returns all recipes in db
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MainTable
+      Events:
+        ApiRequest:
+          Type: HttpApi
+          Properties:
+            Path: /recipes
+            Method: GET
+            ApiId: !Ref RecipeApi
 

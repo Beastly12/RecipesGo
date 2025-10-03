@@ -24,7 +24,7 @@ func TestNewRecipe(t *testing.T) {
 		AuthorName:  "johnny_test",
 		Description: "A very delicious cup of hot water",
 		Ingredients: []string{"water", "cast iron skillet"},
-		SortKey:     "RECIPE#" + result.DateCreated,
+		SortKey:     "RECIPE",
 		ItemType:    "RECIPE",
 		DateCreated: result.DateCreated,
 	}
@@ -97,7 +97,7 @@ func TestRecipeToDatabaseFormat(t *testing.T) {
 
 	expect := map[string]types.AttributeValue{
 		"pk":          &types.AttributeValueMemberS{Value: "RECIPE#" + recipe.Id},
-		"sk":          &types.AttributeValueMemberS{Value: "RECIPE#" + time},
+		"sk":          &types.AttributeValueMemberS{Value: "RECIPE"},
 		"imageUrl":    &types.AttributeValueMemberS{Value: ""},
 		"name":        &types.AttributeValueMemberS{Value: "test"},
 		"authorName":  &types.AttributeValueMemberS{Value: "mad_scientist"},
@@ -127,5 +127,18 @@ func TestRecipeToDatabaseFormat(t *testing.T) {
 			t.Errorf("For key %v: expected %v, got %v", key, expVal, val)
 			continue
 		}
+	}
+}
+
+func TestRecipeKey(t *testing.T) {
+	expect := &map[string]types.AttributeValue{
+		"pk": &types.AttributeValueMemberS{Value: "RECIPE#123"},
+		"sk": &types.AttributeValueMemberS{Value: "RECIPE"},
+	}
+
+	result := RecipeKey("123")
+
+	if result != expect {
+		t.Errorf("expected %s but got %s instead", expect, result)
 	}
 }

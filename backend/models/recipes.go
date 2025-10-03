@@ -41,7 +41,7 @@ func NewRecipe(name, imageUrl, authorName, description string, ingredients ...st
 		Ingredients: ingredients,
 		ItemType:    RecipesSkPrefix, // sets nickname to be "RECIPE", to query all recipes
 		DateCreated: time,
-		SortKey:     RecipesSkPrefix + "#" + time,
+		SortKey:     RecipesSkPrefix,
 	}
 }
 
@@ -72,4 +72,11 @@ func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue) (*[]
 	}
 
 	return &recipes, nil
+}
+
+func RecipeKey(recipeId string) *map[string]types.AttributeValue {
+	return &map[string]types.AttributeValue{
+		"pk": &types.AttributeValueMemberS{Value: RecipesPkPrefix + recipeId},
+		"sk": &types.AttributeValueMemberS{Value: RecipesSkPrefix},
+	}
 }
