@@ -17,12 +17,8 @@ type AddUserDependencies struct {
 	DbClient  *dynamodb.Client
 }
 
-func (deps *AddUserDependencies) HandleAddUser(ctx context.Context, event *events.CognitoEventUserPoolsPostConfirmation) (interface{}, error) {
-	// this function should only run if it is trigger by signup confirm
-	if event.TriggerSource != "PostConfirmation_ConfirmSignUp" {
-		return event, nil
-	}
-
+func (deps *AddUserDependencies) HandleAddUser(ctx context.Context, event *events.CognitoEventUserPoolsPreSignup) (interface{}, error) {
+	// this function should only run if it is trigger by pre signup
 	userid := event.Request.UserAttributes["sub"]
 	nickname := event.Request.UserAttributes["nickname"]
 
@@ -44,6 +40,9 @@ func (deps *AddUserDependencies) HandleAddUser(ctx context.Context, event *event
 	if err != nil {
 		return nil, err
 	}
+
+	event.Response.AutoConfirmUser = true
+	event.Response.AutoVerifyEmail = true
 
 	return event, nil
 }
