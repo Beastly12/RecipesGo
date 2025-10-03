@@ -143,3 +143,26 @@ Resources:
           Properties:
             UserPool: !Ref CognitoUserPool
             Trigger: PostConfirmation
+
+  # to add new recipe to db
+  AddRecipe:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub AddRecipe-${EnvironmentName}
+      CodeUri: bin/add_recipe/add_recipe.zip
+      Handler: bootstrap
+      Architectures: [arm64]
+      Description: Lambda function that runs to add new recipe to db
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MainTable
+      Events:
+        ApiRequest:
+          Type: HttpApi
+          Properties:
+            Path: /recipe
+            Method: POST
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+

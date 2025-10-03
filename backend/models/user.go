@@ -22,6 +22,14 @@ type User struct {
 	Bio         string `dynamodbav:"bio" json:"bio"`
 }
 
+// Returns key to query given user from db
+func UserKey(userid string) *map[string]types.AttributeValue {
+	return &map[string]types.AttributeValue{
+		"pk": &types.AttributeValueMemberS{Value: UserPkPrefix + userid},
+		"sk": &types.AttributeValueMemberS{Value: UserSkPrefix},
+	}
+}
+
 // Returns a new user struct with the id and name provided
 func NewUser(userid, nickname string) *User {
 	return &User{
