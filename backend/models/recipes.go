@@ -22,6 +22,7 @@ type Recipe struct {
 	AuthorName  string   `dynamodbav:"authorName" json:"authorName"`
 	Description string   `dynamodbav:"description" json:"description"`
 	Ingredients []string `dynamodbav:"ingredients" json:"ingredients"`
+	DateCreated string   `dynamodbav:"dateCreated" json:"dateCreated"`
 	SortKey     string   `dynamodbav:"sk"`
 }
 
@@ -35,6 +36,7 @@ func NewRecipe(name, imageUrl, authorName, description string, ingredients ...st
 		AuthorName:  authorName,
 		Description: description,
 		Ingredients: ingredients,
+		DateCreated: utils.GetTimeNow(),
 		SortKey:     RecipesSkPrefix,
 	}
 }

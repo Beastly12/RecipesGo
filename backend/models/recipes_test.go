@@ -24,6 +24,7 @@ func TestNewRecipe(t *testing.T) {
 		Description: "A very delicious cup of hot water",
 		Ingredients: []string{"water", "cast iron skillet"},
 		SortKey:     "RECIPE",
+		DateCreated: result.DateCreated,
 	}
 
 	if !reflect.DeepEqual(result, expect) {
