@@ -16,6 +16,10 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: backend
+
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
@@ -36,14 +40,12 @@ jobs:
           use-installer: true
 
       - name: run utils unit tests
-        run: |
-          cd utils
-          go test -v ./...
+        working-directory: backend/utils
+        run: go test -v ./...
 
       - name: run unit tests for models
-        run: |
-          cd models
-          go test -v ./...
+        working-directory: backend/models
+        run: go test -v ./...
 
       - name: build go bins for lambda
         run: |
@@ -57,7 +59,7 @@ jobs:
         run: |
           sam deploy \
             --template-file template.yaml \
-            --s3-bucket recipe-go-sam-test-${{ env.AWS_REGION }} \
+            --s3-bucket recipe-go-sam-${{ env.AWS_REGION }}-test \
             --stack-name recipe-stack \
             --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
             --region ${{env.AWS_REGION}} \
