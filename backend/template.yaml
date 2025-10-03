@@ -171,7 +171,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub GetRecipes-${EnvironmentName}
-      CodeUri: bin/get_recipe/get_recipe.zip
+      CodeUri: bin/get_recipes/get_recipes.zip
       Handler: bootstrap
       Architectures: [arm64]
       Description: Lambda function that returns all recipes in db
