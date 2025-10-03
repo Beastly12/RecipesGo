@@ -138,7 +138,7 @@ func TestRecipeKey(t *testing.T) {
 
 	result := RecipeKey("123")
 
-	if result != expect {
-		t.Errorf("expected %s but got %s instead", expect, result)
+	if !reflect.DeepEqual(expect, result) {
+		t.Errorf("expected\n%s\nbut got\n%s\ninstead", expect, result)
 	}
 }
