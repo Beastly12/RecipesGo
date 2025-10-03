@@ -11,10 +11,17 @@ Globals:
       Variables:
         MAIN_TABLE: !Ref MainTable
 
+Parameters:
+  EnvironmentName:
+    Type: String
+    Description: "Environment name either production or test"
+    Default: "test"
+
 Resources:
   MainTable:
     Type: AWS::DynamoDB::Table
     Properties:
+      TableName: !Sub main-table-${EnvironmentName}
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: pk
@@ -40,7 +47,7 @@ Resources:
   CognitoUserPool:
     Type: AWS::Cognito::UserPool
     Properties:
-      UserPoolName: RecipeUserPool
+      UserPoolName: !Sub RecipeUserPool-${EnvironmentName}
       UsernameAttributes:
         - email
       Policies:
@@ -66,7 +73,7 @@ Resources:
   CognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
-      ClientName: recipe-client
+      ClientName: !Sub RecipeClient-${EnvironmentName}
       UserPoolId: !Ref CognitoUserPool
       GenerateSecret: false
       ExplicitAuthFlows:
@@ -76,6 +83,7 @@ Resources:
   RecipeApi:
     Type: AWS::Serverless::HttpApi
     Properties:
+      Name: !Sub RecipeApi-${EnvironmentName}
       CorsConfiguration:
         AllowMethods:
           - GET
@@ -100,6 +108,7 @@ Resources:
   AddUser:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub AddUserFunc-${EnvironmentName}
       CodeUri: bin/add_user/add_user.zip
       Handler: bootstrap
       Architectures: [arm64]
@@ -118,4 +127,4 @@ Resources:
           Type: Cognito
           Properties:
             UserPool: !Ref CognitoUserPool
-            Trigger: PostConfirmation
+            Trigger: PreSignUp

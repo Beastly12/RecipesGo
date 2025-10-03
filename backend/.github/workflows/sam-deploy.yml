@@ -4,8 +4,9 @@ env:
   AWS_REGION: "eu-west-2"
 
 on:
-  push:
-    branches: [main]
+  pull_request:
+    branches:
+      - main
 
 permissions:
   id-token: write
@@ -60,5 +61,6 @@ jobs:
             --stack-name recipe-stack \
             --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
             --region ${{env.AWS_REGION}} \
+            --parameter-overrides EnvironmentName=prod \
             --no-confirm-changeset \
             --no-fail-on-empty-changeset
