@@ -12,7 +12,7 @@ COPY . .
 RUN mkdir -p ${BIN_ROOT}
 ARG BUILD_DIRS
 RUN set -e; \
-  for dir in $(echo ${BUILD_DIRS} | tr ',' '\n'); do \
+  for dir in $(echo ${BUILD_DIRS} | tr ' ' '\n'); do \
     echo "==> Building $dir"; \
     mkdir -p ${BIN_ROOT}/$dir; \
     echo "Running: go build -o ${BIN_ROOT}/$dir/bootstrap ./cmd/$dir/main.go"; \
