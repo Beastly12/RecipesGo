@@ -22,12 +22,15 @@ type Recipe struct {
 	AuthorName  string   `dynamodbav:"authorName" json:"authorName"`
 	Description string   `dynamodbav:"description" json:"description"`
 	Ingredients []string `dynamodbav:"ingredients" json:"ingredients"`
-	DateCreated string   `dynamodbav:"dateCreated" json:"dateCreated"`
+	DateCreated string   `json:"dateCreated" dynamodbav:"dateCreated"`
+	ItemType    string   `dynamodbav:"nickname"` // nickname is gsi, so we can query by gsi
 	SortKey     string   `dynamodbav:"sk"`
 }
 
 // Returns a recipe struct with details provided
 func NewRecipe(name, imageUrl, authorName, description string, ingredients ...string) *Recipe {
+
+	time := utils.GetTimeNow()
 
 	return &Recipe{
 		Id:          uuid.New().String(),
@@ -36,8 +39,9 @@ func NewRecipe(name, imageUrl, authorName, description string, ingredients ...st
 		AuthorName:  authorName,
 		Description: description,
 		Ingredients: ingredients,
-		DateCreated: utils.GetTimeNow(),
-		SortKey:     RecipesSkPrefix,
+		ItemType:    RecipesSkPrefix, // sets nickname to be "RECIPE", to query all recipes
+		DateCreated: time,
+		SortKey:     RecipesSkPrefix + "#" + time,
 	}
 }
 

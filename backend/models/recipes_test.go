@@ -1,6 +1,7 @@
 package models
 
 import (
+	"backend/utils"
 	"reflect"
 	"testing"
 
@@ -23,7 +24,8 @@ func TestNewRecipe(t *testing.T) {
 		AuthorName:  "johnny_test",
 		Description: "A very delicious cup of hot water",
 		Ingredients: []string{"water", "cast iron skillet"},
-		SortKey:     "RECIPE",
+		SortKey:     "RECIPE#" + result.DateCreated,
+		ItemType:    "RECIPE",
 		DateCreated: result.DateCreated,
 	}
 
@@ -65,4 +67,65 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 		t.Errorf("Expected %v but got %v instead", expect, result)
 	}
 
+}
+
+func TestRecipesConstants(t *testing.T) {
+	// test pk prefix
+	expectedPk := "RECIPE#"
+
+	if RecipesPkPrefix != expectedPk {
+		t.Errorf("Expected recipes pk prefix to be %v, but got %v instead", expectedPk, RecipesPkPrefix)
+	}
+
+	// test sk prefix
+	expectedSk := "RECIPE"
+	if RecipesSkPrefix != expectedSk {
+		t.Errorf("Expected recipes sk prefix to be %v, but got %v instead", expectedSk, RecipesSkPrefix)
+	}
+}
+
+func TestRecipeToDatabaseFormat(t *testing.T) {
+	time := utils.GetTimeNow()
+
+	recipe := NewRecipe(
+		"test",
+		"",
+		"mad_scientist",
+		"stuff",
+		"water",
+	)
+
+	expect := map[string]types.AttributeValue{
+		"pk":          &types.AttributeValueMemberS{Value: "RECIPE#" + recipe.Id},
+		"sk":          &types.AttributeValueMemberS{Value: "RECIPE#" + time},
+		"imageUrl":    &types.AttributeValueMemberS{Value: ""},
+		"name":        &types.AttributeValueMemberS{Value: "test"},
+		"authorName":  &types.AttributeValueMemberS{Value: "mad_scientist"},
+		"description": &types.AttributeValueMemberS{Value: "stuff"},
+		"ingredients": &types.AttributeValueMemberL{Value: []types.AttributeValue{
+			&types.AttributeValueMemberS{Value: "water"},
+		}},
+		"dateCreated": &types.AttributeValueMemberS{Value: time},
+		"nickname":    &types.AttributeValueMemberS{Value: "RECIPE"},
+	}
+
+	result := recipe.ToDatabaseFormat()
+
+	for key, expVal := range expect {
+		val, exists := (*result)[key]
+		if !exists {
+			t.Errorf("Missing key: %v", key)
+			continue
+		}
+
+		if reflect.TypeOf(val) != reflect.TypeOf(expVal) {
+			t.Errorf("For key %v: expected type: %v, but got type: %v", key, reflect.TypeOf(expVal), reflect.TypeOf(val))
+			continue
+		}
+
+		if !reflect.DeepEqual(val, expVal) {
+			t.Errorf("For key %v: expected %v, got %v", key, expVal, val)
+			continue
+		}
+	}
 }

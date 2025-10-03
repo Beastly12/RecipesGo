@@ -82,3 +82,31 @@ func TestDbItemsToUserStructs(t *testing.T) {
 		t.Errorf("Expected %v but got %v instead", expected, result)
 	}
 }
+
+func TestUsersConstants(t *testing.T) {
+	// test pk prefix
+	expectedPk := "USER#"
+
+	if UserPkPrefix != expectedPk {
+		t.Errorf("Expected recipes pk prefix to be %v, but got %v instead", expectedPk, UserPkPrefix)
+	}
+
+	// test sk prefix
+	expectedSk := "PROFILE"
+	if UserSkPrefix != expectedSk {
+		t.Errorf("Expected recipes sk prefix to be %v, but got %v instead", expectedSk, UserSkPrefix)
+	}
+}
+
+func TestUserKey(t *testing.T) {
+	expected := &map[string]types.AttributeValue{
+		"pk": &types.AttributeValueMemberS{Value: "USER#123"},
+		"sk": &types.AttributeValueMemberS{Value: "PROFILE"},
+	}
+
+	result := UserKey("123")
+
+	if !reflect.DeepEqual(expected, result) {
+		t.Errorf("Expected key to be %s but got %s instead", expected, result)
+	}
+}

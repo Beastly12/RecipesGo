@@ -37,7 +37,7 @@ Resources:
           KeyType: RANGE
       GlobalSecondaryIndexes:
         # to allow us to query by nickname if need be
-        - IndexName: UsernameIndex
+        - IndexName: NicknameIndex
           KeySchema:
             - AttributeName: nickname
               KeyType: HASH
