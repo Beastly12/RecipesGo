@@ -4,6 +4,7 @@ import (
 	"backend/helpers"
 	"backend/models"
 	"context"
+	"log"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -24,6 +25,8 @@ func (deps *AddUserDependencies) HandleAddUser(ctx context.Context, event *event
 
 	userid := event.Request.UserAttributes["sub"]
 	nickname := event.Request.UserAttributes["nickname"]
+
+	log.Println("found user id " + userid + " found nickname " + nickname)
 
 	newUser := models.NewUser(
 		userid,

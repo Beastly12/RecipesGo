@@ -27,5 +27,7 @@ func (deps *UserDynamoHelper) AddNewUser(user *map[string]types.AttributeValue) 
 		return err
 	}
 
+	log.Println("added user successfully")
+
 	return nil
 }
