@@ -28,9 +28,9 @@ func (deps *PostSignupDependencies) HandlePostSignup(ctx context.Context, event 
 	newUser := models.NewUser(
 		userid,
 		nickname,
-	).ToDatabaseFormat()
+	)
 
-	dynamoHelper := helpers.UserDynamoHelper{
+	dynamoHelper := helpers.DynamoHelper{
 		TableName: deps.TableName,
 		DbClient:  deps.DbClient,
 		Ctx:       ctx,
