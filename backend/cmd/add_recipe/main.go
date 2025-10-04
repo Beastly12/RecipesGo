@@ -12,7 +12,7 @@ var (
 )
 
 func init() {
-	dependencies := utils.GetDynamodbAndObjStorageInit()
+	dependencies := utils.GetDynamodbAndCloudfrontInit()
 	starter = *handlers.NewAddRecipeHandler(&dependencies)
 }
 

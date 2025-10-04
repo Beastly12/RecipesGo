@@ -60,7 +60,7 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 		},
 	}
 
-	res, _ := DatabaseItemsToRecipeStructs(&items, "", "cdn.com")
+	res, _ := DatabaseItemsToRecipeStructs(&items, "cdn.com")
 	result := (*res)[0]
 
 	if !reflect.DeepEqual(result, expect) {

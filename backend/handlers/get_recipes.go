@@ -12,15 +12,13 @@ import (
 
 type GetRecipesDependencies struct {
 	CloudFrontDomainName string
-	BucketName           string
 	TableName            string
 	DbClient             *dynamodb.Client
 }
 
-func NewGetRecipeHandler(dependencies *utils.DynamodbAndObjStorage) *GetRecipesDependencies {
+func NewGetRecipeHandler(dependencies *utils.DynamoAndCloudfront) *GetRecipesDependencies {
 	return &GetRecipesDependencies{
 		CloudFrontDomainName: dependencies.CloudfrontDomainName,
-		BucketName:           dependencies.BucketName,
 		TableName:            dependencies.TableName,
 		DbClient:             dependencies.DbClient,
 	}
@@ -30,7 +28,6 @@ func (deps *GetRecipesDependencies) HandleGetRecipes(ctx context.Context, req *e
 	dbHelper := helpers.NewDynamoHelper(
 		deps.TableName,
 		deps.CloudFrontDomainName,
-		deps.BucketName,
 		deps.DbClient,
 		ctx,
 	)

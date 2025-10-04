@@ -10,11 +10,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-type DynamodbAndObjStorage struct {
+type DynamoAndCloudfront struct {
 	TableName            string
-	BucketName           string
 	CloudfrontDomainName string
-	S3Client             *s3.Client
 	DbClient             *dynamodb.Client
 }
 
@@ -24,7 +22,7 @@ type ObjectStorage struct {
 	S3Client             *s3.Client
 }
 
-func GetDynamodbAndObjStorageInit() DynamodbAndObjStorage {
+func GetDynamodbAndCloudfrontInit() DynamoAndCloudfront {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		log.Fatalf("unable to load SDK config: %v", err)
@@ -32,16 +30,10 @@ func GetDynamodbAndObjStorageInit() DynamodbAndObjStorage {
 
 	// load dynamodb stuff
 	dbClient := dynamodb.NewFromConfig(cfg)
-	s3Client := s3.NewFromConfig(cfg)
 
 	tableName := os.Getenv("MAIN_TABLE")
 	if tableName == "" {
 		panic("MAIN_TABLE environment variable not set")
-	}
-
-	bucketName := os.Getenv("RECIPE_IMAGES_BUCKET")
-	if bucketName == "" {
-		panic("BUCKET_NAME environment var not set!")
 	}
 
 	cloudfrontDomain := os.Getenv("CLOUDFRONT_DOMAIN")
@@ -49,11 +41,9 @@ func GetDynamodbAndObjStorageInit() DynamodbAndObjStorage {
 		panic("CLOUDFRONT_DOMAIN environment var not set!")
 	}
 
-	return DynamodbAndObjStorage{
+	return DynamoAndCloudfront{
 		TableName:            tableName,
-		BucketName:           bucketName,
 		CloudfrontDomainName: cloudfrontDomain,
-		S3Client:             s3Client,
 		DbClient:             dbClient,
 	}
 

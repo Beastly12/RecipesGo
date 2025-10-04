@@ -11,16 +11,14 @@ import (
 )
 
 type dynamoHelper struct {
-	BucketName     string
 	CloudFrontName string
 	TableName      string
 	DbClient       *dynamodb.Client
 	Ctx            context.Context
 }
 
-func NewDynamoHelper(tableName, cloudfrontDomainName, bucketName string, dbClient *dynamodb.Client, ctx context.Context) dynamoHelper {
+func NewDynamoHelper(tableName, cloudfrontDomainName string, dbClient *dynamodb.Client, ctx context.Context) dynamoHelper {
 	return dynamoHelper{
-		BucketName:     bucketName,
 		CloudFrontName: cloudfrontDomainName,
 		TableName:      tableName,
 		DbClient:       dbClient,
@@ -104,7 +102,7 @@ func (deps *dynamoHelper) GetAllRecipes() (*[]models.Recipe, error) {
 		return nil, err
 	}
 
-	recipes, rErr := models.DatabaseItemsToRecipeStructs(&items.Items, deps.CloudFrontName, deps.BucketName)
+	recipes, rErr := models.DatabaseItemsToRecipeStructs(&items.Items, deps.CloudFrontName)
 	if rErr != nil {
 		log.Println("An error occurred while trying to convert db recipe items to recipe structs")
 		return nil, rErr

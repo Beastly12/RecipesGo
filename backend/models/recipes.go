@@ -59,7 +59,7 @@ func (r Recipe) ToDatabaseFormat() *map[string]types.AttributeValue {
 }
 
 // Converts db items to recipe structs
-func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue, bucketName, cloudfrontDomainName string) (*[]Recipe, error) {
+func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue, cloudfrontDomainName string) (*[]Recipe, error) {
 	var recipes []Recipe
 
 	if err := attributevalue.UnmarshalListOfMaps(*items, &recipes); err != nil {

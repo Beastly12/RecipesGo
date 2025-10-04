@@ -14,15 +14,13 @@ import (
 
 type PostSignupDependencies struct {
 	CloudFrontDomainName string
-	BucketName           string
 	TableName            string
 	DbClient             *dynamodb.Client
 }
 
-func NewPostSignupHandler(dependencies *utils.DynamodbAndObjStorage) *PostSignupDependencies {
+func NewPostSignupHandler(dependencies *utils.DynamoAndCloudfront) *PostSignupDependencies {
 	return &PostSignupDependencies{
 		CloudFrontDomainName: dependencies.CloudfrontDomainName,
-		BucketName:           dependencies.BucketName,
 		TableName:            dependencies.TableName,
 		DbClient:             dependencies.DbClient,
 	}
@@ -45,7 +43,6 @@ func (deps *PostSignupDependencies) HandlePostSignup(ctx context.Context, event 
 	dynamoHelper := helpers.NewDynamoHelper(
 		deps.TableName,
 		deps.CloudFrontDomainName,
-		deps.BucketName,
 		deps.DbClient,
 		ctx,
 	)

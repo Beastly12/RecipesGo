@@ -14,15 +14,13 @@ import (
 
 type AddRecipeDependencies struct {
 	CloudFrontDomainName string
-	BucketName           string
 	TableName            string
 	DbClient             *dynamodb.Client
 }
 
-func NewAddRecipeHandler(dependencies *utils.DynamodbAndObjStorage) *AddRecipeDependencies {
+func NewAddRecipeHandler(dependencies *utils.DynamoAndCloudfront) *AddRecipeDependencies {
 	return &AddRecipeDependencies{
 		CloudFrontDomainName: dependencies.CloudfrontDomainName,
-		BucketName:           dependencies.BucketName,
 		TableName:            dependencies.TableName,
 		DbClient:             dependencies.DbClient,
 	}
@@ -48,7 +46,6 @@ func (deps *AddRecipeDependencies) HandleAddRecipe(ctx context.Context, req *eve
 	dbHelper := helpers.NewDynamoHelper(
 		deps.TableName,
 		deps.CloudFrontDomainName,
-		deps.BucketName,
 		deps.DbClient,
 		ctx,
 	)
