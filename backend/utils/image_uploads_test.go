@@ -112,45 +112,22 @@ func TestGetContentType(t *testing.T) {
 
 func TestGenerateViewUrl(t *testing.T) {
 	tests := []struct {
-		name       string
-		imageKey   string
-		cfDomain   string
-		bucketName string
-		expect     string
+		name     string
+		imageKey string
+		cfDomain string
+		expect   string
 	}{
 		{
-			name:       "test url with cloud front",
-			imageKey:   "test.jpg",
-			cfDomain:   "cdn.cf.com",
-			bucketName: "test_bucket",
-			expect:     "https://cdn.cf.com/test.jpg",
-		},
-		{
-			name:       "test fall back url s3 direct",
-			imageKey:   "test.jpg",
-			cfDomain:   "",
-			bucketName: "test_bucket",
-			expect:     "https://test_bucket.s3.amazonaws.com/test.jpg",
-		},
-		{
-			name:       "test no key",
-			imageKey:   "",
-			cfDomain:   "cdn.cf.com",
-			bucketName: "test_bucket",
-			expect:     "",
-		},
-		{
-			name:       "test no cloud front and bucket",
-			imageKey:   "test.jpg",
-			cfDomain:   "",
-			bucketName: "",
-			expect:     "",
+			name:     "test url with cloud front",
+			imageKey: "test.jpg",
+			cfDomain: "cdn.cf.com",
+			expect:   "https://cdn.cf.com/test.jpg",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := GenerateViewURL(tt.imageKey, tt.cfDomain, tt.bucketName)
+			result := GenerateViewURL(tt.imageKey, tt.cfDomain)
 			if tt.expect != result {
 				t.Errorf("expected\n%v\n but got \n%v\n instead", tt.expect, result)
 			}

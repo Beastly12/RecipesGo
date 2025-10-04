@@ -44,18 +44,14 @@ func GetContentType(extension string) string {
 }
 
 // creates the cloudfront url for viewing the image
-func GenerateViewURL(imageKey, cloudfrontDomain, bucketName string) string {
+func GenerateViewURL(imageKey, cloudfrontDomain string) string {
+	if cloudfrontDomain == "" {
+		panic("YOU NEED TO PROVIDE A CLOUDFRONT DOMAIN NAME")
+	}
+
 	if imageKey == "" {
-		return ""
+		panic("YOU NEED TO PROVIDE AN IMAGE KEY")
 	}
 
-	if cloudfrontDomain != "" {
-		return fmt.Sprintf("https://%s/%s", cloudfrontDomain, imageKey)
-	}
-
-	if bucketName == "" {
-		return ""
-	}
-	// Fallback to S3 URL if CloudFront domain not configured
-	return fmt.Sprintf("https://%s.s3.amazonaws.com/%s", bucketName, imageKey)
+	return fmt.Sprintf("https://%s/%s", cloudfrontDomain, imageKey)
 }

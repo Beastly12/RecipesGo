@@ -69,7 +69,7 @@ func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue, buck
 
 	for index, recipe := range recipes {
 		recipes[index].Id = strings.TrimPrefix(recipe.Id, RecipesPkPrefix)
-		recipes[index].ImageUrl = utils.GenerateViewURL(recipe.ImageUrl, cloudfrontDomainName, bucketName)
+		recipes[index].ImageUrl = utils.GenerateViewURL(recipe.ImageUrl, cloudfrontDomainName)
 	}
 
 	return &recipes, nil
