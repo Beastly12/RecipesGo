@@ -2,10 +2,8 @@ package models
 
 import (
 	"backend/utils"
-	"log"
 	"strings"
 
-	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
@@ -41,31 +39,14 @@ func NewUser(userid, nickname string) *User {
 	}
 }
 
-// Takes in a user struct and returns a dynamo database item for user
-func (u User) ToDatabaseFormat() *map[string]types.AttributeValue {
+// DANGEROUS CODE: applies prefixes for database storage
+func (u *User) ApplyPrefixes() {
 	u.Userid = utils.AddPrefix(u.Userid, UserPkPrefix)
-
-	item, err := attributevalue.MarshalMap(u)
-
-	if err != nil {
-		panic("Failed to marshal user struct to db item")
-	}
-
-	return &item
 }
 
 // Takes dynamo database items and tries to convert them to user structs
 func DbItemsToUserStructs(items *[]map[string]types.AttributeValue) (*[]User, error) {
-	var users []User
-	if err := attributevalue.UnmarshalListOfMaps(*items, &users); err != nil {
-		log.Println("An error occurred while trying to unmarshal list of database items to user structs")
-		return nil, err
-	}
-
-	// clean up
-	for index, item := range users {
-		users[index].Userid = strings.TrimPrefix(item.Userid, UserPkPrefix)
-	}
-
-	return &users, nil
+	return utils.DatabaseItemToStruct(items, func(u *User) {
+		u.Userid = strings.TrimPrefix(u.Userid, UserPkPrefix)
+	})
 }

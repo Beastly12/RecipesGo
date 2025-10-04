@@ -18,15 +18,17 @@ func TestNewRecipe(t *testing.T) {
 	)
 
 	expect := &Recipe{
-		Id:          result.Id,
-		ImageUrl:    "https://cdn.test.com/test.jpg",
-		Name:        "Hot water",
-		AuthorName:  "johnny_test",
-		Description: "A very delicious cup of hot water",
-		Ingredients: []string{"water", "cast iron skillet"},
-		SortKey:     "RECIPE",
-		ItemType:    "RECIPE",
-		DateCreated: result.DateCreated,
+		Id: result.Id,
+		RecipeDetails: RecipeDetails{
+			ImageUrl:    "https://cdn.test.com/test.jpg",
+			Name:        "Hot water",
+			AuthorName:  "johnny_test",
+			Description: "A very delicious cup of hot water",
+			Ingredients: []string{"water", "cast iron skillet"},
+			DateCreated: result.DateCreated,
+		},
+		SortKey:  "RECIPE",
+		ItemType: "RECIPE",
 	}
 
 	if !reflect.DeepEqual(result, expect) {
@@ -36,13 +38,15 @@ func TestNewRecipe(t *testing.T) {
 
 func TestDbItemToRecipesStruct(t *testing.T) {
 	expect := Recipe{
-		Id:          "123",
-		ImageUrl:    "https://cdn.com/test.jpg",
-		Name:        "White rice",
-		AuthorName:  "johnny_test",
-		Description: "Plain white rice",
-		Ingredients: []string{"Rice", "Water"},
-		SortKey:     "RECIPE",
+		Id: "123",
+		RecipeDetails: RecipeDetails{
+			ImageUrl:    "https://cdn.com/test.jpg",
+			Name:        "White rice",
+			AuthorName:  "johnny_test",
+			Description: "Plain white rice",
+			Ingredients: []string{"Rice", "Water"},
+		},
+		SortKey: "RECIPE",
 	}
 
 	items := []map[string]types.AttributeValue{
@@ -109,7 +113,7 @@ func TestRecipeToDatabaseFormat(t *testing.T) {
 		"nickname":    &types.AttributeValueMemberS{Value: "RECIPE"},
 	}
 
-	result := recipe.ToDatabaseFormat()
+	result := utils.ToDatabaseFormat(utils.DatabaseFormattable(recipe))
 
 	for key, expVal := range expect {
 		val, exists := (*result)[key]

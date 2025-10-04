@@ -1,6 +1,7 @@
 package models
 
 import (
+	"backend/utils"
 	"reflect"
 	"testing"
 
@@ -24,7 +25,7 @@ func TestNewUser(t *testing.T) {
 }
 
 func TestUserStructToDbItem(t *testing.T) {
-	result := *NewUser("123", "test").ToDatabaseFormat()
+	result := *utils.ToDatabaseFormat(NewUser("123", "test"))
 	expect := map[string]types.AttributeValue{
 		"pk":       &types.AttributeValueMemberS{Value: "USER#123"},
 		"sk":       &types.AttributeValueMemberS{Value: "PROFILE"},

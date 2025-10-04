@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"backend/models"
+	"backend/utils"
 	"context"
 	"log"
 
@@ -26,20 +27,23 @@ func NewDynamoHelper(tableName, cloudfrontDomainName string, dbClient *dynamodb.
 	}
 }
 
-func (deps *dynamoHelper) AddNewUser(user *models.User) error {
+func (deps *dynamoHelper) putIntoDb(item *map[string]types.AttributeValue) error {
 	input := &dynamodb.PutItemInput{
-		Item:      *user.ToDatabaseFormat(),
+		Item:      *item,
 		TableName: &deps.TableName,
 	}
 
 	_, err := deps.DbClient.PutItem(deps.Ctx, input)
 
 	if err != nil {
-		log.Print("An error occurred while trying to put new user in the db")
 		return err
 	}
 
 	return nil
+}
+
+func (deps *dynamoHelper) AddNewUser(user *models.User) error {
+	return deps.putIntoDb(utils.ToDatabaseFormat(user))
 }
 
 func (deps *dynamoHelper) GetUser(userid string) (*models.User, error) {
@@ -71,19 +75,7 @@ func (deps *dynamoHelper) GetUser(userid string) (*models.User, error) {
 }
 
 func (deps *dynamoHelper) AddNewRecipe(recipe *models.Recipe) error {
-	input := &dynamodb.PutItemInput{
-		Item:      *recipe.ToDatabaseFormat(),
-		TableName: &deps.TableName,
-	}
-
-	_, err := deps.DbClient.PutItem(deps.Ctx, input)
-
-	if err != nil {
-		log.Println("something went wrong while trying to add recipe to db")
-		return err
-	}
-
-	return nil
+	return deps.putIntoDb(utils.ToDatabaseFormat(recipe))
 }
 
 func (deps *dynamoHelper) GetAllRecipes() (*[]models.Recipe, error) {
@@ -109,4 +101,8 @@ func (deps *dynamoHelper) GetAllRecipes() (*[]models.Recipe, error) {
 	}
 
 	return recipes, nil
+}
+
+func (deps *dynamoHelper) AddToFavorite(favorite *models.Favorite) error {
+	return deps.putIntoDb(utils.ToDatabaseFormat(favorite))
 }

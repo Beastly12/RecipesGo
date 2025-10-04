@@ -2,10 +2,8 @@ package models
 
 import (
 	"backend/utils"
-	"log"
 	"strings"
 
-	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/google/uuid"
 )
@@ -16,15 +14,19 @@ const (
 )
 
 type Recipe struct {
-	Id          string   `dynamodbav:"pk" json:"id"`
+	Id string `dynamodbav:"pk" json:"id"`
+	RecipeDetails
+	ItemType string `dynamodbav:"nickname" json:"-"` // nickname is gsi, so we can query by gsi
+	SortKey  string `dynamodbav:"sk" json:"-"`
+}
+
+type RecipeDetails struct {
 	ImageUrl    string   `dynamodbav:"imageUrl" json:"imageUrl"`
 	Name        string   `dynamodbav:"name" json:"name"`
 	AuthorName  string   `dynamodbav:"authorName" json:"authorName"`
 	Description string   `dynamodbav:"description" json:"description"`
 	Ingredients []string `dynamodbav:"ingredients" json:"ingredients"`
 	DateCreated string   `json:"dateCreated" dynamodbav:"dateCreated"`
-	ItemType    string   `dynamodbav:"nickname" json:"-"` // nickname is gsi, so we can query by gsi
-	SortKey     string   `dynamodbav:"sk" json:"-"`
 }
 
 // Returns a recipe struct with details provided
@@ -33,46 +35,31 @@ func NewRecipe(name, imageUrl, authorName, description string, ingredients ...st
 	time := utils.GetTimeNow()
 
 	return &Recipe{
-		Id:          uuid.New().String(),
-		ImageUrl:    imageUrl,
-		Name:        name,
-		AuthorName:  authorName,
-		Description: description,
-		Ingredients: ingredients,
-		ItemType:    RecipesSkPrefix, // sets nickname to be "RECIPE", to query all recipes
-		DateCreated: time,
-		SortKey:     RecipesSkPrefix,
+		Id: uuid.New().String(),
+		RecipeDetails: RecipeDetails{
+			ImageUrl:    imageUrl,
+			Name:        name,
+			AuthorName:  authorName,
+			Description: description,
+			Ingredients: ingredients,
+			DateCreated: time,
+		},
+		ItemType: RecipesSkPrefix, // sets nickname to be "RECIPE", to query all recipes
+		SortKey:  RecipesSkPrefix,
 	}
 }
 
-// Converts recipe struct to dynamo db items
-func (r Recipe) ToDatabaseFormat() *map[string]types.AttributeValue {
+// DANGEROUS CODE: applies prefixes for database storage
+func (r *Recipe) ApplyPrefixes() {
 	r.Id = utils.AddPrefix(r.Id, RecipesPkPrefix)
-
-	item, err := attributevalue.MarshalMap(r)
-
-	if err != nil {
-		panic("An error occurred while converting recipe struct to db item")
-	}
-
-	return &item
 }
 
 // Converts db items to recipe structs
 func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue, cloudfrontDomainName string) (*[]Recipe, error) {
-	var recipes []Recipe
-
-	if err := attributevalue.UnmarshalListOfMaps(*items, &recipes); err != nil {
-		log.Println("An error occurred while unmarshaling db items to recipe structs")
-		return nil, err
-	}
-
-	for index, recipe := range recipes {
-		recipes[index].Id = strings.TrimPrefix(recipe.Id, RecipesPkPrefix)
-		recipes[index].ImageUrl = utils.GenerateViewURL(recipe.ImageUrl, cloudfrontDomainName)
-	}
-
-	return &recipes, nil
+	return utils.DatabaseItemToStruct(items, func(r *Recipe) {
+		r.Id = strings.TrimPrefix(r.Id, RecipesPkPrefix)
+		r.ImageUrl = utils.GenerateViewURL(r.ImageUrl, cloudfrontDomainName)
+	})
 }
 
 func RecipeKey(recipeId string) *map[string]types.AttributeValue {
