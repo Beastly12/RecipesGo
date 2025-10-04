@@ -11,7 +11,7 @@ import (
 func TestNewRecipe(t *testing.T) {
 	result := NewRecipe(
 		"Hot water",
-		"cdn.test.com",
+		"https://cdn.test.com/test.jpg",
 		"johnny_test",
 		"A very delicious cup of hot water",
 		"water", "cast iron skillet",
@@ -19,7 +19,7 @@ func TestNewRecipe(t *testing.T) {
 
 	expect := &Recipe{
 		Id:          result.Id,
-		ImageUrl:    "cdn.test.com",
+		ImageUrl:    "https://cdn.test.com/test.jpg",
 		Name:        "Hot water",
 		AuthorName:  "johnny_test",
 		Description: "A very delicious cup of hot water",
@@ -37,7 +37,7 @@ func TestNewRecipe(t *testing.T) {
 func TestDbItemToRecipesStruct(t *testing.T) {
 	expect := Recipe{
 		Id:          "123",
-		ImageUrl:    "cdn.test.com",
+		ImageUrl:    "https://cdn.com/test.jpg",
 		Name:        "White rice",
 		AuthorName:  "johnny_test",
 		Description: "Plain white rice",
@@ -49,7 +49,7 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 		{
 			"pk":          &types.AttributeValueMemberS{Value: "RECIPE#123"},
 			"sk":          &types.AttributeValueMemberS{Value: "RECIPE"},
-			"imageUrl":    &types.AttributeValueMemberS{Value: "cdn.test.com"},
+			"imageUrl":    &types.AttributeValueMemberS{Value: "test.jpg"},
 			"name":        &types.AttributeValueMemberS{Value: "White rice"},
 			"description": &types.AttributeValueMemberS{Value: "Plain white rice"},
 			"authorName":  &types.AttributeValueMemberS{Value: "johnny_test"},
@@ -60,7 +60,7 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 		},
 	}
 
-	res, _ := DatabaseItemsToRecipeStructs(&items)
+	res, _ := DatabaseItemsToRecipeStructs(&items, "", "cdn.com")
 	result := (*res)[0]
 
 	if !reflect.DeepEqual(result, expect) {

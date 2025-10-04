@@ -3,6 +3,7 @@ package handlers
 import (
 	"backend/helpers"
 	"backend/models"
+	"backend/utils"
 	"context"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -12,8 +13,19 @@ import (
 // ADDS NEW USER TO DB AFTER REGISTRATION
 
 type PostSignupDependencies struct {
-	TableName string
-	DbClient  *dynamodb.Client
+	CloudFrontDomainName string
+	BucketName           string
+	TableName            string
+	DbClient             *dynamodb.Client
+}
+
+func NewPostSignupHandler(dependencies *utils.DynamodbAndObjStorage) *PostSignupDependencies {
+	return &PostSignupDependencies{
+		CloudFrontDomainName: dependencies.CloudfrontDomainName,
+		BucketName:           dependencies.BucketName,
+		TableName:            dependencies.TableName,
+		DbClient:             dependencies.DbClient,
+	}
 }
 
 func (deps *PostSignupDependencies) HandlePostSignup(ctx context.Context, event *events.CognitoEventUserPoolsPostConfirmation) (interface{}, error) {
@@ -30,11 +42,13 @@ func (deps *PostSignupDependencies) HandlePostSignup(ctx context.Context, event 
 		nickname,
 	)
 
-	dynamoHelper := helpers.DynamoHelper{
-		TableName: deps.TableName,
-		DbClient:  deps.DbClient,
-		Ctx:       ctx,
-	}
+	dynamoHelper := helpers.NewDynamoHelper(
+		deps.TableName,
+		deps.CloudFrontDomainName,
+		deps.BucketName,
+		deps.DbClient,
+		ctx,
+	)
 
 	err := dynamoHelper.AddNewUser(newUser)
 

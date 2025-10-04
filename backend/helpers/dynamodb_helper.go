@@ -10,13 +10,25 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
-type DynamoHelper struct {
-	TableName string
-	DbClient  *dynamodb.Client
-	Ctx       context.Context
+type dynamoHelper struct {
+	BucketName     string
+	CloudFrontName string
+	TableName      string
+	DbClient       *dynamodb.Client
+	Ctx            context.Context
 }
 
-func (deps *DynamoHelper) AddNewUser(user *models.User) error {
+func NewDynamoHelper(tableName, cloudfrontDomainName, bucketName string, dbClient *dynamodb.Client, ctx context.Context) dynamoHelper {
+	return dynamoHelper{
+		BucketName:     bucketName,
+		CloudFrontName: cloudfrontDomainName,
+		TableName:      tableName,
+		DbClient:       dbClient,
+		Ctx:            ctx,
+	}
+}
+
+func (deps *dynamoHelper) AddNewUser(user *models.User) error {
 	input := &dynamodb.PutItemInput{
 		Item:      *user.ToDatabaseFormat(),
 		TableName: &deps.TableName,
@@ -32,7 +44,7 @@ func (deps *DynamoHelper) AddNewUser(user *models.User) error {
 	return nil
 }
 
-func (deps *DynamoHelper) GetUser(userid string) (*models.User, error) {
+func (deps *dynamoHelper) GetUser(userid string) (*models.User, error) {
 	input := &dynamodb.GetItemInput{
 		Key:       *models.UserKey(userid),
 		TableName: &deps.TableName,
@@ -60,7 +72,7 @@ func (deps *DynamoHelper) GetUser(userid string) (*models.User, error) {
 	return &user, nil
 }
 
-func (deps *DynamoHelper) AddNewRecipe(recipe *models.Recipe) error {
+func (deps *dynamoHelper) AddNewRecipe(recipe *models.Recipe) error {
 	input := &dynamodb.PutItemInput{
 		Item:      *recipe.ToDatabaseFormat(),
 		TableName: &deps.TableName,
@@ -76,7 +88,7 @@ func (deps *DynamoHelper) AddNewRecipe(recipe *models.Recipe) error {
 	return nil
 }
 
-func (deps *DynamoHelper) GetAllRecipes() (*[]models.Recipe, error) {
+func (deps *dynamoHelper) GetAllRecipes() (*[]models.Recipe, error) {
 	input := &dynamodb.QueryInput{
 		TableName:              &deps.TableName,
 		IndexName:              aws.String("NicknameIndex"),
@@ -92,7 +104,7 @@ func (deps *DynamoHelper) GetAllRecipes() (*[]models.Recipe, error) {
 		return nil, err
 	}
 
-	recipes, rErr := models.DatabaseItemsToRecipeStructs(&items.Items)
+	recipes, rErr := models.DatabaseItemsToRecipeStructs(&items.Items, deps.CloudFrontName, deps.BucketName)
 	if rErr != nil {
 		log.Println("An error occurred while trying to convert db recipe items to recipe structs")
 		return nil, rErr

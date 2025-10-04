@@ -2,3 +2,4 @@ pre_signup
 post_signup
 add_recipe
 get_recipes
+get_upload_url

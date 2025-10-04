@@ -10,6 +10,8 @@ Globals:
     Environment:
       Variables:
         MAIN_TABLE: !Ref MainTable
+        RECIPE_IMAGES_BUCKET: !Ref RecipeImagesBucket
+        CLOUDFRONT_DOMAIN: !GetAtt RecipeImagesDistribution.DomainName
 
 Parameters:
   EnvironmentName:
@@ -43,6 +45,85 @@ Resources:
               KeyType: HASH
           Projection:
             ProjectionType: ALL
+
+  # S3 Bucket for recipe images
+  RecipeImagesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub recipe-images-${EnvironmentName}-${AWS::AccountId}
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+              - DELETE
+            AllowedOrigins:
+              - "*"
+            MaxAge: 3000
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  # S3 Bucket Policy to allow CloudFront access
+  RecipeImagesBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref RecipeImagesBucket
+      PolicyDocument:
+        Statement:
+          - Sid: AllowCloudFrontServicePrincipal
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub ${RecipeImagesBucket.Arn}/*
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${RecipeImagesDistribution}
+
+  # CloudFront Origin Access Control
+  CloudFrontOAC:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub RecipeImagesOAC-${EnvironmentName}
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  # CloudFront Distribution
+  RecipeImagesDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: !Sub CloudFront distribution for recipe images - ${EnvironmentName}
+        DefaultCacheBehavior:
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          CachedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          Compress: true
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # according to chat gpt CachingOptimized
+          OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf  # from chat gpt CORS-S3Origin
+        Origins:
+          - Id: S3Origin
+            DomainName: !GetAtt RecipeImagesBucket.RegionalDomainName
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+            OriginAccessControlId: !Ref CloudFrontOAC
+        PriceClass: PriceClass_100
 
   CognitoUserPool:
     Type: AWS::Cognito::UserPool
@@ -186,3 +267,51 @@ Resources:
             Method: GET
             ApiId: !Ref RecipeApi
 
+  # to generate presigned url for image uploads
+  GetUploadUrl:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub GetUploadUrl-${EnvironmentName}
+      CodeUri: bin/upload_url/upload_url.zip
+      Handler: bootstrap
+      Architectures: [arm64]
+      Description: Lambda function that generates presigned URLs for S3 uploads
+      Environment:
+        Variables:
+          RECIPE_IMAGES_BUCKET: !Ref RecipeImagesBucket
+          CLOUDFRONT_DOMAIN: !GetAtt RecipeImagesDistribution.DomainName
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref RecipeImagesBucket
+      Events:
+        ApiRequest:
+          Type: HttpApi
+          Properties:
+            Path: /upload-url
+            Method: GET
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+
+Outputs:
+  RecipeImagesBucketName:
+    Description: S3 Bucket for recipe images
+    Value: !Ref RecipeImagesBucket
+    Export:
+      Name: !Sub ${EnvironmentName}-RecipeImagesBucket
+
+  CloudFrontDistributionDomain:
+    Description: CloudFront distribution domain name for images
+    Value: !GetAtt RecipeImagesDistribution.DomainName
+    Export:
+      Name: !Sub ${EnvironmentName}-CloudFrontDomain
+
+  CloudFrontDistributionId:
+    Description: CloudFront distribution ID
+    Value: !Ref RecipeImagesDistribution
+    Export:
+      Name: !Sub ${EnvironmentName}-CloudFrontDistributionId
+
+  ApiEndpoint:
+    Description: API Gateway endpoint URL
+    Value: !Sub https://${RecipeApi}.execute-api.${AWS::Region}.amazonaws.com/prod

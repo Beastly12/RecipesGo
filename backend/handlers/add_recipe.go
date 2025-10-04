@@ -13,8 +13,19 @@ import (
 )
 
 type AddRecipeDependencies struct {
-	TableName string
-	DbClient  *dynamodb.Client
+	CloudFrontDomainName string
+	BucketName           string
+	TableName            string
+	DbClient             *dynamodb.Client
+}
+
+func NewAddRecipeHandler(dependencies *utils.DynamodbAndObjStorage) *AddRecipeDependencies {
+	return &AddRecipeDependencies{
+		CloudFrontDomainName: dependencies.CloudfrontDomainName,
+		BucketName:           dependencies.BucketName,
+		TableName:            dependencies.TableName,
+		DbClient:             dependencies.DbClient,
+	}
 }
 
 type jsonBody struct {
@@ -34,11 +45,13 @@ func (deps *AddRecipeDependencies) HandleAddRecipe(ctx context.Context, req *eve
 		return models.InvalidRequestErrorResponse(""), nil
 	}
 
-	dbHelper := helpers.DynamoHelper{
-		TableName: deps.TableName,
-		DbClient:  deps.DbClient,
-		Ctx:       ctx,
-	}
+	dbHelper := helpers.NewDynamoHelper(
+		deps.TableName,
+		deps.CloudFrontDomainName,
+		deps.BucketName,
+		deps.DbClient,
+		ctx,
+	)
 
 	// get details of user trying to create new recipe
 	userid := utils.GetAuthUserId(req)
