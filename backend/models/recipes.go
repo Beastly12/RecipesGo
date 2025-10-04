@@ -23,8 +23,8 @@ type Recipe struct {
 	Description string   `dynamodbav:"description" json:"description"`
 	Ingredients []string `dynamodbav:"ingredients" json:"ingredients"`
 	DateCreated string   `json:"dateCreated" dynamodbav:"dateCreated"`
-	ItemType    string   `dynamodbav:"nickname"` // nickname is gsi, so we can query by gsi
-	SortKey     string   `dynamodbav:"sk"`
+	ItemType    string   `dynamodbav:"nickname" json:"-"` // nickname is gsi, so we can query by gsi
+	SortKey     string   `dynamodbav:"sk" json:"-"`
 }
 
 // Returns a recipe struct with details provided
