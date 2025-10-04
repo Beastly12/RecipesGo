@@ -78,11 +78,11 @@ func (deps *DynamoHelper) AddNewRecipe(recipe *models.Recipe) error {
 
 func (deps *DynamoHelper) GetAllRecipes() (*[]models.Recipe, error) {
 	input := &dynamodb.QueryInput{
-		TableName:        &deps.TableName,
-		IndexName:        aws.String("NicknameIndex"),
-		FilterExpression: aws.String("pk = :pk"),
+		TableName:              &deps.TableName,
+		IndexName:              aws.String("NicknameIndex"),
+		KeyConditionExpression: aws.String("nickname = :n"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":pk": &types.AttributeValueMemberS{Value: models.RecipesSkPrefix},
+			":n": &types.AttributeValueMemberS{Value: models.RecipesSkPrefix},
 		},
 	}
 
