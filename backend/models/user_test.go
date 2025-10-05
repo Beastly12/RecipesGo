@@ -14,7 +14,6 @@ func TestNewUser(t *testing.T) {
 		Description: "PROFILE",
 		Nickname:    "test",
 		DpUrl:       "",
-		Bio:         "",
 	}
 
 	result := NewUser("123", "test")
@@ -31,7 +30,6 @@ func TestUserStructToDbItem(t *testing.T) {
 		"sk":       &types.AttributeValueMemberS{Value: "PROFILE"},
 		"nickname": &types.AttributeValueMemberS{Value: "test"},
 		"dpUrl":    &types.AttributeValueMemberS{Value: ""},
-		"bio":      &types.AttributeValueMemberS{Value: ""},
 	}
 
 	if len(result) != len(expect) {
@@ -64,7 +62,6 @@ func TestDbItemsToUserStructs(t *testing.T) {
 			"sk":       &types.AttributeValueMemberS{Value: "PROFILE"},
 			"nickname": &types.AttributeValueMemberS{Value: "test"},
 			"dpUrl":    &types.AttributeValueMemberS{Value: "cdn.pic.com"},
-			"bio":      &types.AttributeValueMemberS{Value: "i love food"},
 		},
 	}
 
@@ -73,7 +70,6 @@ func TestDbItemsToUserStructs(t *testing.T) {
 		Description: "PROFILE",
 		Nickname:    "test",
 		DpUrl:       "cdn.pic.com",
-		Bio:         "i love food",
 	}
 
 	res, _ := DbItemsToUserStructs(&userItem)

@@ -58,7 +58,9 @@ func (r *Recipe) ApplyPrefixes() {
 func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue, cloudfrontDomainName string) (*[]Recipe, error) {
 	return utils.DatabaseItemToStruct(items, func(r *Recipe) {
 		r.Id = strings.TrimPrefix(r.Id, RecipesPkPrefix)
-		r.ImageUrl = utils.GenerateViewURL(r.ImageUrl, cloudfrontDomainName)
+		if r.ImageUrl != "" {
+			r.ImageUrl = utils.GenerateViewURL(r.ImageUrl, cloudfrontDomainName)
+		}
 	})
 }
 

@@ -43,6 +43,14 @@ func (deps *AddRecipeDependencies) HandleAddRecipe(ctx context.Context, req *eve
 		return models.InvalidRequestErrorResponse(""), nil
 	}
 
+	if recipe.Name == "" {
+		return models.InvalidRequestErrorResponse("Recipe must have a name"), nil
+	}
+
+	if len(recipe.Ingredients) < 1 {
+		return models.InvalidRequestErrorResponse("Recipe must have at least 1 ingredient"), nil
+	}
+
 	dbHelper := helpers.NewDynamoHelper(
 		deps.TableName,
 		deps.CloudFrontDomainName,

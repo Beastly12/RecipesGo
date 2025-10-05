@@ -17,7 +17,6 @@ type User struct {
 	Description string `dynamodbav:"sk" json:"-"`
 	Nickname    string `dynamodbav:"nickname" json:"nickname"`
 	DpUrl       string `dynamodbav:"dpUrl" json:"dpUrl"`
-	Bio         string `dynamodbav:"bio" json:"bio"`
 }
 
 // Returns key to query given user from db
@@ -35,7 +34,6 @@ func NewUser(userid, nickname string) *User {
 		Description: UserSkPrefix,
 		Nickname:    nickname,
 		DpUrl:       "",
-		Bio:         "",
 	}
 }
 
