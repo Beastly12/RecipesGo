@@ -103,6 +103,66 @@ func (deps *dynamoHelper) GetAllRecipes() (*[]models.Recipe, error) {
 	return recipes, nil
 }
 
+func (deps *dynamoHelper) GetRecipe(recipeId string) (*models.Recipe, error) {
+	input := &dynamodb.GetItemInput{
+		Key:       *models.RecipeKey(recipeId),
+		TableName: &deps.TableName,
+	}
+
+	item, err := deps.DbClient.GetItem(deps.Ctx, input)
+	if err != nil {
+		log.Println("failed to get recipe form database")
+		return nil, err
+	}
+
+	if len(item.Item) < 1 {
+		return nil, nil
+	}
+
+	recipes, err := models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, deps.CloudFrontName)
+
+	if err != nil {
+		return nil, err
+	}
+
+	recipe := (*recipes)[0]
+	return &recipe, nil
+}
+
 func (deps *dynamoHelper) AddToFavorite(favorite *models.Favorite) error {
 	return deps.putIntoDb(utils.ToDatabaseFormat(favorite))
+}
+
+func (deps *dynamoHelper) GetAllFavorites(userId string) (*[]models.Favorite, error) {
+	input := &dynamodb.QueryInput{
+		TableName:              &deps.TableName,
+		KeyConditionExpression: aws.String("pk = :pk AND begins_with(sk, :sk)"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":pk": &types.AttributeValueMemberS{Value: models.FavoritePkPrefix + userId},
+			":sk": &types.AttributeValueMemberS{Value: models.FavoriteSkPrefix},
+		},
+	}
+
+	items, err := deps.DbClient.Query(deps.Ctx, input)
+	if err != nil {
+		log.Println("failed to get all user favorites from db")
+		return nil, err
+	}
+
+	return models.DbItemsToFavoriteStructs(&items.Items)
+}
+
+func (deps *dynamoHelper) RemoveFromFavorite(userId, recipeId string) error {
+	input := &dynamodb.DeleteItemInput{
+		Key:       *models.FavoriteKey(userId, recipeId),
+		TableName: &deps.TableName,
+	}
+
+	_, err := deps.DbClient.DeleteItem(deps.Ctx, input)
+	if err != nil {
+		log.Println("An error occurred while trying to remove a recipe from favorites")
+		return err
+	}
+
+	return nil
 }

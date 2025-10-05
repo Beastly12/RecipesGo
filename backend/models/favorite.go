@@ -39,3 +39,10 @@ func DbItemsToFavoriteStructs(items *[]map[string]types.AttributeValue) (*[]Favo
 		f.RecipeId = strings.TrimPrefix(f.RecipeId, FavoriteSkPrefix)
 	})
 }
+
+func FavoriteKey(userid, recipeId string) *map[string]types.AttributeValue {
+	return &map[string]types.AttributeValue{
+		"pk": &types.AttributeValueMemberS{Value: FavoritePkPrefix + userid},
+		"sk": &types.AttributeValueMemberS{Value: FavoriteSkPrefix + recipeId},
+	}
+}
