@@ -7,43 +7,34 @@ import (
 	"context"
 
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
 // ADDS NEW USER TO DB AFTER REGISTRATION
 
 type PostSignupDependencies struct {
-	CloudFrontDomainName string
-	TableName            string
-	DbClient             *dynamodb.Client
+	Dependencies utils.DynamoAndCloudfront
 }
 
-func NewPostSignupHandler(dependencies *utils.DynamoAndCloudfront) *PostSignupDependencies {
-	return &PostSignupDependencies{
-		CloudFrontDomainName: dependencies.CloudfrontDomainName,
-		TableName:            dependencies.TableName,
-		DbClient:             dependencies.DbClient,
-	}
-}
+func (this *PostSignupDependencies) HandlePostSignup(ctx context.Context, event *events.CognitoEventUserPoolsPostConfirmation) (interface{}, error) {
 
-func (deps *PostSignupDependencies) HandlePostSignup(ctx context.Context, event *events.CognitoEventUserPoolsPostConfirmation) (interface{}, error) {
-
+	// only continue if triggered by sign up complete
 	if event.TriggerSource != "PostConfirmation_ConfirmSignUp" {
 		return event, nil
 	}
 
+	// get user id and nickname
 	userid := event.Request.UserAttributes["sub"]
 	nickname := event.Request.UserAttributes["nickname"]
 
+	// create new user
 	newUser := models.NewUser(
 		userid,
 		nickname,
 	)
 
+	// add new user to db
 	dynamoHelper := helpers.NewDynamoHelper(
-		deps.TableName,
-		deps.CloudFrontDomainName,
-		deps.DbClient,
+		&this.Dependencies,
 		ctx,
 	)
 

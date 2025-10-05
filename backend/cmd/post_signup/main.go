@@ -12,8 +12,9 @@ var (
 )
 
 func init() {
-	deps := utils.GetDynamodbAndCloudfrontInit()
-	starter = *handlers.NewPostSignupHandler(&deps)
+	starter = handlers.PostSignupDependencies{
+		Dependencies: utils.GetDynamodbAndCloudfrontInit(),
+	}
 }
 
 func main() {

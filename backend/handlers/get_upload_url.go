@@ -13,17 +13,7 @@ import (
 )
 
 type GetUploadUrlDependencies struct {
-	BucketName       string
-	CloudfrontDomain string
-	S3Client         *s3.Client
-}
-
-func NewGetUploadUrlHandler(dependencies *utils.ObjectStorage) *GetUploadUrlDependencies {
-	return &GetUploadUrlDependencies{
-		BucketName:       dependencies.BucketName,
-		CloudfrontDomain: dependencies.CloudfrontDomainName,
-		S3Client:         dependencies.S3Client,
-	}
+	Dependencies utils.ObjectStorage
 }
 
 type response struct {
@@ -31,7 +21,7 @@ type response struct {
 	ImageKey  string `json:"imageKey"`
 }
 
-func (deps *GetUploadUrlDependencies) HandleGetUploadUrl(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func (this *GetUploadUrlDependencies) HandleGetUploadUrl(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	userid := utils.GetAuthUserId(req)
 	if userid == "" {
 		return models.InvalidRequestErrorResponse("User id not found"), nil
@@ -48,9 +38,9 @@ func (deps *GetUploadUrlDependencies) HandleGetUploadUrl(ctx context.Context, re
 	imageKey := utils.GenerateImageKey(userid, fileExtension)
 
 	// presign
-	presignClient := s3.NewPresignClient(deps.S3Client)
+	presignClient := s3.NewPresignClient(this.Dependencies.S3Client)
 	presignedReq, err := presignClient.PresignPutObject(ctx, &s3.PutObjectInput{
-		Bucket:      &deps.BucketName,
+		Bucket:      &this.Dependencies.BucketName,
 		Key:         &imageKey,
 		ContentType: aws.String(utils.GetContentType(fileExtension)),
 	}, func(po *s3.PresignOptions) {

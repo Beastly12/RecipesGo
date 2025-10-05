@@ -11,28 +11,22 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-type AddFavorite struct {
+type AddFavoriteDependencies struct {
 	Dependencies utils.DynamoAndCloudfront
-}
-
-func NewAddFavorite(dependencies *utils.DynamoAndCloudfront) *AddFavorite {
-	return &AddFavorite{
-		Dependencies: *dependencies,
-	}
 }
 
 type favReqBody struct {
 	RecipeId string `json:"recipeId"`
 }
 
-func (this *AddFavorite) HandleAddToFavorite(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func (this *AddFavoriteDependencies) HandleAddToFavorite(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
 	// extract recipe id from body
 	var payload favReqBody
 	if err := json.Unmarshal([]byte(req.Body), &payload); err != nil {
 		log.Println("failed to unmarshal add to favorite request body")
 		return models.InvalidRequestErrorResponse(""), nil
 	}
-
 	if payload.RecipeId == "" {
 		return models.InvalidRequestErrorResponse("You need to provide the recipeId of the recipe to add to favorites!"), nil
 	}
@@ -43,7 +37,7 @@ func (this *AddFavorite) HandleAddToFavorite(ctx context.Context, req *events.AP
 		return models.UnauthorizedErrorResponse("You need to be logged in to do this"), nil
 	}
 
-	dbHelper := helpers.NewDynamoHelper(this.Dependencies.TableName, this.Dependencies.CloudfrontDomainName, this.Dependencies.DbClient, ctx)
+	dbHelper := helpers.NewDynamoHelper(&this.Dependencies, ctx)
 
 	// get full details of recipe parsed
 	recipe, err := dbHelper.GetRecipe(payload.RecipeId)

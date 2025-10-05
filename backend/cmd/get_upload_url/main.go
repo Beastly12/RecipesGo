@@ -12,8 +12,9 @@ var (
 )
 
 func init() {
-	deps := utils.GetObjectStorageInit()
-	starter = *handlers.NewGetUploadUrlHandler(&deps)
+	starter = handlers.GetUploadUrlDependencies{
+		Dependencies: utils.GetObjectStorageInit(),
+	}
 }
 
 func main() {

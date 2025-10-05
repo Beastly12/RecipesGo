@@ -12,28 +12,24 @@ import (
 )
 
 type dynamoHelper struct {
-	CloudFrontName string
-	TableName      string
-	DbClient       *dynamodb.Client
-	Ctx            context.Context
+	Dependencies *utils.DynamoAndCloudfront
+	Ctx          context.Context
 }
 
-func NewDynamoHelper(tableName, cloudfrontDomainName string, dbClient *dynamodb.Client, ctx context.Context) dynamoHelper {
-	return dynamoHelper{
-		CloudFrontName: cloudfrontDomainName,
-		TableName:      tableName,
-		DbClient:       dbClient,
-		Ctx:            ctx,
+func NewDynamoHelper(dependencies *utils.DynamoAndCloudfront, ctx context.Context) *dynamoHelper {
+	return &dynamoHelper{
+		Dependencies: dependencies,
+		Ctx:          ctx,
 	}
 }
 
-func (deps *dynamoHelper) putIntoDb(item *map[string]types.AttributeValue) error {
+func (this *dynamoHelper) putIntoDb(item *map[string]types.AttributeValue) error {
 	input := &dynamodb.PutItemInput{
 		Item:      *item,
-		TableName: &deps.TableName,
+		TableName: &this.Dependencies.TableName,
 	}
 
-	_, err := deps.DbClient.PutItem(deps.Ctx, input)
+	_, err := this.Dependencies.DbClient.PutItem(this.Ctx, input)
 
 	if err != nil {
 		return err
@@ -42,17 +38,17 @@ func (deps *dynamoHelper) putIntoDb(item *map[string]types.AttributeValue) error
 	return nil
 }
 
-func (deps *dynamoHelper) AddNewUser(user *models.User) error {
-	return deps.putIntoDb(utils.ToDatabaseFormat(user))
+func (this *dynamoHelper) AddNewUser(user *models.User) error {
+	return this.putIntoDb(utils.ToDatabaseFormat(user))
 }
 
-func (deps *dynamoHelper) GetUser(userid string) (*models.User, error) {
+func (this *dynamoHelper) GetUser(userid string) (*models.User, error) {
 	input := &dynamodb.GetItemInput{
 		Key:       *models.UserKey(userid),
-		TableName: &deps.TableName,
+		TableName: &this.Dependencies.TableName,
 	}
 
-	result, err := deps.DbClient.GetItem(deps.Ctx, input)
+	result, err := this.Dependencies.DbClient.GetItem(this.Ctx, input)
 
 	if err != nil {
 		log.Println("an error occurred while trying to get user from db")
@@ -74,13 +70,13 @@ func (deps *dynamoHelper) GetUser(userid string) (*models.User, error) {
 	return &user, nil
 }
 
-func (deps *dynamoHelper) AddNewRecipe(recipe *models.Recipe) error {
-	return deps.putIntoDb(utils.ToDatabaseFormat(recipe))
+func (this *dynamoHelper) AddNewRecipe(recipe *models.Recipe) error {
+	return this.putIntoDb(utils.ToDatabaseFormat(recipe))
 }
 
-func (deps *dynamoHelper) GetAllRecipes() (*[]models.Recipe, error) {
+func (this *dynamoHelper) GetAllRecipes() (*[]models.Recipe, error) {
 	input := &dynamodb.QueryInput{
-		TableName:              &deps.TableName,
+		TableName:              &this.Dependencies.TableName,
 		IndexName:              aws.String("NicknameIndex"),
 		KeyConditionExpression: aws.String("nickname = :n"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
@@ -88,13 +84,13 @@ func (deps *dynamoHelper) GetAllRecipes() (*[]models.Recipe, error) {
 		},
 	}
 
-	items, err := deps.DbClient.Query(deps.Ctx, input)
+	items, err := this.Dependencies.DbClient.Query(this.Ctx, input)
 	if err != nil {
 		log.Println("failed to get all recipes from db")
 		return nil, err
 	}
 
-	recipes, rErr := models.DatabaseItemsToRecipeStructs(&items.Items, deps.CloudFrontName)
+	recipes, rErr := models.DatabaseItemsToRecipeStructs(&items.Items, this.Dependencies.CloudfrontDomainName)
 	if rErr != nil {
 		log.Println("An error occurred while trying to convert db recipe items to recipe structs")
 		return nil, rErr
@@ -103,13 +99,13 @@ func (deps *dynamoHelper) GetAllRecipes() (*[]models.Recipe, error) {
 	return recipes, nil
 }
 
-func (deps *dynamoHelper) GetRecipe(recipeId string) (*models.Recipe, error) {
+func (this *dynamoHelper) GetRecipe(recipeId string) (*models.Recipe, error) {
 	input := &dynamodb.GetItemInput{
 		Key:       *models.RecipeKey(recipeId),
-		TableName: &deps.TableName,
+		TableName: &this.Dependencies.TableName,
 	}
 
-	item, err := deps.DbClient.GetItem(deps.Ctx, input)
+	item, err := this.Dependencies.DbClient.GetItem(this.Ctx, input)
 	if err != nil {
 		log.Println("failed to get recipe form database")
 		return nil, err
@@ -119,7 +115,7 @@ func (deps *dynamoHelper) GetRecipe(recipeId string) (*models.Recipe, error) {
 		return nil, nil
 	}
 
-	recipes, err := models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, deps.CloudFrontName)
+	recipes, err := models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, this.Dependencies.CloudfrontDomainName)
 
 	if err != nil {
 		return nil, err
@@ -129,13 +125,13 @@ func (deps *dynamoHelper) GetRecipe(recipeId string) (*models.Recipe, error) {
 	return &recipe, nil
 }
 
-func (deps *dynamoHelper) AddToFavorite(favorite *models.Favorite) error {
-	return deps.putIntoDb(utils.ToDatabaseFormat(favorite))
+func (this *dynamoHelper) AddToFavorite(favorite *models.Favorite) error {
+	return this.putIntoDb(utils.ToDatabaseFormat(favorite))
 }
 
-func (deps *dynamoHelper) GetAllFavorites(userId string) (*[]models.Favorite, error) {
+func (this *dynamoHelper) GetAllFavorites(userId string) (*[]models.Favorite, error) {
 	input := &dynamodb.QueryInput{
-		TableName:              &deps.TableName,
+		TableName:              &this.Dependencies.TableName,
 		KeyConditionExpression: aws.String("pk = :pk AND begins_with(sk, :sk)"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":pk": &types.AttributeValueMemberS{Value: models.FavoritePkPrefix + userId},
@@ -143,7 +139,7 @@ func (deps *dynamoHelper) GetAllFavorites(userId string) (*[]models.Favorite, er
 		},
 	}
 
-	items, err := deps.DbClient.Query(deps.Ctx, input)
+	items, err := this.Dependencies.DbClient.Query(this.Ctx, input)
 	if err != nil {
 		log.Println("failed to get all user favorites from db")
 		return nil, err
@@ -152,13 +148,13 @@ func (deps *dynamoHelper) GetAllFavorites(userId string) (*[]models.Favorite, er
 	return models.DbItemsToFavoriteStructs(&items.Items)
 }
 
-func (deps *dynamoHelper) RemoveFromFavorite(userId, recipeId string) error {
+func (this *dynamoHelper) RemoveFromFavorite(userId, recipeId string) error {
 	input := &dynamodb.DeleteItemInput{
 		Key:       *models.FavoriteKey(userId, recipeId),
-		TableName: &deps.TableName,
+		TableName: &this.Dependencies.TableName,
 	}
 
-	_, err := deps.DbClient.DeleteItem(deps.Ctx, input)
+	_, err := this.Dependencies.DbClient.DeleteItem(this.Ctx, input)
 	if err != nil {
 		log.Println("An error occurred while trying to remove a recipe from favorites")
 		return err

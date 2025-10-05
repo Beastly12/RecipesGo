@@ -9,21 +9,10 @@ import (
 	"log"
 
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
 type AddRecipeDependencies struct {
-	CloudFrontDomainName string
-	TableName            string
-	DbClient             *dynamodb.Client
-}
-
-func NewAddRecipeHandler(dependencies *utils.DynamoAndCloudfront) *AddRecipeDependencies {
-	return &AddRecipeDependencies{
-		CloudFrontDomainName: dependencies.CloudfrontDomainName,
-		TableName:            dependencies.TableName,
-		DbClient:             dependencies.DbClient,
-	}
+	Dependencies utils.DynamoAndCloudfront
 }
 
 type jsonBody struct {
@@ -34,7 +23,7 @@ type jsonBody struct {
 }
 
 // adds new recipe to db
-func (deps *AddRecipeDependencies) HandleAddRecipe(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func (this *AddRecipeDependencies) HandleAddRecipe(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	// converts json body into recipe
 	var recipe jsonBody
 	if err := json.Unmarshal([]byte(req.Body), &recipe); err != nil {
@@ -52,9 +41,7 @@ func (deps *AddRecipeDependencies) HandleAddRecipe(ctx context.Context, req *eve
 	}
 
 	dbHelper := helpers.NewDynamoHelper(
-		deps.TableName,
-		deps.CloudFrontDomainName,
-		deps.DbClient,
+		&this.Dependencies,
 		ctx,
 	)
 

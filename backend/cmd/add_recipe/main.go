@@ -12,8 +12,9 @@ var (
 )
 
 func init() {
-	dependencies := utils.GetDynamodbAndCloudfrontInit()
-	starter = *handlers.NewAddRecipeHandler(&dependencies)
+	starter = handlers.AddRecipeDependencies{
+		Dependencies: utils.GetDynamodbAndCloudfrontInit(),
+	}
 }
 
 func main() {
