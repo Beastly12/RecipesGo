@@ -21,7 +21,7 @@ type Recipe struct {
 }
 
 type RecipeDetails struct {
-	ImageUrl    string   `dynamodbav:"imageUrl" json:"imageUrl"`
+	ImageUrl    string   `dynamodbav:"imageUrl" json:"imageUrl,omitempty"`
 	Name        string   `dynamodbav:"name" json:"name"`
 	AuthorName  string   `dynamodbav:"authorName" json:"authorName"`
 	Description string   `dynamodbav:"description" json:"description"`
