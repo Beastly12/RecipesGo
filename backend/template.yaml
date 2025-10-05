@@ -272,7 +272,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub AddFavorite-${EnvironmentName}
-      CodeUri: bin/add_Favorite/add_Favorite.zip
+      CodeUri: bin/add_favorite/add_favorite.zip
       Handler: bootstrap
       Architectures: [arm64]
       Description: Lambda function that adds given recipe to users favorite recipes
