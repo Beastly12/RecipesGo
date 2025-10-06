@@ -129,7 +129,7 @@ func (this *dynamoHelper) AddToFavorite(favorite *models.Favorite) error {
 	return this.putIntoDb(utils.ToDatabaseFormat(favorite))
 }
 
-func (this *dynamoHelper) GetAllFavorites(userId string) (*[]models.Favorite, error) {
+func (this *dynamoHelper) GetAllFavorites(userId string) (*[]models.Recipe, error) {
 	input := &dynamodb.QueryInput{
 		TableName:              &this.Dependencies.TableName,
 		KeyConditionExpression: aws.String("pk = :pk AND begins_with(sk, :sk)"),
@@ -145,7 +145,25 @@ func (this *dynamoHelper) GetAllFavorites(userId string) (*[]models.Favorite, er
 		return nil, err
 	}
 
-	return models.DbItemsToFavoriteStructs(&items.Items)
+	favs, err := models.DbItemsToFavoriteStructs(&items.Items)
+	if err != nil {
+		return nil, err
+	}
+
+	var recipes []models.Recipe
+	for _, fav := range *favs {
+		r := *models.NewRecipe(
+			fav.Name,
+			fav.ImageUrl,
+			fav.AuthorName,
+			fav.Description,
+			fav.Ingredients...,
+		)
+		r.Id = fav.RecipeId
+		recipes = append(recipes, r)
+	}
+
+	return &recipes, nil
 }
 
 func (this *dynamoHelper) RemoveFromFavorite(userId, recipeId string) error {
