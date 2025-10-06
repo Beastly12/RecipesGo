@@ -21,28 +21,30 @@ type Recipe struct {
 }
 
 type RecipeDetails struct {
-	ImageUrl    string   `dynamodbav:"imageUrl" json:"imageUrl,omitempty"`
-	Name        string   `dynamodbav:"name" json:"name"`
-	AuthorName  string   `dynamodbav:"authorName" json:"authorName"`
-	Description string   `dynamodbav:"description" json:"description"`
-	Ingredients []string `dynamodbav:"ingredients" json:"ingredients"`
-	DateCreated string   `json:"dateCreated" dynamodbav:"dateCreated"`
+	ImageUrl        string   `dynamodbav:"imageUrl" json:"imageUrl,omitempty"`
+	Name            string   `dynamodbav:"name" json:"name"`
+	AuthorName      string   `dynamodbav:"authorName" json:"authorName"`
+	Description     string   `dynamodbav:"description" json:"description"`
+	Ingredients     []string `dynamodbav:"ingredients" json:"ingredients"`
+	PreparationTime int      `dynamodbav:"preparationTime" json:"preparationTime"`
+	DateCreated     string   `json:"dateCreated" dynamodbav:"dateCreated"`
 }
 
 // Returns a recipe struct with details provided
-func NewRecipe(name, imageUrl, authorName, description string, ingredients ...string) *Recipe {
+func NewRecipe(name, imageUrl, authorName, description string, preparationTimeMins int, ingredients ...string) *Recipe {
 
 	time := utils.GetTimeNow()
 
 	return &Recipe{
 		Id: uuid.New().String(),
 		RecipeDetails: RecipeDetails{
-			ImageUrl:    imageUrl,
-			Name:        name,
-			AuthorName:  authorName,
-			Description: description,
-			Ingredients: ingredients,
-			DateCreated: time,
+			ImageUrl:        imageUrl,
+			Name:            name,
+			AuthorName:      authorName,
+			Description:     description,
+			Ingredients:     ingredients,
+			PreparationTime: preparationTimeMins,
+			DateCreated:     time,
 		},
 		ItemType: RecipesSkPrefix, // sets nickname to be "RECIPE", to query all recipes
 		SortKey:  RecipesSkPrefix,

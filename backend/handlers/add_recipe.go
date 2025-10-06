@@ -16,10 +16,11 @@ type AddRecipeDependencies struct {
 }
 
 type jsonBody struct {
-	Name        string   `json:"name"`
-	ImageUrl    string   `json:"imageUrl"`
-	Description string   `json:"description"`
-	Ingredients []string `json:"ingredients"`
+	Name            string   `json:"name"`
+	ImageUrl        string   `json:"imageUrl"`
+	Description     string   `json:"description"`
+	Ingredients     []string `json:"ingredients"`
+	PreparationTime int      `json:"preparationTime"`
 }
 
 // adds new recipe to db
@@ -70,6 +71,7 @@ func (this *AddRecipeDependencies) HandleAddRecipe(ctx context.Context, req *eve
 		recipe.ImageUrl,
 		user.Nickname,
 		recipe.Description,
+		recipe.PreparationTime,
 		recipe.Ingredients...,
 	)
 

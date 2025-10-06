@@ -40,6 +40,7 @@ func TestDbItemToFavorite(t *testing.T) {
 		"",
 		"test",
 		"test",
+		1,
 		"water",
 	)
 
@@ -62,7 +63,8 @@ func TestDbItemToFavorite(t *testing.T) {
 			"ingredients": &types.AttributeValueMemberL{Value: []types.AttributeValue{
 				&types.AttributeValueMemberS{Value: "water"},
 			}},
-			"dateCreated": &types.AttributeValueMemberS{Value: recipe.DateCreated},
+			"preparationTime": &types.AttributeValueMemberN{Value: "1"},
+			"dateCreated":     &types.AttributeValueMemberS{Value: recipe.DateCreated},
 		},
 	}
 
@@ -86,7 +88,8 @@ func TestFavoriteToDatabase(t *testing.T) {
 		"ingredients": &types.AttributeValueMemberL{Value: []types.AttributeValue{
 			&types.AttributeValueMemberS{Value: "water"},
 		}},
-		"dateCreated": &types.AttributeValueMemberS{Value: dc},
+		"preparationTime": &types.AttributeValueMemberN{Value: "1"},
+		"dateCreated":     &types.AttributeValueMemberS{Value: dc},
 	}
 
 	rec := NewRecipe(
@@ -94,6 +97,7 @@ func TestFavoriteToDatabase(t *testing.T) {
 		"",
 		"test_person",
 		"test food",
+		1,
 		"water",
 	)
 	rec.Id = "123"

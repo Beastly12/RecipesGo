@@ -14,18 +14,20 @@ func TestNewRecipe(t *testing.T) {
 		"https://cdn.test.com/test.jpg",
 		"johnny_test",
 		"A very delicious cup of hot water",
+		1,
 		"water", "cast iron skillet",
 	)
 
 	expect := &Recipe{
 		Id: result.Id,
 		RecipeDetails: RecipeDetails{
-			ImageUrl:    "https://cdn.test.com/test.jpg",
-			Name:        "Hot water",
-			AuthorName:  "johnny_test",
-			Description: "A very delicious cup of hot water",
-			Ingredients: []string{"water", "cast iron skillet"},
-			DateCreated: result.DateCreated,
+			ImageUrl:        "https://cdn.test.com/test.jpg",
+			Name:            "Hot water",
+			AuthorName:      "johnny_test",
+			Description:     "A very delicious cup of hot water",
+			Ingredients:     []string{"water", "cast iron skillet"},
+			DateCreated:     result.DateCreated,
+			PreparationTime: 1,
 		},
 		SortKey:  "RECIPE",
 		ItemType: "RECIPE",
@@ -40,11 +42,12 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 	expect := Recipe{
 		Id: "123",
 		RecipeDetails: RecipeDetails{
-			ImageUrl:    "https://cdn.com/test.jpg",
-			Name:        "White rice",
-			AuthorName:  "johnny_test",
-			Description: "Plain white rice",
-			Ingredients: []string{"Rice", "Water"},
+			ImageUrl:        "https://cdn.com/test.jpg",
+			Name:            "White rice",
+			AuthorName:      "johnny_test",
+			Description:     "Plain white rice",
+			Ingredients:     []string{"Rice", "Water"},
+			PreparationTime: 1,
 		},
 		SortKey: "RECIPE",
 	}
@@ -61,6 +64,7 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 				&types.AttributeValueMemberS{Value: "Rice"},
 				&types.AttributeValueMemberS{Value: "Water"},
 			}},
+			"preparationTime": &types.AttributeValueMemberN{Value: "1"},
 		},
 	}
 
@@ -96,6 +100,7 @@ func TestRecipeToDatabaseFormat(t *testing.T) {
 		"",
 		"mad_scientist",
 		"stuff",
+		1,
 		"water",
 	)
 

@@ -157,6 +157,7 @@ func (this *dynamoHelper) GetAllFavorites(userId string) (*[]models.Recipe, erro
 			fav.ImageUrl,
 			fav.AuthorName,
 			fav.Description,
+			fav.PreparationTime,
 			fav.Ingredients...,
 		)
 		r.Id = fav.RecipeId
