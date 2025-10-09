@@ -1,5 +1,8 @@
-# COM619_
+# RecipesGo
 DevOps
 
-
-dafe
+Adam
+Daniel
+Dafe
+Zhihan
+David
