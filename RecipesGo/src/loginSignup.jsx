@@ -9,45 +9,6 @@ export default function Login() {
   const log = () => alert("Logged In Successful");
   const signup = () => alert("Account Created Successfully");
 
-  const AntSwitch = styled(Switch)(({ theme }) => ({
-    width: 28,
-    height: 16,
-    padding: 0,
-    display: "flex",
-    "&:active": {
-      "& .MuiSwitch-thumb": { width: 15 },
-      "& .MuiSwitch-switchBase.Mui-checked": {
-        transform: "translateX(9px)",
-      },
-    },
-    "& .MuiSwitch-switchBase": {
-      padding: 2,
-      "&.Mui-checked": {
-        transform: "translateX(12px)",
-        color: "#fff",
-        "& + .MuiSwitch-track": {
-          opacity: 1,
-          backgroundColor: "#1890ff",
-        },
-      },
-    },
-    "& .MuiSwitch-thumb": {
-      boxShadow: "0 2px 4px 0 rgb(0 35 11 / 20%)",
-      width: 12,
-      height: 12,
-      borderRadius: 6,
-      transition: theme.transitions.create(["width"], {
-        duration: 200,
-      }),
-    },
-    "& .MuiSwitch-track": {
-      borderRadius: 8,
-      opacity: 1,
-      backgroundColor: "rgba(0,0,0,.25)",
-      boxSizing: "border-box",
-    },
-  }));
-
   return (
     <div className="login-container">
       <div className="info-block">
@@ -65,13 +26,20 @@ export default function Login() {
 
       <div className="form-container">
         <h1>Prepify</h1>
-        <div className="toggle-container">
-          <p>Log In</p>
-          <AntSwitch
+        <div className="toggle-checkbox">
+          <input
+            id="status"
+            type="checkbox"
             checked={isSignup}
             onChange={(e) => setIsSignup(e.target.checked)}
           />
-          <p>Sign Up</p>
+          <label htmlFor="status">
+            <div
+              className="status-switch"
+              data-unchecked="Log In"
+              data-checked="Sign Up"
+            ></div>
+          </label>
         </div>
 
         {!isSignup ? (
