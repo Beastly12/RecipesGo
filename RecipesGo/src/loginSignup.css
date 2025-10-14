@@ -1,0 +1,17 @@
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+  }
+  
+  .info-block {
+    text-align: center;
+    padding: 40px;
+    border-radius: 30px;
+    background-color: #fe7b7c;
+    color: white;
+  }
+  
