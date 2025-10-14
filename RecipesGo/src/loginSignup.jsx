@@ -91,7 +91,18 @@ export default function Login() {
         ) : (
           <div>
             <p>Full Name</p>
-       
+            <input name="name" placeholder="Enter your full name" />
+            <p>Email</p>
+            <input name="email" placeholder="Enter your email" />
+            <p>Password</p>
+            <input
+              name="password"
+              type="password"
+              placeholder="Create a password"
+            />
+            <p>
+              <button onClick={signup}>Sign Up</button>
+            </p>
           </div>
         )}
       </div>
