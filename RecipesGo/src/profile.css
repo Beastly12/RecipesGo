@@ -1,0 +1,37 @@
+
+.profile-container {
+    height: calc(60vh - 60px); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+    padding-top: 60px; 
+    box-sizing: border-box;
+    position: fixed;
+    top: 60px;
+  }
+    
+    .picture-block {
+      text-align: center;
+      padding: 40px;
+      border-radius: 30px;
+      background-color: #fe7b7c;
+      color: white;
+    }
+    
+    .details-container {
+      text-align: center;
+      padding: 40px;
+      min-width: 250px;
+    }
+    
+
+  body {
+    margin: 0;
+    font-family: Helvetica, Arial, sans-serif;
+  }
+  
+ 
+  
+  
+  

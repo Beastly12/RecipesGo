@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./loginSignup.css"; 
+import "./App.css"; 
 
 export default function Login() {
   const [isSignup, setIsSignup] = useState(false);

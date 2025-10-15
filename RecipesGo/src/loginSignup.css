@@ -1,11 +1,13 @@
 
 .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-  }
+  height: calc(100vh - 60px); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  padding-top: 60px; 
+  box-sizing: border-box;
+}
   
   .info-block {
     text-align: center;
@@ -126,34 +128,4 @@ body {
       }
     }
   }
-}
-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background-color: white;
-  padding: 3px 20px;
-  display: flex;
-  justify-content: space-between; 
-  align-items: center;
-}
-
-.nav-links {
-  display: flex;
-  gap: 15px;
-}
-
-nav a {
-  text-decoration: none;
-  color: black;
-  font-weight: 50;
-}
-
-nav a:hover {
-  color: #fe7b7c; 
-}
-
-.logo {
-  color: #fe7b7c; 
 }

@@ -41,3 +41,43 @@
   color: #888;
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden; 
+  font-family: Arial, sans-serif;
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  padding: 3px 20px;
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+}
+
+.nav-links {
+  display: flex;
+  gap: 15px;
+}
+
+nav a {
+  text-decoration: none;
+  color: black;
+  font-weight: 50;
+}
+
+nav a:hover {
+  color: #fe7b7c; 
+}
+
+.logo {
+  color: #fe7b7c; 
+}
+
