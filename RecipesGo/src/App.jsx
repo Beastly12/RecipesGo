@@ -5,9 +5,13 @@ import Login from "./loginSignup.jsx"
 export default function App() {
   return (
     <div>
-      <nav style={{ display: "flex", gap: "10px", padding: "10px" }}>
-        <Link to="/">Home</Link>
-        <Link to="/login">Login</Link>
+      <nav>
+        <div className="logo"><h2>Prepify</h2></div>
+
+        <div className="nav-links">
+          <Link to="/">Home</Link>
+          <Link to="/login">Login</Link>
+        </div>
       </nav>
 
       <Routes>
