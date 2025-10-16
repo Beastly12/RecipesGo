@@ -1,4 +1,14 @@
 
+.full-container {
+  height: calc(100vh - 60px); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+  padding-top: 250px; 
+  box-sizing: border-box;
+}
+
 .profile-container {
     height: calc(60vh - 60px); 
     display: flex;
