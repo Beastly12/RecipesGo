@@ -9,18 +9,24 @@
     box-sizing: border-box;
     position: fixed;
     top: 60px;
+    left: 40vh;
   }
     
     .picture-block {
       text-align: center;
       padding: 40px;
-      border-radius: 30px;
-      background-color: #fe7b7c;
-      color: white;
+      border-radius: 100px;
+    }
+
+    .profile-picture {
+      width: 200px;    
+      height: 200px;
+      border-radius: 50%; 
+      object-fit: cover;
     }
     
     .details-container {
-      text-align: center;
+      text-align: left;
       padding: 40px;
       min-width: 250px;
     }
@@ -35,21 +41,23 @@
     padding: 10px 20px;
     border-radius: 6px;
     border: none;
-    background-color: #fe7b7c;
+    background-color: #00008B;
     cursor: pointer;
     transition: background-color 0.2s ease;
   }
   
   button:hover {
-    background-color: #fc5b5c;
+    background-color: #00008B;
+    color: white;
   }
-  
+   
   .settings, .stats{
     margin: 10px 0;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
+    text-align: left;
   }
 
 

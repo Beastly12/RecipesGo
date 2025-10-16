@@ -3,18 +3,21 @@ import React, { useState } from "react";
 import "./profile.css"; 
 
 export default function Profile() {
-    const log = () => alert("Logged In Successful");
   const signup = () => alert("Account Created Successfully");
 
 
   return (
     <div className="profile-container">
        <div className="picture-block">
-            <h1>Username</h1>
+       <img 
+    src="\profile.webp" 
+    alt="Profile" 
+    className="profile-picture" 
+  />
         </div>
 
         <div className="details-container">
-            <h2>USERNAME</h2>
+            <h1>USERNAME</h1>
             <p>BIO</p>
 
             
