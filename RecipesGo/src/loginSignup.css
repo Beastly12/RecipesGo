@@ -13,7 +13,7 @@
     text-align: center;
     padding: 40px;
     border-radius: 30px;
-    background-color: #fe7b7c;
+    background-color: #00008B;
     color: white;
   }
   
@@ -35,13 +35,13 @@
     padding: 10px 20px;
     border-radius: 6px;
     border: none;
-    background-color: #fe7b7c;
+    background-color: #00008B;
     cursor: pointer;
     transition: background-color 0.2s ease;
   }
   
   button:hover {
-    background-color: #fc5b5c;
+    background-color: #00008B;
   }
   
   input {
@@ -97,7 +97,7 @@ body {
         }
       
         &:before {
-          background-color: #fe7b7c;
+          background-color: #00008B;
           color: white;
           box-shadow: 0 0 4px 4px rgba(#000, 0.2);
           left: 3px;
