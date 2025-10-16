@@ -51,13 +51,13 @@
     padding: 10px 20px;
     border-radius: 6px;
     border: none;
-    background-color: #00008B;
+    background-color: #05339C;
     cursor: pointer;
     transition: background-color 0.2s ease;
   }
   
   button:hover {
-    background-color: #00008B;
+    background-color: #05339C;
     color: white;
   }
    
