@@ -68,7 +68,7 @@ While the app itself is simple, the focus of this project is on **DevOps pipelin
 
 ---
 
-## � Example Workflow File
+##  Example Workflow File
 
 ```yaml
 name: RecipesGo CI/CD
