@@ -5,7 +5,7 @@ The aim is to demonstrate end-to-end automation — from code commits to deploym
 
 ---
 
-## 👥 Team Members
+##  Team Members
 | Name | Role | GitHub Username |
 |------|------|----------------|
 | **Adam Ali** | DevOps Engineer / Project Lead | [2alia](https://github.com/2alia) |
@@ -16,13 +16,13 @@ The aim is to demonstrate end-to-end automation — from code commits to deploym
 
 ---
 
-## 🚀 Project Overview
+##  Project Overview
 RecipesGo is a recipe-sharing platform where users can view, add, and manage recipes.  
 While the app itself is simple, the focus of this project is on **DevOps pipeline design**, **team collaboration**, and **deployment automation**.
 
 ---
 
-## 🧱 Tech Stack
+##  Tech Stack
 
 ### **Frontend**
 - React (Vite)
@@ -48,7 +48,7 @@ While the app itself is simple, the focus of this project is on **DevOps pipelin
 
 ---
 
-## ⚙️ CI/CD Workflow
+##  CI/CD Workflow
 
 ### **Trigger Conditions**
 - **Pull Requests:** Run unit tests for backend and frontend  
@@ -68,7 +68,7 @@ While the app itself is simple, the focus of this project is on **DevOps pipelin
 
 ---
 
-## 🧪 Example Workflow File
+## � Example Workflow File
 
 ```yaml
 name: RecipesGo CI/CD
