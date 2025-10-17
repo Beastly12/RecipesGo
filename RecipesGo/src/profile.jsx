@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import "./profile.css"; 
 
 export default function Profile() {
+      const [isFavorites, setIsFavorites] = useState(false);
   const edit = () => alert("Settings Edit");
 
 
@@ -32,16 +33,37 @@ export default function Profile() {
                     </div>
 
                     <div className="settings">
-                        <button onClick={edit}>Edit Profile</button>
                         <button onClick={edit}>Settings</button>
-
                     </div>
             </div>
         </div>
 
         <div className="recipies">
-            <h2>My Recipies</h2>
-            <h5>Favorites</h5>
+        <div className="toggle">
+          <input
+            id="status"
+            type="checkbox"
+            checked={isFavorites}
+            onChange={(e) => setIsFavorites(e.target.checked)}
+          />
+          <label htmlFor="status">
+            <div
+              className="status-switch"
+              data-unchecked="My Recipes"
+              data-checked="Favorites"
+            ></div>
+          </label>
+        </div>
+
+        {!isFavorites ? (
+          <div>
+            <p>Recipies</p>
+          </div>
+        ) : (
+          <div>
+            <p>Favorites</p>
+          </div>
+        )}
         </div>
     </div>
   );
