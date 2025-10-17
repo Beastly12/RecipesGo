@@ -3,8 +3,13 @@ import React, { useState } from "react";
 import "./profile.css"; 
 
 export default function Profile() {
-      const [isFavorites, setIsFavorites] = useState(false);
+  const [isFavorites, setIsFavorites] = useState(false);
   const edit = () => alert("Settings Edit");
+  const recipes = [
+    {id: 1, name: 'Homemade Margherita Pizza', picture: <img src="\profile.webp" alt="Cover" className="cover-picture" />, likes: '200'},
+    {id: 2, name: 'Homemade Margherita', picture: <img src="\profile.webp" alt="Cover" className="cover-picture" />, likes: '201'},
+    {id: 3, name: 'Homemade', picture: <img src="\profile.webp" alt="Cover" className="cover-picture" />, likes: '203'}
+  ];
 
 
   return (
@@ -57,7 +62,9 @@ export default function Profile() {
 
         {!isFavorites ? (
           <div>
-            <p>Recipies</p>
+                <ul>
+                    {recipes.map((recipe) => <li key={recipe.id}> { recipe.name } ❤️{ recipe.likes }</li>)}
+                </ul>
           </div>
         ) : (
           <div>

@@ -78,9 +78,13 @@
 
   .toggle {
     width: 200px;
-    height: 50px;
-    position: fixed;
-    left: 50px;
+  height: 50px;
+  margin: 0 auto; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  top: 0;
     input#status {
       display: none;
       + label {
