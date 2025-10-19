@@ -1,25 +1,28 @@
 
 .full-container {
   height: calc(100vh - 60px); 
+  width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  gap: 60px;
-  padding-top: 250px; 
+  gap: 0px;
+  padding-top: 60px; 
   box-sizing: border-box;
+  flex-direction: column;
+  z-index: 1;
 }
 
 .profile-container {
-    height: calc(60vh - 60px); 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-top: 60px; 
-    box-sizing: border-box;
-    position: fixed;
-    top: 60px;
-    left: 40vh;
-  }
+  height: auto; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 60px; 
+  box-sizing: border-box;
+  position: relative;
+  margin-bottom: 0px; 
+}
+
     
     .picture-block {
       text-align: center;
@@ -69,11 +72,19 @@
     text-align: left;
   }
 
-  .recipes, .likes{
+  .likes{
     align-items: left;
     justify-content: left;
     text-align: left;
     padding: 0;
+  }
+
+  .recipes{
+    align-items: left;
+    justify-content: left;
+    text-align: left;
+    padding: 0;
+    position: relative;
   }
 
   .toggle {
@@ -146,8 +157,53 @@
       }
     }
   }
+
+  .recipe-list {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  .grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+  }
   
 
+  .grid li {
+    flex: 0 0 25%;  
+    display: flex;
+    justify-content: center;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    width: 15vw; 
+    height: 320px;
+    border-radius: 10px;
+    padding: 0px;
+  }
+  
+  .cover-picture {
+    width: 15vw; 
+    height: 200px; 
+    border-radius: 10px;
+    object-fit: cover;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 8px;
+  }
 
 
   

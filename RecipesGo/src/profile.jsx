@@ -6,9 +6,20 @@ export default function Profile() {
   const [isFavorites, setIsFavorites] = useState(false);
   const edit = () => alert("Settings Edit");
   const recipes = [
-    {id: 1, name: 'Homemade Margherita Pizza', picture: <img src="\profile.webp" alt="Cover" className="cover-picture" />, likes: '200'},
-    {id: 2, name: 'Homemade Margherita', picture: <img src="\profile.webp" alt="Cover" className="cover-picture" />, likes: '201'},
-    {id: 3, name: 'Homemade', picture: <img src="\profile.webp" alt="Cover" className="cover-picture" />, likes: '203'}
+    {id: 1, name: 'Homemade Margherita Pizza', picture: <img src="\MPizza1.webp" alt="Cover" className="cover-picture" />, likes: '200'},
+    {id: 2, name: 'Homemade Margherita', picture: <img src="\Margherita-Pizza.webp" alt="Cover" className="cover-picture" />, likes: '201'},
+    {id: 3, name: 'Homemade', picture: <img src="\PIZZA-MARGHERITA.jpg" alt="Cover" className="cover-picture" />, likes: '202'},
+    {id: 4, name: 'Homemade Margherita Pizza', picture: <img src="\MPizza1.webp" alt="Cover" className="cover-picture" />, likes: '203'},
+    {id: 5, name: 'Homemade Margherita', picture: <img src="\Margherita-Pizza.webp" alt="Cover" className="cover-picture" />, likes: '204'},
+    {id: 6, name: 'Homemade', picture: <img src="\PIZZA-MARGHERITA.jpg" alt="Cover" className="cover-picture" />, likes: '205'}
+  ];
+
+  const favs = [
+    {id: 1, name: 'Homemade Margherita Pizza', picture: <img src="\Margherita-Pizza.webp" alt="Cover" className="cover-picture" />, likes: '206'},
+    {id: 2, name: 'Homemade Margherita', picture: <img src="\PIZZA-MARGHERITA.jpg" alt="Cover" className="cover-picture" />, likes: '207'},
+    {id: 3, name: 'Homemade', picture: <img src="\MPizza1.webp" alt="Cover" className="cover-picture" />, likes: '208'},
+    {id: 4, name: 'Homemade Margherita Pizza', picture: <img src="\Margherita-Pizza.webp" alt="Cover" className="cover-picture" />, likes: '209'},
+    {id: 5, name: 'Homemade Margherita', picture: <img src="\PIZZA-MARGHERITA.jpg" alt="Cover" className="cover-picture" />, likes: '210'},
   ];
 
 
@@ -61,14 +72,34 @@ export default function Profile() {
         </div>
 
         {!isFavorites ? (
-          <div>
-                <ul>
-                    {recipes.map((recipe) => <li key={recipe.id}> { recipe.name } ❤️{ recipe.likes }</li>)}
+          <div className="recipe-list">
+                <ul className="grid">
+                    {recipes.map((recipe) => <li key={recipe.id}> 
+                      <div className="content">
+                        {recipe.picture} 
+
+                        <div className="info">
+                            { recipe.name } ❤️{ recipe.likes }
+                        </div>
+                      </div>
+                    
+                    </li>)}
                 </ul>
           </div>
         ) : (
-          <div>
-            <p>Favorites</p>
+          <div className="recipe-list">
+                <ul className="grid">
+                    {favs.map((fav) => <li key={fav.id}> 
+                      <div className="content">
+                        {fav.picture} 
+
+                        <div className="info">
+                            { fav.name } ❤️{ fav.likes }
+                        </div>
+                      </div>
+                    
+                    </li>)}
+                </ul>
           </div>
         )}
         </div>
