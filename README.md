@@ -10,9 +10,9 @@ RecipesGo is a collaborative DevOps project focused on building, testing, and de
 |------|------|----------------|
 | **Adam Ali** | DevOps Engineer / Project Lead | [2alia](https://github.com/2alia) |
 | **David** | Backend Developer | [dayv-exe](https://github.com/dayv-exe) |
-| **Dafe** | Frontend Developer | [Beastly12](https://github.com/Beastly12) |
-| **Daniel** | Backend Engineer | [danielsauuce](https://github.com/danielsauuce) |
-| **Zhihan** | Frontend Engineer | [2LIUZ98](https://github.com/2LIUZ98) |
+| **Dafe** | DevOps Engineer /Frontend Developer | [Beastly12](https://github.com/Beastly12) |
+| **Daniel** |  DevOps Engineer /Backend Engineer | [danielsauuce](https://github.com/danielsauuce) |
+| **Zhihan** | DevOps Engineer /Frontend Engineer | [2LIUZ98](https://github.com/2LIUZ98) |
 
 ---
 
