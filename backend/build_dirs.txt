@@ -1,0 +1,8 @@
+pre_signup
+post_signup
+add_recipe
+get_recipes
+get_upload_url
+add_favorite
+remove_favorite
+get_favorite
