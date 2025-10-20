@@ -8,7 +8,7 @@ RecipesGo is a collaborative DevOps project focused on building, testing, and de
 ##  Team Members
 | Name | Role | GitHub Username |
 |------|------|----------------|
-| **Adam Ali** | DevOps Engineer / Project Lead | [2alia](https://github.com/2alia) |
+| **Adam Ali** | DevOps Engineer| [2alia](https://github.com/2alia) |
 | **David** | DevOps Engineer| [dayv-exe](https://github.com/dayv-exe) |
 | **Dafe** | DevOps Engineer| [Beastly12](https://github.com/Beastly12) |
 | **Daniel** |  DevOps Engineer| [danielsauuce](https://github.com/danielsauuce) |
