@@ -4,7 +4,7 @@
   width: vw;
   display: flex;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
   gap: 0px;
   padding-top: 60px; 
   box-sizing: border-box;
@@ -15,12 +15,13 @@
 .profile-container {
   height: auto; 
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   padding-top: 60px; 
   box-sizing: border-box;
   position: relative;
   margin-bottom: 0px; 
+  margin-left: 70px
 }
 
     
