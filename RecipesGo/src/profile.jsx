@@ -51,7 +51,7 @@ export default function Profile() {
                     </div>
 
                     <div className="settings">
-                        <button onClick={edit}>Settings</button>
+                        <button onClick={edit}>⚙️Settings</button>
                     </div>
             </div>
         </div>
@@ -95,7 +95,7 @@ export default function Profile() {
                 <ul className="grid">
                     {favs.map((fav) => <li key={fav.id}> 
                       <div className="content">
-                      <a href={recipe.link} className="link">
+                      <a href={fav.link} className="link">
                         {fav.picture} 
 
                         <div className="info">
