@@ -1,0 +1,383 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: SAM template for RecipeGo website a devops project
+
+Globals:
+  Function:
+    Timeout: 10
+    Runtime: provided.al2023
+    MemorySize: 128
+    Environment:
+      Variables:
+        MAIN_TABLE: !Ref MainTable
+        RECIPE_IMAGES_BUCKET: !Ref RecipeImagesBucket
+        CLOUDFRONT_DOMAIN: !GetAtt RecipeImagesDistribution.DomainName
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Description: "Environment name either production or test"
+    Default: "test"
+
+Resources:
+  MainTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub main-table-${EnvironmentName}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+        - AttributeName: nickname
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        # to allow us to query by nickname if need be
+        - IndexName: NicknameIndex
+          KeySchema:
+            - AttributeName: nickname
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  # S3 Bucket for recipe images
+  RecipeImagesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub recipe-images-${EnvironmentName}-${AWS::AccountId}
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+              - DELETE
+            AllowedOrigins:
+              - "*"
+            MaxAge: 3000
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  # S3 Bucket Policy to allow CloudFront access
+  RecipeImagesBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref RecipeImagesBucket
+      PolicyDocument:
+        Statement:
+          - Sid: AllowCloudFrontServicePrincipal
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub ${RecipeImagesBucket.Arn}/*
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${RecipeImagesDistribution}
+
+  # CloudFront Origin Access Control
+  CloudFrontOAC:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub RecipeImagesOAC-${EnvironmentName}
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  # CloudFront Distribution
+  RecipeImagesDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: !Sub CloudFront distribution for recipe images - ${EnvironmentName}
+        DefaultCacheBehavior:
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          CachedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          Compress: true
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # according to chat gpt CachingOptimized
+          OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf  # from chat gpt CORS-S3Origin
+        Origins:
+          - Id: S3Origin
+            DomainName: !GetAtt RecipeImagesBucket.RegionalDomainName
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+            OriginAccessControlId: !Ref CloudFrontOAC
+        PriceClass: PriceClass_100
+
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub RecipeUserPool-${EnvironmentName}
+      UsernameAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: false
+          RequireLowercase: false
+          RequireNumbers: false
+          RequireSymbols: false
+      Schema:
+        - Name: email
+          Required: true
+          Mutable: true
+        - Name: nickname
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+        
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: !Sub RecipeClient-${EnvironmentName}
+      UserPoolId: !Ref CognitoUserPool
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - USER_PASSWORD_AUTH
+
+  # api gateway
+  RecipeApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Name: !Sub RecipeApi-${EnvironmentName}
+      CorsConfiguration:
+        AllowMethods:
+          - GET
+          - POST
+          - DELETE
+          - PUT
+        AllowOrigins:
+          - "*"
+        AllowHeaders:
+          - "*"
+      StageName: prod
+      Auth:
+        Authorizers:
+          CognitoAuthorizer:
+            IdentitySource: "$request.header.Authorization"
+            JwtConfiguration:
+              issuer: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${CognitoUserPool}"
+              audience:
+                - !Ref CognitoUserPoolClient
+
+  # to add newly created user to dynamo db
+  PreSignUp:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub PreSignup-${EnvironmentName}
+      CodeUri: bin/pre_signup/pre_signup.zip
+      Handler: bootstrap
+      Architectures: [arm64]
+      Description: Lambda function that runs to auto verify user after they sign up
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MainTable
+        - Statement:
+            Effect: Allow
+            Action:
+              - cognito-idp:AdminGetUser
+              - cognito-idp:AdminDeleteUser
+            Resource: "*"
+      Events:
+        CognitoTrigger:
+          Type: Cognito
+          Properties:
+            UserPool: !Ref CognitoUserPool
+            Trigger: PreSignUp
+
+  # to add newly created user to dynamo db
+  PostSignUp:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub PostSignup-${EnvironmentName}
+      CodeUri: bin/post_signup/post_signup.zip
+      Handler: bootstrap
+      Architectures: [arm64]
+      Description: Lambda function that runs after auto verifying user and adds them to dynamodb
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MainTable
+      Events:
+        CognitoTrigger:
+          Type: Cognito
+          Properties:
+            UserPool: !Ref CognitoUserPool
+            Trigger: PostConfirmation
+
+  # to add new recipe to db
+  AddRecipe:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub AddRecipe-${EnvironmentName}
+      CodeUri: bin/add_recipe/add_recipe.zip
+      Handler: bootstrap
+      Architectures: [arm64]
+      Description: Lambda function that runs to add new recipe to db
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MainTable
+      Events:
+        ApiRequest:
+          Type: HttpApi
+          Properties:
+            Path: /recipes
+            Method: POST
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+
+  # to add new recipe to db
+  GetRecipes:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub GetRecipes-${EnvironmentName}
+      CodeUri: bin/get_recipes/get_recipes.zip
+      Handler: bootstrap
+      Architectures: [arm64]
+      Description: Lambda function that returns all recipes in db
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MainTable
+      Events:
+        ApiRequest:
+          Type: HttpApi
+          Properties:
+            Path: /recipes
+            Method: GET
+            ApiId: !Ref RecipeApi
+
+  # to add a recipe to favorites
+  AddFavorite:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub AddFavorite-${EnvironmentName}
+      CodeUri: bin/add_favorite/add_favorite.zip
+      Handler: bootstrap
+      Architectures: [arm64]
+      Description: Lambda function that adds given recipe to users favorite recipes
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MainTable
+      Events:
+        ApiRequest:
+          Type: HttpApi
+          Properties:
+            Path: /favorites
+            Method: POST
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+
+  # to remove a recipe to favorites
+  RemoveFavorite:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub RemoveFavorite-${EnvironmentName}
+      CodeUri: bin/remove_favorite/remove_favorite.zip
+      Handler: bootstrap
+      Architectures: [arm64]
+      Description: Lambda function that removes given recipe from users favorite recipes
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MainTable
+      Events:
+        ApiRequest:
+          Type: HttpApi
+          Properties:
+            Path: /favorites
+            Method: DELETE
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+
+  # to get all recipes in favorites
+  GetFavorite:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub GetFavorite-${EnvironmentName}
+      CodeUri: bin/get_favorite/get_favorite.zip
+      Handler: bootstrap
+      Architectures: [arm64]
+      Description: Lambda function that gets all recipes in user favorites
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MainTable
+      Events:
+        ApiRequest:
+          Type: HttpApi
+          Properties:
+            Path: /favorites
+            Method: GET
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+
+  # to generate presigned url for image uploads
+  GetUploadUrl:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub GetUploadUrl-${EnvironmentName}
+      CodeUri: bin/get_upload_url/get_upload_url.zip
+      Handler: bootstrap
+      Architectures: [arm64]
+      Description: Lambda function that generates presigned URLs for S3 uploads
+      Environment:
+        Variables:
+          RECIPE_IMAGES_BUCKET: !Ref RecipeImagesBucket
+          CLOUDFRONT_DOMAIN: !GetAtt RecipeImagesDistribution.DomainName
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref RecipeImagesBucket
+      Events:
+        ApiRequest:
+          Type: HttpApi
+          Properties:
+            Path: /upload-url
+            Method: GET
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+
+Outputs:
+  RecipeImagesBucketName:
+    Description: S3 Bucket for recipe images
+    Value: !Ref RecipeImagesBucket
+    Export:
+      Name: !Sub ${EnvironmentName}-RecipeImagesBucket
+
+  CloudFrontDistributionDomain:
+    Description: CloudFront distribution domain name for images
+    Value: !GetAtt RecipeImagesDistribution.DomainName
+    Export:
+      Name: !Sub ${EnvironmentName}-CloudFrontDomain
+
+  CloudFrontDistributionId:
+    Description: CloudFront distribution ID
+    Value: !Ref RecipeImagesDistribution
+    Export:
+      Name: !Sub ${EnvironmentName}-CloudFrontDistributionId
+
+  ApiEndpoint:
+    Description: API Gateway endpoint URL
+    Value: !Sub https://${RecipeApi}.execute-api.${AWS::Region}.amazonaws.com/prod
