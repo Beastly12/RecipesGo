@@ -1,10 +1,14 @@
 import React from "react";
+import { Routes, Route } from "react-router-dom";
+import RecipeDetailPage from "./pages/RecipeDetails";
+import AuthPage from "./pages/AuthPage";
 
 function App() {
   return (
-    <div>
-      <hi>App</hi>
-    </div>
+    <Routes>
+      <Route path="/Auth" element={<AuthPage />} />
+      <Route path="/recipe-details" element={<RecipeDetailPage />} />
+    </Routes>
   );
 }
 
