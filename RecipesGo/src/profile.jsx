@@ -1,25 +1,27 @@
 
 import React, { useState } from "react";
 import "./profile.css"; 
+import { Link } from "react-router-dom";
+
 
 export default function Profile() {
   const [isFavorites, setIsFavorites] = useState(false);
   const edit = () => alert("Settings Edit");
   const recipes = [
-    {id: 1, name: 'Homemade Margherita Pizza', picture: <img src="\MPizza1.webp" alt="Cover" className="cover-picture" />, likes: '200'},
-    {id: 2, name: 'Homemade Margherita', picture: <img src="\Margherita-Pizza.webp" alt="Cover" className="cover-picture" />, likes: '201'},
-    {id: 3, name: 'Homemade', picture: <img src="\PIZZA-MARGHERITA.jpg" alt="Cover" className="cover-picture" />, likes: '202'},
-    {id: 4, name: 'Homemade Margherita Pizza', picture: <img src="\MPizza1.webp" alt="Cover" className="cover-picture" />, likes: '203'},
-    {id: 5, name: 'Homemade Margherita', picture: <img src="\Margherita-Pizza.webp" alt="Cover" className="cover-picture" />, likes: '204'},
-    {id: 6, name: 'Homemade', picture: <img src="\PIZZA-MARGHERITA.jpg" alt="Cover" className="cover-picture" />, likes: '205'}
+    {id: 1, name: 'Homemade Margherita Pizza', picture: <img src="\MPizza1.webp" alt="Cover" className="cover-picture" />, likes: '200', link:"/login"},
+    {id: 2, name: 'Homemade Margherita', picture: <img src="\Margherita-Pizza.webp" alt="Cover" className="cover-picture" />, likes: '201', link:"/"},
+    {id: 3, name: 'Homemade', picture: <img src="\PIZZA-MARGHERITA.jpg" alt="Cover" className="cover-picture" />, likes: '202', link:"/login"},
+    {id: 4, name: 'Homemade Margherita Pizza', picture: <img src="\MPizza1.webp" alt="Cover" className="cover-picture" />, likes: '203', link:"/"},
+    {id: 5, name: 'Homemade Margherita', picture: <img src="\Margherita-Pizza.webp" alt="Cover" className="cover-picture" />, likes: '204', link:"/login"},
+    {id: 6, name: 'Homemade', picture: <img src="\PIZZA-MARGHERITA.jpg" alt="Cover" className="cover-picture" />, likes: '205', link:"/login"}
   ];
 
   const favs = [
-    {id: 1, name: 'Homemade Margherita Pizza', picture: <img src="\Margherita-Pizza.webp" alt="Cover" className="cover-picture" />, likes: '206'},
-    {id: 2, name: 'Homemade Margherita', picture: <img src="\PIZZA-MARGHERITA.jpg" alt="Cover" className="cover-picture" />, likes: '207'},
-    {id: 3, name: 'Homemade', picture: <img src="\MPizza1.webp" alt="Cover" className="cover-picture" />, likes: '208'},
-    {id: 4, name: 'Homemade Margherita Pizza', picture: <img src="\Margherita-Pizza.webp" alt="Cover" className="cover-picture" />, likes: '209'},
-    {id: 5, name: 'Homemade Margherita', picture: <img src="\PIZZA-MARGHERITA.jpg" alt="Cover" className="cover-picture" />, likes: '210'},
+    {id: 1, name: 'Homemade Margherita Pizza', picture: <img src="\Margherita-Pizza.webp" alt="Cover" className="cover-picture" />, likes: '206', link:"/"},
+    {id: 2, name: 'Homemade Margherita', picture: <img src="\PIZZA-MARGHERITA.jpg" alt="Cover" className="cover-picture" />, likes: '207', link:"/login"},
+    {id: 3, name: 'Homemade', picture: <img src="\MPizza1.webp" alt="Cover" className="cover-picture" />, likes: '208', link:"/"},
+    {id: 4, name: 'Homemade Margherita Pizza', picture: <img src="\Margherita-Pizza.webp" alt="Cover" className="cover-picture" />, likes: '209', link:"/login"},
+    {id: 5, name: 'Homemade Margherita', picture: <img src="\PIZZA-MARGHERITA.jpg" alt="Cover" className="cover-picture" />, likes: '210, link:"/"'},
   ];
 
 
@@ -76,11 +78,13 @@ export default function Profile() {
                 <ul className="grid">
                     {recipes.map((recipe) => <li key={recipe.id}> 
                       <div className="content">
+                      <a href={recipe.link} className="link">
                         {recipe.picture} 
 
                         <div className="info">
                             { recipe.name } ❤️{ recipe.likes }
                         </div>
+                      </a>
                       </div>
                     
                     </li>)}
@@ -91,11 +95,13 @@ export default function Profile() {
                 <ul className="grid">
                     {favs.map((fav) => <li key={fav.id}> 
                       <div className="content">
+                      <a href={recipe.link} className="link">
                         {fav.picture} 
 
                         <div className="info">
                             { fav.name } ❤️{ fav.likes }
                         </div>
+                      </a>
                       </div>
                     
                     </li>)}
