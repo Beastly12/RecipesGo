@@ -1,7 +1,7 @@
 # RecipesGo – Web Project
 
 RecipesGo is a collaborative DevOps project focused on building, testing, and deploying a full-stack web application using modern DevOps practices.  
-The aim is to demonstrate end-to-end automation — from code commits to deployment — using continuous integration, continuous delivery, and monitoring tools.
+
 
 ---
 
