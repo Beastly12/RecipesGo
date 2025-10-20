@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type='module' src='../src/map.mjs'></script>
+<script type="module" src="../src/main.mjs"></script>
+
+</head>
+<body>
+    <h1>RECIPIES GO</h1>
+    <div id="login-form">
+        <h2>Login</h2>
+        Username: <br />
+        <input id="login_username" type="text" /><br />
+        Password: <br />
+        <input id="login_password" type="password" /><br />
+        <input type="button" id="login_button" value="Login" />
+    </div>
+    
+    <div id="logged-in-message" style="display: none;">
+        <p>Logged in as <span id="username-display"></span></p>
+        <button id="logout-button">Logout</button>
+    </div>
+
+<p>
+    <a href="public/add.html">Add New Recipe</a>
+</p>
+
+</body>
+</html>
