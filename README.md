@@ -1,6 +1,6 @@
 # RecipesGo – Web Project
 
-RecipesGo is a collaborative DevOps project focused on building, testing, and deploying a full-stack web application using modern DevOps practices.  
+RecipesGo is a collaborative DevOps project focused on building, testing, and deploying a full-stack web application using modern DevOps practices. 
 
 
 ---
@@ -44,7 +44,8 @@ While the app itself is simple, the focus of this project is on **DevOps pipelin
 - **Docker** – containerised builds  
 - **AWS SAM CLI** – serverless deployment  
 - **AWS CloudWatch** – logs and metrics  
-- **GitHub Projects** – Kanban & sprint management  
+- **GitHub Projects** – Kanban & sprint management
+- **Cypress testing** - Frontend automated testing
 
 ---
 
