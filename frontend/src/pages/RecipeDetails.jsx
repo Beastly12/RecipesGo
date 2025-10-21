@@ -51,14 +51,18 @@ function RecipeDetailPage() {
   return (
     <div className="bg-[#fafafa] min-h-screen m-9 text-[#1a1a1a]">
       <div className=" flex flex-col justify-items-center">
+        {/* Back Button */}
         <button className="flex items-center space-x-5 text-[#1a1a1a] p-2 hover:underline mb-4">
           <ArrowLeft /> <span className="text-2xl">Back</span>
         </button>
 
+        {/* Image Card */}
         <div className="rounded-4xl w-full mt-8 mb-8 shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
           {recipe_details.image}
         </div>
       </div>
+
+      {/* User Info Card */}
       <h1 className="text-5xl font-semibold mb-3 mt-8">
         {recipe_details.title}
       </h1>
@@ -67,41 +71,77 @@ function RecipeDetailPage() {
           <p className="font-bold text-xl text-gray-800 px-4">
             {recipe_details.Author}
           </p>
-
           <p className="text-sm text-gray-500 px-4">
             {recipe_details.Published}
           </p>
         </div>
 
-        <div className="flex gap-5">
+        <div className=" flex gap-5">
+          {/* Likes Button */}
           <button className="bg-[#ff6b6b] text-white p-5 pr-12 pl-2 border rounded-3xl text-sm hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300">
             ❤️ Like ({recipe_details.Likes})
           </button>
 
+          {/* Favorite Button */}
           <button className="bg-yellow-100 text-yellow-600 border px-12 py-1 rounded-3xl text-sm transition-all duration-300 hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
-            ⭐ Favoriteww
+            ⭐ Favorite
           </button>
 
-          <button className="bg-gray-100 text-gray-600 border px-20 py-3 rounded-3xl text-sm transition-all duration-300 hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
+          {/*Share Button*/}
+          <button className="bg-gray-100 text-gray-600 border px-16 py-3 rounded-3xl text-sm transition-all duration-300 hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
             <ExternalLink className="text-sm" /> Share
           </button>
         </div>
       </div>
-      <div className="flex flex-wrap gap-7 mb-6 mt-15">
-        <div className="bg-gray-50 px-15 py-7 rounded-2xl text-center shadow-[0_12px_24px_rgba(0,0,0,0 pl-">
-          <Clock className="bg-[#ff6b6b] text-white rounded-2xl mx-4" />
-          <p className="font-semibold mt-4">{recipe_details.Time}</p>
+   
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-8 mt-15">
+        <div>
+          <div className=" grid grid-cols-1 md:grid-cols-3 gap-10 mb-6">
+            {/* Time Card */}
+            <div className="flex flex-col items-center justify-center bg-gray-50 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
+              <div>
+                <Clock className="bg-[#ff6b6b] text-white rounded-2xl" />
+              </div>
+              <p className="font-semibold mt-4">{recipe_details.Time}</p>
+            </div>
+            {/* Category Card */}
+            <div className="flex flex-col items-center justify-center bg-gray-50 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
+              <Utensils className="bg-[#ff6b6b] text-white rounded-2xl mx-4" />
+              <p className="font-semibold mt-4">{recipe_details.Category}</p>
+            </div>
+            {/* Difficulty Card */}
+            <div className="flex flex-col items-center justify-center bg-gray-50 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
+              <ChartNoAxesColumn className="bg-[#ff6b6b] text-white rounded-2xl mx-4" />
+              <p className="font-semibold mt-4">{recipe_details.Difficulty}</p>
+            </div>
+          </div>
+
+          {/* Ingredients Box */}
+          <div className=" p-7 mt-9 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
+            <h2 className="font-medium text-4xl mb-2 ">Ingredients</h2>
+            <ul className="list-disc list-inside text-gray-700 mt-4 mb-4">
+              {recipe_details.ingredients?.map((ingredients, index) => (
+                <li key={index}>{ingredients}</li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <div className="bg-gray-50 px-15 py-7 rounded-2xl text-center shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
-          <Utensils className="bg-[#ff6b6b] text-white rounded-2xl mx-4" />
-          <p className="font-semibold mt-4">{recipe_details.Category}</p>
-        </div>
-        <div className="bg-gray-50 px-15 py-7 rounded-2xl text-center shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
-          <ChartNoAxesColumn className="bg-[#ff6b6b] text-white rounded-2xl mx-4" />
-          <p className="font-semibold mt-4">{recipe_details.Difficulty}</p>
+
+        {/* Instruction Box */}
+        <div className="">
+          <div className="p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
+            <h2 className="font-medium text-4xl mb-2">Instructions</h2>
+            <ol className="list-decimal list-inside text-gray-700">
+              {recipe_details.instructions?.map((instructions, index) => (
+                <li key={index}>{instructions}</li>
+              ))}
+            </ol>
+          </div>
         </div>
       </div>
-      w
+
+      {/* Comments Box */}
+      <div>Comments</div>
     </div>
   );
 }
