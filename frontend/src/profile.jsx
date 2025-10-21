@@ -1,7 +1,6 @@
 
 import React, { useState } from "react";
 import "./profile.css"; 
-import { Link } from "react-router-dom";
 
 
 export default function Profile() {
@@ -51,12 +50,12 @@ export default function Profile() {
                     </div>
 
                     <div className="settings">
-                        <button onClick={edit}>⚙️Settings</button>
+                        <button onClick={edit}><h5>⚙️Settings</h5></button>
                     </div>
             </div>
         </div>
 
-        <div className="recipies">
+        <div className="my_recipes">
         <div className="toggle">
           <input
             id="status"
@@ -65,11 +64,10 @@ export default function Profile() {
             onChange={(e) => setIsFavorites(e.target.checked)}
           />
           <label htmlFor="status">
-            <div
-              className="status-switch"
-              data-unchecked="My Recipes"
-              data-checked="Favorites"
-            ></div>
+              <div className="status-switch">
+                  <span className={isFavorites ? '' : 'active'}><h3>My Recipes</h3></span>
+                  <span className={isFavorites ? 'active' : ''}><h3>Favorites</h3></span>
+              </div>
           </label>
         </div>
 

@@ -6,7 +6,7 @@
   justify-content: flex-start;
   align-items: flex-start;
   gap: 0px;
-  padding-top: 60px; 
+  padding-top: 0px; 
   box-sizing: border-box;
   flex-direction: column;
   z-index: 1;
@@ -53,15 +53,19 @@
   button {
     padding: 10px 20px;
     border-radius: 6px;
-    border: none;
     background-color: #05339C;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    outline: 1px solid #D3D3D3;
+  }
+
+  button h5 {
+    margin: 0;   
+    color: #555555;
   }
   
-  button:hover {
-    background-color: #05339C;
+  button:hover h5 {
     color: white;
+    background-color: #05339C;
   }
    
   .settings, .stats{
@@ -73,28 +77,25 @@
     text-align: left;
   }
 
-  .likes{
+  .recipes, .likes{
     align-items: left;
     justify-content: left;
     text-align: left;
     padding: 0;
+    margin: 0;
   }
 
-  .recipes{
-    align-items: left;
-    justify-content: left;
-    text-align: left;
-    padding: 0;
-    position: relative;
+  .recipes h2, .recipes h5, .likes h2, .likes h5 {
+    margin: 0; 
   }
 
   .toggle {
-    width: 200px;
+    width: 300px;
   height: 50px;
-  margin: 0 auto; 
+  margin-left: 70px; 
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
   position: relative;
   top: 0;
     input#status {
@@ -108,10 +109,40 @@
           height: 100%;
           position: relative;
           background-color: #fafafa;
-          color: grey;
+          color: #05339C;
           transition: all 0.5s ease;
           padding: 3px;
           border-radius: 3px;
+          display: flex;        
+          justify-content: space-between; 
+          align-items: center;
+          padding: 0 30px;
+          
+
+          .status-switch span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #05339C;
+            z-index: 2; 
+            text-align: center;
+            width: 50%;
+          }
+          
+          .status-switch::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50%;
+            height: 2px;
+            background-color: #05339C;
+            transition: left 0.3s ease;
+          }
+    
+          input#status:checked + label .status-switch::before {
+            left: 50%;
+          }
   
           &:before,
           &:after {
@@ -126,17 +157,19 @@
           }
         
           &:before {
-            background-color: #05339C;
-            color: white;
+            color:#05339C;
             box-shadow: 0 0 4px 4px rgba(#000, 0.2);
             left: 3px;
             z-index: 10;
             content: attr(data-unchecked);
+            border-bottom: 2px solid #05339C;
           }
+
           
           &:after {
             right: 0;
             content: attr(data-checked);
+            border-bottom: 2px solid transparent;
           }
         }
       }
@@ -151,7 +184,7 @@
         }
    
         &:before {
-          color: white;
+          color: #05339C;
           left: 50%;
           content: attr(data-checked);
         }
