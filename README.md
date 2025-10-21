@@ -17,8 +17,8 @@ RecipesGo is a collaborative DevOps project focused on building, testing, and de
 ---
 
 ##  Project Overview
-RecipesGo is a recipe-sharing platform where users can view, add, and manage recipes.  
-While the app itself is simple, the focus of this project is on **DevOps pipeline design**, **team collaboration**, and **deployment automation**.
+The objective of this platfrom is to cater to an audience that loves cooking and recipe sharing. Moreover, users can give feedback by commenting recipes and liking them.
+
 
 ## Design
 
