@@ -9,13 +9,7 @@ import {
 
 function RecipeDetails() {
   return {
-    image: (
-      <img
-        src="https://images.unsplash.com/photo-1504674900247-0877df9cc836"
-        alt="Recipe"
-        className="w-full h-96 object-cover rounded-xl"
-      />
-    ),
+    image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836",
     title: "Creamy Garlic Pasta",
     Author: "Chef Olivia Martinez",
     Published: "October 12, 2025",
@@ -42,6 +36,46 @@ function RecipeDetails() {
       "Season with salt and pepper.",
       "Garnish with parsley and serve warm.",
     ],
+
+    totalComments: 12,
+    comments: [
+      {
+        id: 1,
+        user: {
+          name: "Mike Johnson",
+          profilePic: "https://randomuser.me/api/portraits/men/32.jpg",
+        },
+        posted: "1 day ago",
+        text: "Made this last night and it was absolutely delicious! The sauce was so creamy and flavorful. I added a bit of white wine which really elevated it. Will definitely make again!",
+      },
+      {
+        id: 2,
+        user: {
+          name: "Samantha Lee",
+          profilePic: "https://randomuser.me/api/portraits/women/45.jpg",
+        },
+        posted: "2 days ago",
+        text: "This was such a comforting meal. I replaced the cream with oat milk and it still turned out amazing.",
+      },
+      {
+        id: 3,
+        user: {
+          name: "David Kim",
+          profilePic: "https://randomuser.me/api/portraits/men/56.jpg",
+        },
+        posted: "3 days ago",
+        text: "Simple, quick, and super tasty. Perfect for a weeknight dinner!",
+      },
+      {
+        id: 4,
+        user: {
+          name: "Emily Carter",
+          profilePic: "https://randomuser.me/api/portraits/women/67.jpg",
+        },
+        posted: "4 days ago",
+        text: "I doubled the garlic because I’m a garlic lover! Turned out heavenly!",
+      },
+    ],
   };
 }
 
@@ -58,7 +92,11 @@ function RecipeDetailPage() {
 
         {/* Image Card */}
         <div className="rounded-4xl w-full mt-8 mb-8 shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
-          {recipe_details.image}
+          <img
+            className="w-full h-96 object-cover rounded-xl"
+            src={recipe_details.image}
+            alt="Recipe Image"
+          />
         </div>
       </div>
 
@@ -93,7 +131,7 @@ function RecipeDetailPage() {
           </button>
         </div>
       </div>
-   
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-8 mt-15">
         <div>
           <div className=" grid grid-cols-1 md:grid-cols-3 gap-10 mb-6">
@@ -141,7 +179,15 @@ function RecipeDetailPage() {
       </div>
 
       {/* Comments Box */}
-      <div>Comments</div>
+      <div className=" bg-[#fafafa] mt-14 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
+        <h2 className="font-bold text-2xl">
+          Comments ({recipe_details.totalComments})
+        </h2>
+
+        <div>
+          <img src={recipe_details.profilePic} />
+        </div>
+      </div>
     </div>
   );
 }
