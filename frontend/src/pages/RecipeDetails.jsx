@@ -8,7 +8,6 @@ import {
   Star,
   Heart,
 } from "lucide-react";
-import { FaHeart } from "react-icons/fa";
 
 function RecipeDetails() {
   return {
@@ -163,7 +162,7 @@ function RecipeDetailPage() {
           {/* Ingredients Box */}
           <div className=" p-7 mt-9 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
             <h2 className="font-medium text-4xl mb-2 ">Ingredients</h2>
-            <ul className="list-disc list-inside text-gray-700 mt-4 mb-4">
+            <ul className="list-disc list-inside text-gray-700 mt-4 mb-4 leading-14 text-[16px]">
               {recipe_details.ingredients?.map((ingredients, index) => (
                 <li key={index}>{ingredients}</li>
               ))}
@@ -175,7 +174,7 @@ function RecipeDetailPage() {
         <div className="">
           <div className="p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
             <h2 className="font-medium text-4xl mb-2">Instructions</h2>
-            <ol className="list-decimal list-inside text-gray-700">
+            <ol className="list-decimal list-inside text-gray-700 leading-14 text-[16px]">
               {recipe_details.instructions?.map((instructions, index) => (
                 <li key={index}>{instructions}</li>
               ))}
