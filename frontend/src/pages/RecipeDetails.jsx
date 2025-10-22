@@ -137,7 +137,7 @@ function RecipeDetailPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-8 mt-15">
+      <div className="grid grid- md:grid-cols-2 gap-10 mb-8 mt-15">
         <div>
           <div className=" grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-6">
             {/* Time Card */}
@@ -161,8 +161,8 @@ function RecipeDetailPage() {
 
           {/* Ingredients Box */}
           <div className=" p-7 mt-9 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
-            <h2 className="font-medium text-4xl mb-2 ">Ingredients</h2>
-            <ul className="list-disc list-inside text-gray-700 mt-4 mb-4 leading-14 text-[16px]">
+            <h2 className="font-bold text-4xl mb-2 ">Ingredients</h2>
+            <ul className="list-disc list-inside text-gray-800 mt-4 mb-4 space-y-10 text-[14px]">
               {recipe_details.ingredients?.map((ingredients, index) => (
                 <li key={index}>{ingredients}</li>
               ))}
@@ -171,27 +171,48 @@ function RecipeDetailPage() {
         </div>
 
         {/* Instruction Box */}
-        <div className="">
-          <div className="p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
-            <h2 className="font-medium text-4xl mb-2">Instructions</h2>
-            <ol className="list-decimal list-inside text-gray-700 leading-14 text-[16px]">
-              {recipe_details.instructions?.map((instructions, index) => (
-                <li key={index}>{instructions}</li>
-              ))}
-            </ol>
-          </div>
+        <div className="p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)] mt-6 bg-white">
+          <h2 className="font-bold text-4xl mb-4">Instructions</h2>
+
+          <ol className="space-y-10 text-[14px]">
+            {recipe_details.instructions?.map((instruction, index) => (
+              <li key={index} className="flex items-start gap-4">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#ff6b6b] text-white font-bold">
+                  {index + 1}
+                </div>
+
+                <div className="text-gray-700 leading-relaxed">
+                  {instruction}
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
 
       {/* Comments Box */}
       <div className=" bg-[#fafafa] mt-14 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
-        <h2 className="font-bold text-2xl">
+        <h2 className="font-bold text-3xl mb-10  text-gray-800">
           Comments ({recipe_details.totalComments})
         </h2>
 
-        <div>
-          <img src={recipe_details.profilePic} />
-        </div>
+        {recipe_details.comments?.map((comment) => (
+          <div
+            key={comment.id}
+            className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg mb-3 border-b border-gray-300"
+          >
+            <img
+              src={comment.user.profilePic}
+              alt={comment.user.name}
+              className="w-10 h-10 rounded-full"
+            />
+            <div>
+              <h4 className="font-medium">{comment.user.name}</h4>
+              <p className="text-sm text-gray-500">{comment.posted}</p>
+              <p className="mt-1 text-gray-800">{comment.text}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
