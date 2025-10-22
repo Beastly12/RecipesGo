@@ -5,7 +5,10 @@ import {
   Clock,
   Utensils,
   ChartNoAxesColumn,
+  Star,
+  Heart,
 } from "lucide-react";
+import { FaHeart } from "react-icons/fa";
 
 function RecipeDetails() {
   return {
@@ -101,40 +104,43 @@ function RecipeDetailPage() {
       </div>
 
       {/* User Info Card */}
-      <h1 className="text-5xl font-semibold mb-3 mt-8">
+      <h1 className="text-5xl font-semibold mb-5 mt-8">
         {recipe_details.title}
       </h1>
-      <div className="flex flex-row justify-between text-sm text-gray-500 mb-4 mt-6 p-7 shadow-[0_12px_24px_rgba(0,0,0,0.12)] rounded-2xl">
-        <div className="flex flex-col justify-between">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-1 md:grid-cols-2 text-sm text-gray-500 mb-4 mt-6 p-7 shadow-[0_12px_24px_rgba(0,0,0,0.12)] rounded-2xl">
+        <div className="grid grid-cols-1 gap-3 sm:grid-rows-1">
           <p className="font-bold text-xl text-gray-800 px-4">
             {recipe_details.Author}
           </p>
-          <p className="text-sm text-gray-500 px-4">
+          <p className="text-sm text-gray-500 mb-2 px-4">
             {recipe_details.Published}
           </p>
         </div>
 
-        <div className=" flex gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3">
           {/* Likes Button */}
-          <button className="bg-[#ff6b6b] text-white p-5 pr-12 pl-2 border rounded-3xl text-sm hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300">
-            ❤️ Like ({recipe_details.Likes})
+          <button className="flex items-center justify-center gap-2 bg-[#ff6b6b] text-white py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300 w-full">
+            <Heart className="w-5 h-5" />
+            <span>Likes ({recipe_details.Likes})</span>
           </button>
 
           {/* Favorite Button */}
-          <button className="bg-yellow-100 text-yellow-600 border px-12 py-1 rounded-3xl text-sm transition-all duration-300 hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
-            ⭐ Favorite
+          <button className="flex items-center justify-center gap-2 bg-yellow-100 text-yellow-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full">
+            <Star className="w-5 h-5" />
+            <span>Favorite</span>
           </button>
 
-          {/*Share Button*/}
-          <button className="bg-gray-100 text-gray-600 border px-16 py-3 rounded-3xl text-sm transition-all duration-300 hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
-            <ExternalLink className="text-sm" /> Share
+          {/* Share Button */}
+          <button className="flex items-center justify-center gap-2 bg-gray-100 text-gray-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full">
+            <ExternalLink className="w-5 h-5" />
+            <span>Share</span>
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-8 mt-15">
         <div>
-          <div className=" grid grid-cols-1 md:grid-cols-3 gap-10 mb-6">
+          <div className=" grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-6">
             {/* Time Card */}
             <div className="flex flex-col items-center justify-center bg-gray-50 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
               <div>
