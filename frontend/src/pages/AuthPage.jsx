@@ -1,0 +1,57 @@
+import React from "react";
+import { CookingPot } from "lucide-react";
+
+function FeaturesList() {
+  return [
+    { icon: "⭐", text: "Share your favorite recipes" },
+    { icon: "💬", text: "Connect with other chefs" },
+    { icon: "❤️", text: "Save recipes you love" },
+    { icon: "📞", text: "Access anywhere, anytime" },
+  ];
+}
+
+const AuthPage = () => {
+  const features = FeaturesList();
+
+  return (
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#fafafa]">
+      <div className="bg-[#FF6B6B] text-white flex flex-col justify-center items-center md:items-start md:w-1/2 w-full p-8 md:p-16 rounded-b-4xl md:rounded-none md:rounded-r-4xl">
+        <CookingPot className="text-black w-32 h-32 md:w-60 md:h-60 mb-6 md:mb-10" />
+
+        <h1 className="text-5xl md:text-7xl font-bold mb-4 md:mb-6 text-center md:text-left">
+          Prepify
+        </h1>
+
+        <p className="text-base md:text-2xl mb-8 md:mb-20 text-center md:text-left">
+          Join our community of food lovers and discover thousands of delicious
+          recipes.
+        </p>
+
+        <ul className="space-y-4 md:space-y-9 font-medium text-base md:text-[17px]">
+          {features.map((feature) => (
+            <li key={feature.text} className="flex items-center space-x-3">
+              <span className="text-xl">{feature.icon}</span>
+              <span>{feature.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="w-full md:w-1/2 p-8 md:p-16">
+        <div className=" flex flex-row justify-center items-center mt-14 sm:mt-1">
+          <CookingPot className="w-30 h-30 pr-7 sm:w-20 sm:h-20 md:w-30 md:h-30" />
+          <h1 className=" font-bold text-[40px]"> Prepify</h1>
+        </div>
+
+        <div className="flex items-center">
+          <div className="flex border border-gray-300 rounded-xl p-1 overflow-hidden w-full mt-10 h-15 mb-6">
+            <button>Login</button>
+            <button>Sign Up</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AuthPage;
