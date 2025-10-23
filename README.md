@@ -1,6 +1,6 @@
 # RecipesGo – Web Project
 
-RecipesGo is a collaborative DevOps project focused on building, testing, and deploying a full-stack web application using modern DevOps practices.  
+RecipesGo is a collaborative DevOps project focused on building, testing, and deploying a full-stack web application using modern DevOps practices. 
 
 
 ---
@@ -8,18 +8,22 @@ RecipesGo is a collaborative DevOps project focused on building, testing, and de
 ##  Team Members
 | Name | Role | GitHub Username |
 |------|------|----------------|
-| **Adam Ali** | DevOps Engineer / Project Lead | [2alia](https://github.com/2alia) |
-| **David** | DevOps Engineer /Backend Developer | [dayv-exe](https://github.com/dayv-exe) |
-| **Dafe** | DevOps Engineer /Frontend Developer | [Beastly12](https://github.com/Beastly12) |
-| **Daniel** |  DevOps Engineer /Backend Engineer | [danielsauuce](https://github.com/danielsauuce) |
-| **Zhihan** | DevOps Engineer /Frontend Engineer | [2LIUZ98](https://github.com/2LIUZ98) |
+| **Adam Ali** | DevOps Engineer| [2alia](https://github.com/2alia) |
+| **David** | DevOps Engineer| [dayv-exe](https://github.com/dayv-exe) |
+| **Dafe** | DevOps Engineer| [Beastly12](https://github.com/Beastly12) |
+| **Daniel** |  DevOps Engineer| [danielsauuce](https://github.com/danielsauuce) |
+| **Zhihan** | DevOps Engineer| [2LIUZ98](https://github.com/2LIUZ98) |
 
 ---
 
 ##  Project Overview
-RecipesGo is a recipe-sharing platform where users can view, add, and manage recipes.  
-While the app itself is simple, the focus of this project is on **DevOps pipeline design**, **team collaboration**, and **deployment automation**.
+The objective of this platfrom is to cater to an audience that loves cooking and recipe sharing. Moreover, users can give feedback by commenting recipes and liking them.
 
+
+## Design
+
+## **Figma**
+![Figma Design Preview](Figma.png)
 ---
 
 ##  Tech Stack
@@ -44,7 +48,8 @@ While the app itself is simple, the focus of this project is on **DevOps pipelin
 - **Docker** – containerised builds  
 - **AWS SAM CLI** – serverless deployment  
 - **AWS CloudWatch** – logs and metrics  
-- **GitHub Projects** – Kanban & sprint management  
+- **GitHub Projects** – Kanban & sprint management
+- **Cypress testing** - Frontend automated testing
 
 ---
 
@@ -71,38 +76,26 @@ While the app itself is simple, the focus of this project is on **DevOps pipelin
 ##  Example Workflow File
 
 ```yaml
-name: RecipesGo CI/CD
 
-on:
-  push:
-    branches: [develop, main]
-  pull_request:
+name: ci Workflow
+run-name: ${{ github.actor }} is testing out GitHub Actions
+on: [push]
 
 jobs:
-  build-and-deploy:
+  Explore-GitHub-Actions:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Build backend
-        run: go build ./backend
-
-      - name: Run backend tests
-        run: go test ./backend/... -v
-
-      - name: Build frontend
+      - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "GitHub!"
+      - run: echo "This job is now running on a ${{ runner.os }} server hosted by GitHub."
+      - run: echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v5
+      - run: echo "The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "The workflow is now ready to test your code on the runner."
+      - name: List files in the repository
         run: |
-          cd frontend
-          npm install
-          npm run build
-
-      - name: Deploy with AWS SAM
-        run: |
-          sam deploy \
-            --template-file template.yaml \
-            --stack-name recipego-stack \
-            --region eu-west-2 \
-            --capabilities CAPABILITY_IAM
+          ls ${{ github.workspace }}
+      - run: echo "This job's status is ${{ job.status }}."
 
 
