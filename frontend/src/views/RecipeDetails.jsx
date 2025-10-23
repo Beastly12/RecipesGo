@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ArrowLeft,
   ExternalLink,
@@ -78,6 +78,24 @@ function RecipeDetails() {
         posted: "4 days ago",
         text: "I doubled the garlic because I’m a garlic lover! Turned out heavenly!",
       },
+      {
+        id: 3,
+        user: {
+          name: "David Kim",
+          profilePic: "https://randomuser.me/api/portraits/men/56.jpg",
+        },
+        posted: "3 days ago",
+        text: "Simple, quick, and super tasty. Perfect for a weeknight dinner!",
+      },
+      {
+        id: 4,
+        user: {
+          name: "Emily Carter",
+          profilePic: "https://randomuser.me/api/portraits/women/67.jpg",
+        },
+        posted: "4 days ago",
+        text: "I doubled the garlic because I’m a garlic lover! Turned out heavenly!",
+      },
     ],
 
     descriptionSections: [
@@ -99,6 +117,14 @@ function RecipeDetails() {
 
 function RecipeDetailPage() {
   const recipe_details = RecipeDetails();
+  const [visibleComment, setVisibleComment] = useState(2);
+
+  const handleViewMore = () => {
+    setVisibleComment((prev) => prev + 2);
+  };
+
+  const visibleComments = recipe_details.comments.slice(0, visibleComment);
+  const hasMore = visibleComment < recipe_details.comments.length;
 
   return (
     <div className="bg-[#fafafa] min-h-screen m-9 text-[#1a1a1a]">
@@ -214,7 +240,7 @@ function RecipeDetailPage() {
           Comments ({recipe_details.totalComments})
         </h2>
 
-        {recipe_details.comments?.map((comment) => (
+        {visibleComments?.map((comment) => (
           <div
             key={comment.id}
             className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg mb-3 border-b border-gray-300"
@@ -231,6 +257,17 @@ function RecipeDetailPage() {
             </div>
           </div>
         ))}
+
+        {hasMore && (
+          <div className="text-center mt-6">
+            <button
+              onClick={handleViewMore}
+              className="px-6 py-2 bg-[#ff6b6b] text-white rounded-full hover:bg-[#ff4b4b] transition-all shadow-[0_6px_16px_rgba(255,107,107,0.4)]"
+            >
+              View More
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -27,7 +27,7 @@ export const Accordion = ({ sections }) => {
       {isOpen && (
         <div className="mt-4 p-5 text-gray-700 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)] ">
           {sections?.map((section) => (
-            <p key={section.id} className="mb-4 leading-relaxed text-[14px]">
+            <p key={section.id} className="mb-4 leading-relaxed text-[1]">
               {section.text}
             </p>
           ))}
