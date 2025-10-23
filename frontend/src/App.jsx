@@ -12,10 +12,10 @@ export default function App() {
       <Route path="/Auth" element={<AuthPage />} />
       <Route path="/" element={<RecipeFeed />} />
 
-      <Route path="/" element={<h1>Home Page</h1>} />
+      {/* <Route path="/" element={<h1>Home Page</h1>} /> */}
       {/* <Route path="/login" element={<LoginSignUp />} /> */}
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/recipe-details" element={<RecipeDetailPage />} />
+      {/* <Route path="/profile" element={<Profile />} /> */}
+      {/* <Route path="/recipe-details" element={<RecipeDetailPage />} /> */}
       <Route path="/createRecipe" element={<CreateRecipePage />} />
     </Routes>
   );
