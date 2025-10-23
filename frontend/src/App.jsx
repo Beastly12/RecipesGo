@@ -1,25 +1,19 @@
 import React from "react";
-import { Routes, Route, Link } from "react-router-dom";
-import RecipeDetailPage from "./views/RecipeDetails";
-import Profile from "./profile.jsx";
-import LoginSignUp from "./loginSignup.jsx"
+import { Routes, Route } from "react-router-dom";
+import RecipeFeed from "./views/RecipesFeed";
+import CreateRecipePage from "./views/CreateRecipePage";
 
 
 
 
 export default function App() {
   return (
-    <div>
-      <nav>
-        <div className="logo"><h2>Prepify</h2></div>
-
-        <div className="nav-links">
-          <Link to="/">Home</Link>
-          <Link to="/login">Login</Link>
-          <Link to="/profile">Profile</Link>
-          <Link to="/recipe-details">DETIALS</Link>
-        </div>
-      </nav>
+    <Routes>
+      <Route path="/" element={<RecipeFeed />} />
+      <Route path="/createRecipe" element={<CreateRecipePage/>}/>
+    </Routes>
+  );
+}
 
       <Routes>
         <Route path="/" element={<h1>Home Page</h1>} />
