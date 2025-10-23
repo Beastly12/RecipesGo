@@ -8,7 +8,7 @@ import {
   Star,
   Heart,
 } from "lucide-react";
-import { Accordion } from "../../components/Accordion";
+import { Accordion } from "../components/Accordion";
 
 function RecipeDetails() {
   return {
