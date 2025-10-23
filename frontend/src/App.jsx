@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route, Link } from "react-router-dom";
-import RecipeDetailPage from "./pages/RecipeDetails";
+import RecipeDetailPage from "./views/RecipeDetails";
 import Profile from "./profile.jsx";
 import LoginSignUp from "./loginSignup.jsx"
 
