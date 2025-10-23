@@ -117,6 +117,7 @@ function RecipeDetails() {
 
 function RecipeDetailPage() {
   const recipe_details = RecipeDetails();
+
   const [visibleComment, setVisibleComment] = useState(2);
 
   const handleViewMore = () => {
@@ -137,7 +138,7 @@ function RecipeDetailPage() {
         {/* Image Card */}
         <div className="rounded-4xl w-full mt-8 mb-8 shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
           <img
-            className="w-full h-96 object-cover rounded-xl"
+            className="w-full h-96 object-cover rounded-x"
             src={recipe_details.image}
             alt="Recipe Image"
           />
@@ -145,10 +146,10 @@ function RecipeDetailPage() {
       </div>
 
       {/* User Info Card */}
-      <h1 className="text-5xl font-semibold mb-5 mt-8">
+      <h1 className="text-5xl font-semibold mb-5 mt-8 dark:text-white">
         {recipe_details.title}
       </h1>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-1 md:grid-cols-2 text-sm text-gray-500 mb-4 mt-6 p-7 shadow-[0_12px_24px_rgba(0,0,0,0.12)] rounded-2xl">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-1 md:grid-cols-2 text-sm text-gray-500 mb-4 mt-6 p-7 shadow-[0_12px_24px_rgba(0,0,0,0.12)] rounded-2xl ">
         <div className="grid grid-cols-1 gap-3 sm:grid-rows-1">
           <p className="font-bold text-xl text-gray-800 px-4">
             {recipe_details.Author}
@@ -258,6 +259,7 @@ function RecipeDetailPage() {
           </div>
         ))}
 
+        {/* View More */}
         {hasMore && (
           <div className="text-center mt-6">
             <button
