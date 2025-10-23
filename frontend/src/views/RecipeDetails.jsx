@@ -8,6 +8,7 @@ import {
   Star,
   Heart,
 } from "lucide-react";
+import { Accordion } from "../../components/Accordion";
 
 function RecipeDetails() {
   return {
@@ -78,6 +79,21 @@ function RecipeDetails() {
         text: "I doubled the garlic because I’m a garlic lover! Turned out heavenly!",
       },
     ],
+
+    descriptionSections: [
+      {
+        id: 1,
+        text: "This creamy garlic pasta is inspired by traditional Italian cuisine and made for quick weeknight dinners.",
+      },
+      {
+        id: 2,
+        text: "Use freshly grated Parmesan for the best flavor, and don’t overcook the pasta—it should be slightly firm.",
+      },
+      {
+        id: 3,
+        text: "Each serving contains approximately 450 calories, 20g protein, 30g fat, and 40g carbs.",
+      },
+    ],
   };
 }
 
@@ -118,24 +134,26 @@ function RecipeDetailPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3">
           {/* Likes Button */}
-          <button className="flex items-center justify-center gap-2 bg-[#ff6b6b] text-white py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300 w-full">
+          <button className="cursor-pointer flex items-center justify-center gap-2 bg-[#ff6b6b] text-white py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300 w-full">
             <Heart className="w-5 h-5" />
             <span>Likes ({recipe_details.Likes})</span>
           </button>
 
           {/* Favorite Button */}
-          <button className="flex items-center justify-center gap-2 bg-yellow-100 text-yellow-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full">
+          <button className="cursor-pointer flex items-center justify-center gap-2 bg-yellow-100 text-yellow-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full">
             <Star className="w-5 h-5" />
             <span>Favorite</span>
           </button>
 
           {/* Share Button */}
-          <button className="flex items-center justify-center gap-2 bg-gray-100 text-gray-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full">
+          <button className=" cursor-pointer flex items-center justify-center gap-2 bg-gray-100 text-gray-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full">
             <ExternalLink className="w-5 h-5" />
             <span>Share</span>
           </button>
         </div>
       </div>
+
+      <Accordion sections={recipe_details.descriptionSections} />
 
       <div className="grid grid- md:grid-cols-2 gap-10 mb-8 mt-15">
         <div>

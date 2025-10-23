@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import RecipeDetailPage from "./pages/RecipeDetails";
-import AuthPage from "./pages/AuthPage";
+import RecipeDetailPage from "./views/RecipeDetails";
+import AuthPage from "./views/AuthPage";
 
 function App() {
   return (
