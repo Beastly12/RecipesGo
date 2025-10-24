@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { CookingPot } from "lucide-react";
+import LoginForm from "../components/LoginForm";
+import SignUpForm from "../components/SignUpForm";
 
 function FeaturesList() {
   return [
@@ -74,37 +76,7 @@ const AuthPage = () => {
         </div>
 
         {/* Form */}
-        {isLogin ? (
-          <form className="space-y-7 w-full mt-4 p-3 ">
-            <div>
-              <label className="block text-2xl font-medium text-gray-700 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="w-full border border-gray-300 rounded-2xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <label className="block text-2xl font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <input
-                type="email"
-                placeholder="Enter your password"
-                className="w-full border border-gray-300 rounded-2xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
-              />
-
-              <button className=" self-end mt-9 cursor-pointer text-[#FF686B] font-medium hover:underline transition-colors duration-200 hover:text-[#ff4a4a]">
-                Forget password?
-              </button>
-            </div>
-          </form>
-        ) : (
-          <form className="space-y-6"></form>
-        )}
+        {isLogin ? <LoginForm /> : <SignUpForm />}
       </div>
     </div>
   );
