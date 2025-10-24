@@ -128,7 +128,7 @@ function RecipeDetailPage() {
   const hasMore = visibleComment < recipe_details.comments.length;
 
   return (
-    <div className="bg-[#fafafa] min-h-screen m-9 text-[#1a1a1a]">
+    <div className="bg-[#fafafa] min-h-screen m-4 text-[#1a1a1a]">
       <div className=" flex flex-col justify-items-center">
         {/* Back Button */}
         <button className="flex items-center space-x-5 text-[#1a1a1a] p-2 hover:underline mb-4">
@@ -150,6 +150,7 @@ function RecipeDetailPage() {
         {recipe_details.title}
       </h1>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-1 md:grid-cols-2 text-sm text-gray-500 mb-4 mt-6 p-7 shadow-[0_12px_24px_rgba(0,0,0,0.12)] rounded-2xl ">
+        
         <div className="grid grid-cols-1 gap-3 sm:grid-rows-1">
           <p className="font-bold text-xl text-gray-800 px-4">
             {recipe_details.Author}

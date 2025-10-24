@@ -22,16 +22,16 @@ const AuthPage = () => {
       <div className="hidden md:bg-[#FF6B6B] md:flex text-white flex-col justify-center items-center md:items-start md:w-1/2 w-full p-8 md:p-16 rounded-b-4xl md:rounded-none md:rounded-r-4xl">
         <CookingPot className="text-black bg-[#FF6B6B] w-32 h-32 md:w-60 md:h-60 mb-6 md:mb-10" />
 
-        <h1 className="text-5xl md:text-7xl font-bold mb-4 md:mb-6 text-center md:text-left">
+        <h1 className="text-5xl md:text-4xl font-bold mb-4 md:mb-8 text-center md:text-left">
           Prepify
         </h1>
 
-        <p className="text-base md:text-2xl mb-8 md:mb-20 text-center md:text-left">
+        <p className="text-base md:text-xl mb-8 md:mt-5 md:mb-20 text-center md:text-left">
           Join our community of food lovers and discover thousands of delicious
           recipes.
         </p>
 
-        <ul className="space-y-4 md:space-y-9 font-medium text-base md:text-[17px]">
+        <ul className="space-y-4 md:space-y-9 text-base md:text-[18px]">
           {features.map((feature) => (
             <li key={feature.text} className="flex items-center space-x-3">
               <span className="text-xl">{feature.icon}</span>

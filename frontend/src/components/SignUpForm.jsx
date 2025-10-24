@@ -11,7 +11,7 @@ const SignUpForm = () => {
           <input
             type="email"
             placeholder="Enter your full name"
-            className="w-full border border-gray-300 rounded-2xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+            className="w-full border border-gray-300 rounded-2xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B] md:text-sm md:font-light"
           />
         </div>
 
@@ -22,7 +22,7 @@ const SignUpForm = () => {
           <input
             type="email"
             placeholder="Enter your email"
-            className="w-full border border-gray-300 rounded-2xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+            className="w-full border border-gray-300 rounded-2xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B] md:text-sm md:font-light"
           />
         </div>
 
@@ -33,11 +33,11 @@ const SignUpForm = () => {
           <input
             type="email"
             placeholder="Enter your password"
-            className="w-full border border-gray-300 rounded-2xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+            className="w-full border border-gray-300 rounded-2xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B] md:text-sm md:font-light"
           />
         </div>
 
-        <button className="w-full items-center p-3 mt-7 font-medium rounded-3xl bg-[#FF686B] text-2xl text-white focus:ring-2 focus:ring-[#FF486B]">
+        <button className="w-full items-center p-3 mt-7 font-medium rounded-3xl bg-[#FF686B] text-2xl text-white focus:ring-2 focus:ring-[#FF486B] md:font-medium">
           Sign Up
         </button>
       </form>
