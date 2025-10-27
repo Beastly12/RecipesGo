@@ -263,20 +263,20 @@ Resources:
             Auth:
               Authorizer: CognitoAuthorizer
 
-  # to add new recipe to db
-  AddRecipe:
+# to handle recipes
+  RecipesActions:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub AddRecipe-${EnvironmentName}
-      CodeUri: bin/add_recipe/add_recipe.zip
+      FunctionName: !Sub recipes-actions-${EnvironmentName}
+      CodeUri: bin/recipes_actions/recipes_actions.zip
       Handler: bootstrap
       Architectures: [arm64]
-      Description: Lambda function that runs to add new recipe to db
+      Description: Lambda function that handles crud requests for recipes
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref MainTable
       Events:
-        ApiRequest:
+        AddFavorites:
           Type: HttpApi
           Properties:
             Path: /recipes
@@ -284,27 +284,15 @@ Resources:
             ApiId: !Ref RecipeApi
             Auth:
               Authorizer: CognitoAuthorizer
-
-  # to add new recipe to db
-  GetRecipes:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub GetRecipes-${EnvironmentName}
-      CodeUri: bin/get_recipes/get_recipes.zip
-      Handler: bootstrap
-      Architectures: [arm64]
-      Description: Lambda function that returns all recipes in db
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref MainTable
-      Events:
-        ApiRequest:
+        GetFavorites:
           Type: HttpApi
           Properties:
             Path: /recipes
             Method: GET
             ApiId: !Ref RecipeApi
-
+            Auth:
+              Authorizer: CognitoAuthorizer
+  
   # to generate presigned url for image uploads
   GetUploadUrl:
     Type: AWS::Serverless::Function

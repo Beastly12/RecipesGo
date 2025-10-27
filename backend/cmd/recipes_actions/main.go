@@ -12,5 +12,5 @@ func init() {
 }
 
 func main() {
-	lambda.Start(handlers.HandleAddRecipe)
+	lambda.Start(handlers.HandleRecipesActions)
 }
