@@ -129,7 +129,7 @@ function RecipeDetailPage() {
   const hasMore = visibleComment < recipe_details.comments.length;
 
   return (
-    <div className="bg-[#fafafa] dark:bg-amber-700 min-h-screen m-4 text-[#1a1a1a]">
+    <div className="bg-[#fafafa] min-h-screen m-4 text-[#1a1a1a]  dark:bg-[#1a1a1a] dark:text-[#fafafa]">
       <div className=" flex flex-col justify-items-center">
         {/* Back Button */}
         <Link
@@ -140,7 +140,7 @@ function RecipeDetailPage() {
         </Link>
       </div>
 
-      <div className="max-w-[900px] my-[40px] mx-[auto] px-[40px]">
+      <div className="max-w-[900px] my-[40px] mx-[auto] px-[40px] dark:text-[#fafafa]">
         <div className=" flex flex-col justify-items-center">
           <div>
             {/* Image Card */}
@@ -156,34 +156,34 @@ function RecipeDetailPage() {
               {recipe_details.title}
             </h1>
 
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-1 md:grid-cols-2 text-sm text-gray-500 mb-4 mt-6 p-7 shadow-[0_12px_24px_rgba(0,0,0,0.12)] rounded-2xl ">
-              <div className="grid grid-cols-1 gap-3 sm:grid-rows-1">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-1 md:grid-cols-2 text-sm text-gray-500 mb-4 mt-6 p-7 shadow-[0_12px_24px_rgba(0,0,0,0.12)] rounded-2xl  dark:bg-[#fafafa]">
+              <div className="grid grid-cols-1 gap-3 sm:grid-rows-1 ">
                 <Link to={"/profile"}>
-                  <p className="font-bold text-xl text-gray-800 px-4 cursor-pointer">
+                  <p className="font-bold text-xl text-gray-800 px-4 cursor-pointer   dark:text-gray-600 ">
                     {recipe_details.Author}
                   </p>
                 </Link>
 
-                <p className="text-sm text-gray-500 mb-2 px-4">
+                <p className="text-sm text-gray-500 mb-2 px-4   dark:text-gray-600">
                   {recipe_details.Published}
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3  dark:text-[#fafafa]">
                 {/* Likes Button */}
-                <button className="cursor-pointer flex items-center justify-center gap-2 bg-[#ff6b6b] text-white py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300 w-full">
+                <button className="cursor-pointer flex items-center justify-center gap-2 bg-[#ff6b6b] text-white py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300 w-full  dark:text-[#fafafa]">
                   <Heart className="w-5 h-5" />
                   <span>Likes ({recipe_details.Likes})</span>
                 </button>
 
                 {/* Favorite Button */}
-                <button className="cursor-pointer flex items-center justify-center gap-2 bg-yellow-100 text-yellow-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full">
+                <button className="cursor-pointer flex items-center justify-center gap-2 bg-yellow-100 text-yellow-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full ">
                   <Star className="w-5 h-5" />
                   <span>Favorite</span>
                 </button>
 
                 {/* Share Button */}
-                <button className=" cursor-pointer flex items-center justify-center gap-2 bg-gray-100 text-gray-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full">
+                <button className=" cursor-pointer flex items-center justify-center gap-2 bg-gray-100 text-gray-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full ">
                   <ExternalLink className="w-5 h-5" />
                   <span>Share</span>
                 </button>
@@ -192,7 +192,7 @@ function RecipeDetailPage() {
 
             <Accordion sections={recipe_details.descriptionSections} />
 
-            <div className="grid grid- md:grid-cols-2 gap-10 mb-8 mt-15">
+            <div className="grid grid- md:grid-cols-2 gap-10 mb-8 mt-15 dark  dark:bg-[#fafafa] dark:text-gray-600 dark:rounded-2xl">
               <div>
                 <div className=" grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-6">
                   {/* Time Card */}
@@ -250,7 +250,7 @@ function RecipeDetailPage() {
             </div>
 
             {/* Comments Box */}
-            <div className=" bg-[#fafafa] mt-14 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
+            <div className=" bg-[#fafafa] mt-14 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)] mb-8">
               <h2 className="font-bold text-3xl mb-10  text-gray-800">
                 Comments ({recipe_details.totalComments})
               </h2>

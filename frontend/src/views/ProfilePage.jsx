@@ -54,7 +54,7 @@ export default function Profile() {
   const [activeTab, setActiveTab] = useState("myRecipes");
 
   return (
-    <div className="min-h-screen  bg-[#fafafa] m-4 text-[#1a1a1a]">
+    <div className="min-h-screen  bg-[#fafafa] m-4 text-[#1a1a1a] dark:bg-[#1a1a1a] dark:text-[#fafafa]">
       <Link to="/recipe-details">
         <div className="flex m-4 p-3 space-x-3">
           <ArrowLeft className="cursor-pointer" />
@@ -83,11 +83,11 @@ export default function Profile() {
             <div className="flex items-center space-x-7 mt-8">
               <div>
                 <p className="font-bold text-xl">{profile.recipesCount}</p>
-                <p className="text-[#1a1a1a] text-xl">Recipes</p>
+                <p className="text-[#1a1a1a] dark:text-[#fafafa] text-xl">Recipes</p>
               </div>
               <div>
                 <p className="font-bold text-xl">{profile.totalLikes}K</p>
-                <p className="text-[#1a1a1a] text-xl">Total Likes</p>
+                <p className="text-[#1a1a1a] dark:text-[#fafafa] text-xl">Total Likes</p>
               </div>
             </div>
 
@@ -98,7 +98,7 @@ export default function Profile() {
           </div>
         </div>
 
-        <div className="flex space-x-20 mt-4 text-[#1a1a1a] border-b-1 border-b-gray-600">
+        <div className="flex space-x-20 mt-4 text-[#1a1a1a] dark:text-[#fafafa] border-b-1 border-b-gray-600">
           {/* My Recipes Tab */}
           <button
             onClick={() => setActiveTab("myRecipes")}
@@ -124,7 +124,7 @@ export default function Profile() {
           </button>
         </div>
 
-        <div className="m-10 mt-20">
+        <div className="m-10 mt-20 dark:text-[#fafafa] ">
           <RecipesList recipes={rData} />
         </div>
       </div>
