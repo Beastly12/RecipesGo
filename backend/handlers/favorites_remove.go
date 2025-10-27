@@ -5,21 +5,13 @@ import (
 	"backend/models"
 	"backend/utils"
 	"context"
-	"encoding/json"
-	"log"
 
 	"github.com/aws/aws-lambda-go/events"
 )
 
 func HandleRemoveFavorite(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-
-	// extract recipe id from request body
-	var reqBody favReqBody
-	if err := json.Unmarshal([]byte(req.Body), &reqBody); err != nil {
-		log.Println("failed to unmarshal remove favorite request")
-		return models.InvalidRequestErrorResponse(""), nil
-	}
-	if reqBody.RecipeId == "" {
+	doomedRecipeId := req.PathParameters["id"]
+	if doomedRecipeId == "" {
 		return models.InvalidRequestErrorResponse("No recipeId provided in request body"), nil
 	}
 
@@ -29,12 +21,8 @@ func HandleRemoveFavorite(ctx context.Context, req *events.APIGatewayProxyReques
 		return models.UnauthorizedErrorResponse("You have to be logged in to do this"), nil
 	}
 
-	dbHelper := helpers.NewDynamoHelper(
-		ctx,
-	)
-
 	// remove favorite from db
-	err := dbHelper.RemoveFromFavorite(userid, reqBody.RecipeId)
+	err := helpers.NewFavoritesHelper(ctx).Remove(userid, doomedRecipeId)
 	if err != nil {
 		return models.ServerSideErrorResponse("", err), nil
 	}
