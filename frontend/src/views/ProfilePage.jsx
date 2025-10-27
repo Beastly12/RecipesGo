@@ -85,14 +85,12 @@ export default function Profile() {
                 <p className="font-bold">Total Likes</p>
                 <p>{profile.totalLikes}</p>
               </div>
-              
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="m-10 mt-20">
-        <RecipesList recipes={rData} />
+        <div className="m-10 mt-20">
+          <RecipesList recipes={rData} />
+        </div>
       </div>
     </div>
   );
