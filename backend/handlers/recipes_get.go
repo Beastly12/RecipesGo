@@ -9,7 +9,7 @@ import (
 )
 
 func HandleGetRecipes(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	lastEvalKey, hasLastId := req.QueryStringParameters["last"]
+	lastEvalKey, hasLastId := req.QueryStringParameters["next"]
 	if !hasLastId {
 		lastEvalKey = ""
 	}

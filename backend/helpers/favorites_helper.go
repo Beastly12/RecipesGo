@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"backend"
 	"backend/models"
 	"backend/utils"
 	"context"
@@ -25,7 +26,7 @@ func (this *favoritesHelper) Add(favorite *models.Favorite) error {
 	return NewHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(favorite))
 }
 
-func (this *favoritesHelper) GetAll(userId string) (*[]models.Recipe, error) {
+func (this *favoritesHelper) GetAll(userId string, lastRecipeId string) (*[]models.Recipe, error) {
 	input := &dynamodb.QueryInput{
 		TableName:              &utils.GetDependencies().MainTableName,
 		KeyConditionExpression: aws.String("pk = :pk AND begins_with(sk, :sk)"),
@@ -33,6 +34,11 @@ func (this *favoritesHelper) GetAll(userId string) (*[]models.Recipe, error) {
 			":pk": &types.AttributeValueMemberS{Value: models.FavoritePkPrefix + userId},
 			":sk": &types.AttributeValueMemberS{Value: models.FavoriteSkPrefix},
 		},
+		Limit: aws.Int32(backend.MAX_RECIPES_DUMP),
+	}
+
+	if lastRecipeId != "" {
+		input.ExclusiveStartKey = *models.FavoriteKey(userId, lastRecipeId)
 	}
 
 	items, err := utils.GetDependencies().DbClient.Query(this.Ctx, input)

@@ -9,8 +9,8 @@ To create a new recipe:
 
 To get all recipes:
 	GET /recipes
-	To get next page:
-		GET /recipes?last={id of last recipe received}
+	To get next batch:
+		GET /recipes?next={id of last recipe returned}
 
 To delete a recipe:
 	DELETE /recipes/{recipe_id}
@@ -25,6 +25,8 @@ To remove recipe from favorite:
 	
 To get all favorites recipes:
 	GET /favorites
+	To get next batch:
+		GET /favorites?next={id of last favorite returned}
 
 To get url to post pictures to:
 	GET /upload-url
