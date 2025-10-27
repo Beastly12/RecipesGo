@@ -3,7 +3,6 @@ package handlers
 import (
 	"backend/helpers"
 	"backend/models"
-	"backend/utils"
 	"context"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -11,11 +10,7 @@ import (
 
 // ADDS NEW USER TO DB AFTER REGISTRATION
 
-type PostSignupDependencies struct {
-	Dependencies utils.DynamoAndCloudfront
-}
-
-func (this *PostSignupDependencies) HandlePostSignup(ctx context.Context, event *events.CognitoEventUserPoolsPostConfirmation) (interface{}, error) {
+func HandlePostSignup(ctx context.Context, event *events.CognitoEventUserPoolsPostConfirmation) (interface{}, error) {
 
 	// only continue if triggered by sign up complete
 	if event.TriggerSource != "PostConfirmation_ConfirmSignUp" {
@@ -34,7 +29,6 @@ func (this *PostSignupDependencies) HandlePostSignup(ctx context.Context, event 
 
 	// add new user to db
 	dynamoHelper := helpers.NewDynamoHelper(
-		&this.Dependencies,
 		ctx,
 	)
 

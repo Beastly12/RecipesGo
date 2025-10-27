@@ -11,11 +11,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-type RemoveFavoriteDependencies struct {
-	Dependencies utils.DynamoAndCloudfront
-}
-
-func (this *RemoveFavoriteDependencies) HandleRemoveFavorite(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func HandleRemoveFavorite(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	// extract recipe id from request body
 	var reqBody favReqBody
@@ -34,7 +30,6 @@ func (this *RemoveFavoriteDependencies) HandleRemoveFavorite(ctx context.Context
 	}
 
 	dbHelper := helpers.NewDynamoHelper(
-		&this.Dependencies,
 		ctx,
 	)
 

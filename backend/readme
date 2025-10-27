@@ -1,0 +1,27 @@
+To create a new recipe:
+  POST /recipes
+	JSON:
+		name: string
+		imageKey: string
+		description: string
+		ingredients: []string
+		preparationTime: int
+
+To get all recipes:
+	GET /recipes
+
+To add recipe to favorite:
+	POST /favorites
+	JSON:
+		recipeId: string
+
+To remove recipe from favorite:
+	DELETE /favorites
+	JSON:
+		recipeId: string
+	
+To get all favorites recipes:
+	GET /favorites
+
+To get url to post pictures to:
+	GET /upload-url
