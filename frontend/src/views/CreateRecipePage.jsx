@@ -1,11 +1,12 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const CreateRecipePage = () => {
 
     return (
         <div className="bg-[#fafafa] text-[#1a1a1a] min-h-screen font-sans ">
             <nav className="bg-white px-10 py-4 shadow-sm sticky top-0 z-50 flex items-center justify-between">
-                <div className="text-xl font-semibold ">← Cancel</div>
+                <Link to={"/"} className="text-xl font-semibold ">← Cancel</Link>
 
                 <div className="flex items-center gap-4">
                     {/* <button className="bg-white border text-[#495057] border-[#e9ecef]  hover:bg-[#f8f9fa]  px-6 py-3 rounded-xl font-semibold transition transform">

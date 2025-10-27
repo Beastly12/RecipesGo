@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import {Link} from "react-router-dom"
 import {
   ArrowLeft,
   ExternalLink,
@@ -131,9 +132,9 @@ function RecipeDetailPage() {
     <div className="bg-[#fafafa] min-h-screen m-4 text-[#1a1a1a]">
       <div className=" flex flex-col justify-items-center">
         {/* Back Button */}
-        <button className="flex items-center space-x-5 text-[#1a1a1a] p-2 hover:underline mb-4">
+        <Link to={"/"} className="flex items-center space-x-5 text-[#1a1a1a] p-2 hover:underline mb-4">
           <ArrowLeft /> <span className="text-2xl">Back</span>
-        </button>
+        </Link>
 
         {/* Image Card */}
         <div className="rounded-4xl w-full mt-8 mb-8 shadow-[0_12px_24px_rgba(0,0,0,0.12)]">

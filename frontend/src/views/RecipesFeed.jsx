@@ -4,6 +4,7 @@ import RecipesList from "../components/RecipeList";
 import { Sun, Moon } from "lucide-react";
 import useDarkMode from "../hooks/useDarkMode"
 import HeroSection from "../components/HeroSection";
+import { Link } from "react-router-dom";
 
 export default function RecipeFeed() {
   var fData = [
@@ -97,9 +98,9 @@ export default function RecipeFeed() {
           <span onClick={() => setTheme(colorTheme)}>
             {colorTheme === "dark" ? <Sun /> : <Moon />}
           </span>
-          <button className="bg-[#ff6b6b] text-white hover:bg-[#ff5252] hover:shadow-[#ff5252]  px-6 py-2 rounded-full font-semibold transition transform hover:-translate-y-0.5 shadow hover:shadow-lg">
+          <Link to={'/createRecipe'} className="bg-[#ff6b6b] text-white hover:bg-[#ff5252] hover:shadow-[#ff5252]  px-6 py-2 rounded-full font-semibold transition transform hover:-translate-y-0.5 shadow hover:shadow-lg">
             + Create Recipe
-          </button>
+          </Link>
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 cursor-pointer hover:scale-105 transition-transform"></div>
         </div>
       </nav>
