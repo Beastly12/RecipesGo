@@ -129,7 +129,7 @@ function RecipeDetailPage() {
   const hasMore = visibleComment < recipe_details.comments.length;
 
   return (
-    <div className="bg-[#fafafa] min-h-screen m-4 text-[#1a1a1a]">
+    <div className="bg-[#fafafa] dark:bg-amber-700 min-h-screen m-4 text-[#1a1a1a]">
       <div className=" flex flex-col justify-items-center">
         {/* Back Button */}
         <Link
@@ -139,13 +139,14 @@ function RecipeDetailPage() {
           <ArrowLeft /> <span className="text-2xl">Back</span>
         </Link>
       </div>
+
       <div className="max-w-[900px] my-[40px] mx-[auto] px-[40px]">
         <div className=" flex flex-col justify-items-center">
           <div>
             {/* Image Card */}
             <div className="rounded-4xl w-full mt-8 mb-8 shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
               <img
-                className="w-full h-96 object-cover rounded-x"
+                className="w-full h-96 object-cover rounded-3xl"
                 src={recipe_details.image}
                 alt="Recipe Image"
               />

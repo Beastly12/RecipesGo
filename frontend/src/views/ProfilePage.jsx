@@ -74,7 +74,7 @@ export default function Profile() {
             />
           </div>
 
-          <div className="md:space-y-10  sm:space-x-2 m-6 p-2 border-b-1 border-b-gray-600 ">
+          <div className="md:space-y-10  sm:space-x-2 m-6 p- ">
             <h3 className="font-bold text-5xl">{profile.name}</h3>
             <p className="text-[16px] sm:text-[12px] md:text-[16px] mt-4 items-center">
               {profile.bio}
@@ -95,33 +95,33 @@ export default function Profile() {
               <Settings size={16} strokeWidth={1.75} />
               Settings
             </button>
-
-            <div className="flex space-x-20 mt-4 text-[#1a1a1a]">
-              {/* My Recipes Tab */}
-              <button
-                onClick={() => setActiveTab("myRecipes")}
-                className={`cursor-pointer pb-2 border-b-2 ${
-                  activeTab === "myRecipes"
-                    ? "border-b-[#ff6b6b]"
-                    : "border-b-transparent hover:border-b-gray-600"
-                }`}
-              >
-                My Recipes
-              </button>
-
-              {/* Favorites Tab */}
-              <button
-                onClick={() => setActiveTab("favorites")}
-                className={`cursor-pointer pb-2 border-b-2 ${
-                  activeTab === "favorites"
-                    ? "border-b-[#ff6b6b]"
-                    : "border-b-transparent hover:border-b-gray-600"
-                }`}
-              >
-                Favorites
-              </button>
-            </div>
           </div>
+        </div>
+
+        <div className="flex space-x-20 mt-4 text-[#1a1a1a] border-b-1 border-b-gray-600">
+          {/* My Recipes Tab */}
+          <button
+            onClick={() => setActiveTab("myRecipes")}
+            className={`cursor-pointer pb-2 border-b-2 ${
+              activeTab === "myRecipes"
+                ? "border-b-[#ff6b6b] border-b-3"
+                : "border-b-transparent hover:border-b-gray-600"
+            }`}
+          >
+            My Recipes
+          </button>
+
+          {/* Favorites Tab */}
+          <button
+            onClick={() => setActiveTab("favorites")}
+            className={`cursor-pointer pb-2 border-b-2 ${
+              activeTab === "favorites"
+                ? "border-b-[#ff6b6b] border-b-3"
+                : "border-b-transparent hover:border-b-gray-600"
+            }`}
+          >
+            Favorites
+          </button>
         </div>
 
         <div className="m-10 mt-20">
