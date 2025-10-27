@@ -4,6 +4,7 @@ import RecipesList from "../components/RecipeList";
 import { Sun, Moon } from "lucide-react";
 import useDarkMode from "../hooks/useDarkMode"
 import HeroSection from "../components/HeroSection";
+import { Link } from "react-router-dom";
 
 export default function RecipeFeed() {
   var fData = [
@@ -80,7 +81,7 @@ export default function RecipeFeed() {
   return (
 <div className="bg-[#fafafa] dark:bg-[#1a1a1a] text-[#1a1a1a] dark:text-[#fafafa] min-h-screen font-sans transition-colors duration-300">
       <nav className="bg-white px-10 py-4 shadow-sm sticky top-0 z-50 flex items-center justify-between">
-        <div className="text-2xl font-bold text-[#ff6b6b]">P Prepify</div>
+        <Link to={"/"} className="text-2xl font-bold text-[#ff6b6b]">P Prepify</Link>
 
         <div className="flex-1 max-w-xl mx-10 relative">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
