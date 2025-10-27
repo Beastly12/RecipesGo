@@ -130,19 +130,12 @@ function RecipeDetailPage() {
 
   return (
     <div className="bg-[#fafafa] min-h-screen m-4 text-[#1a1a1a]">
-<<<<<<< HEAD
       <div className=" flex flex-col justify-items-center">
         {/* Back Button */}
         <Link to={"/"} className="flex items-center space-x-5 text-[#1a1a1a] p-2 hover:underline mb-4">
           <ArrowLeft /> <span className="text-2xl">Back</span>
         </Link>
-=======
-      {/* Back Button */}
-      <button className="flex items-center space-x-5 text-[#1a1a1a] p-2 hover:underline mb-4">
-        <ArrowLeft /> <span className="text-2xl">Back</span>
-      </button>
->>>>>>> upstream
-
+      </div>
       <div className="max-w-[900px] my-[40px] mx-[auto] px-[40px]">
         <div className=" flex flex-col justify-items-center">
           <div>
