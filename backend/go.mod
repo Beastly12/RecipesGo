@@ -2,15 +2,18 @@ module backend
 
 go 1.24.4
 
-require github.com/aws/aws-sdk-go-v2/service/dynamodb v1.50.5
+require (
+	github.com/aws/aws-sdk-go-v2 v1.39.4
+	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.57.9
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.50.5
+)
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.39.2 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.1 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.18.16 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.9 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.9 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.9 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.11 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.11 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.3 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.9 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.31.0 // indirect
@@ -26,9 +29,10 @@ require (
 
 require (
 	github.com/aws/aws-lambda-go v1.49.0
+	github.com/aws/aws-sdk-go v1.55.8
 	github.com/aws/aws-sdk-go-v2/config v1.31.12
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.20.13
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.88.3
-	github.com/aws/smithy-go v1.23.0 // indirect
+	github.com/aws/smithy-go v1.23.1 // indirect
 	github.com/google/uuid v1.6.0
 )

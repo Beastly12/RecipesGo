@@ -12,16 +12,12 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-type GetUploadUrlDependencies struct {
-	Dependencies utils.ObjectStorage
-}
-
 type response struct {
 	UploadUrl string `json:"uploadUrl"`
 	ImageKey  string `json:"imageKey"`
 }
 
-func (this *GetUploadUrlDependencies) HandleGetUploadUrl(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func HandleGetUploadUrl(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	userid := utils.GetAuthUserId(req)
 	if userid == "" {
 		return models.InvalidRequestErrorResponse("User id not found"), nil
@@ -38,9 +34,9 @@ func (this *GetUploadUrlDependencies) HandleGetUploadUrl(ctx context.Context, re
 	imageKey := utils.GenerateImageKey(userid, fileExtension)
 
 	// presign
-	presignClient := s3.NewPresignClient(this.Dependencies.S3Client)
+	presignClient := s3.NewPresignClient(utils.GetDependencies().S3Client)
 	presignedReq, err := presignClient.PresignPutObject(ctx, &s3.PutObjectInput{
-		Bucket:      &this.Dependencies.BucketName,
+		Bucket:      &utils.GetDependencies().BucketName,
 		Key:         &imageKey,
 		ContentType: aws.String(utils.GetContentType(fileExtension)),
 	}, func(po *s3.PresignOptions) {

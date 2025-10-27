@@ -7,16 +7,10 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-var (
-	starter handlers.GetUploadUrlDependencies
-)
-
 func init() {
-	starter = handlers.GetUploadUrlDependencies{
-		Dependencies: utils.GetObjectStorageInit(),
-	}
+	utils.InitHandlerDependencies(utils.WithDatabase())
 }
 
 func main() {
-	lambda.Start(starter.HandleGetUploadUrl)
+	lambda.Start(handlers.HandleGetUploadUrl)
 }

@@ -7,16 +7,10 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-var (
-	starter handlers.GetRecipesDependencies
-)
-
 func init() {
-	starter = handlers.GetRecipesDependencies{
-		Dependencies: utils.GetDynamodbAndCloudfrontInit(),
-	}
+	utils.InitHandlerDependencies(utils.WithDatabase())
 }
 
 func main() {
-	lambda.Start(starter.HandleGetRecipes)
+	lambda.Start(handlers.HandleGetRecipes)
 }

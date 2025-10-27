@@ -2,18 +2,15 @@ package main
 
 import (
 	"backend/handlers"
+	"backend/utils"
 
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-var (
-	starter handlers.PreSignupDependencies
-)
-
 func init() {
-	starter = handlers.PreSignupDependencies{}
+	utils.InitHandlerDependencies(utils.WithCognitoClientOnly())
 }
 
 func main() {
-	lambda.Start(starter.HandleAddUser)
+	lambda.Start(handlers.HandleAddUser)
 }

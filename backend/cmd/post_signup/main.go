@@ -7,16 +7,10 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-var (
-	starter handlers.PostSignupDependencies
-)
-
 func init() {
-	starter = handlers.PostSignupDependencies{
-		Dependencies: utils.GetDynamodbAndCloudfrontInit(),
-	}
+	utils.InitHandlerDependencies(utils.WithDatabase())
 }
 
 func main() {
-	lambda.Start(starter.HandlePostSignup)
+	lambda.Start(handlers.HandlePostSignup)
 }

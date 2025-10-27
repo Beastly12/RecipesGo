@@ -9,11 +9,7 @@ import (
 
 // VALIDATES USER SIGN UP DETAILS THEN AUTO VERIFIES USER
 
-type PreSignupDependencies struct {
-}
-
-func (deps *PreSignupDependencies) HandleAddUser(ctx context.Context, event *events.CognitoEventUserPoolsPreSignup) (interface{}, error) {
-
+func HandleAddUser(ctx context.Context, event *events.CognitoEventUserPoolsPreSignup) (interface{}, error) {
 	nickname, ok := event.Request.UserAttributes["nickname"]
 
 	if !ok || nickname == "" {

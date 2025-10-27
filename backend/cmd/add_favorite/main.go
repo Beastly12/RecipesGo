@@ -7,14 +7,10 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-var starter handlers.AddFavoriteDependencies
-
 func init() {
-	starter = handlers.AddFavoriteDependencies{
-		Dependencies: utils.GetDynamodbAndCloudfrontInit(),
-	}
+	utils.InitHandlerDependencies(utils.WithDatabase())
 }
 
 func main() {
-	lambda.Start(starter.HandleAddToFavorite)
+	lambda.Start(handlers.HandleAddToFavorite)
 }

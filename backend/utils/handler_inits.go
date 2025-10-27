@@ -5,72 +5,96 @@ import (
 	"log"
 	"os"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-type DynamoAndCloudfront struct {
-	TableName            string
-	CloudfrontDomainName string
+const (
+	MAIN_TABLE             = "MAIN_TABLE"
+	USER_POOL_ID           = "USER_POOL_ID"
+	CLOUDFRONT_DOMAIN_NAME = "CLOUDFRONT_DOMAIN"
+	MEDIA_BUCKET           = "MEDIA_BUCKET"
+)
+
+type handlerDependenciesType struct {
 	DbClient             *dynamodb.Client
-}
-
-type ObjectStorage struct {
-	BucketName           string
-	CloudfrontDomainName string
+	CognitoClient        *cognitoidentityprovider.Client
 	S3Client             *s3.Client
+	BucketName           string
+	MainTableName        string
+	UserPoolId           string
+	CloudFrontDomainName string
 }
 
-func GetDynamodbAndCloudfrontInit() DynamoAndCloudfront {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
-	if err != nil {
-		log.Fatalf("unable to load SDK config: %v", err)
-	}
+var handlerDependencies handlerDependenciesType
 
-	// load dynamodb stuff
-	dbClient := dynamodb.NewFromConfig(cfg)
-
-	tableName := os.Getenv("MAIN_TABLE")
-	if tableName == "" {
-		panic("MAIN_TABLE environment variable not set")
-	}
-
-	cloudfrontDomain := os.Getenv("CLOUDFRONT_DOMAIN")
-	if cloudfrontDomain == "" {
-		panic("CLOUDFRONT_DOMAIN environment var not set!")
-	}
-
-	return DynamoAndCloudfront{
-		TableName:            tableName,
-		CloudfrontDomainName: cloudfrontDomain,
-		DbClient:             dbClient,
-	}
-
+func GetDependencies() *handlerDependenciesType {
+	return &handlerDependencies
 }
 
-func GetObjectStorageInit() ObjectStorage {
+type option func(*handlerDependenciesType, aws.Config)
+
+func getConfig() aws.Config {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
-		log.Fatalf("unable to load SDK config: %v", err)
+		log.Panicf("Unable to load sdk config, reason: %v", err)
 	}
 
-	// load dynamodb stuff
-	s3Client := s3.NewFromConfig(cfg)
+	return cfg
+}
 
-	bucketName := os.Getenv("RECIPE_IMAGES_BUCKET")
-	if bucketName == "" {
-		panic("BUCKET_NAME environment var not set!")
+func getEnvironmentVariable(key string) string {
+	val := os.Getenv(key)
+	if val == "" {
+		log.Panicf("%v environment variable not set!", key)
 	}
 
-	cloudfrontDomain := os.Getenv("CLOUDFRONT_DOMAIN")
-	if cloudfrontDomain == "" {
-		panic("CLOUDFRONT_DOMAIN environment var not set!")
-	}
+	return val
+}
 
-	return ObjectStorage{
-		BucketName:           bucketName,
-		CloudfrontDomainName: cloudfrontDomain,
-		S3Client:             s3Client,
+func WithDatabase() option {
+	return func(hd *handlerDependenciesType, c aws.Config) {
+		hd.MainTableName = getEnvironmentVariable(MAIN_TABLE)
+		hd.DbClient = dynamodb.NewFromConfig(c)
+	}
+}
+
+func WithCognito() option {
+	return func(hd *handlerDependenciesType, c aws.Config) {
+		hd.CognitoClient = cognitoidentityprovider.NewFromConfig(c)
+		hd.UserPoolId = getEnvironmentVariable(USER_POOL_ID)
+	}
+}
+
+func WithCognitoClientOnly() option {
+	// for sam functions triggered by cognito actions that cant have user pool id in environment var
+	return func(hd *handlerDependenciesType, c aws.Config) {
+		hd.CognitoClient = cognitoidentityprovider.NewFromConfig(c)
+	}
+}
+
+func LateInitUserPoolId(userPoolId string) {
+	// get the user pool id from the event parameter after function is triggered
+	handlerDependencies.UserPoolId = userPoolId
+}
+
+func WithBucket() option {
+	return func(hd *handlerDependenciesType, c aws.Config) {
+		hd.BucketName = getEnvironmentVariable(MEDIA_BUCKET)
+		hd.S3Client = s3.NewFromConfig(c)
+	}
+}
+
+func InitHandlerDependencies(opts ...option) {
+	cfg := getConfig()
+
+	// init cloudfront always
+	handlerDependencies.CloudFrontDomainName = getEnvironmentVariable(CLOUDFRONT_DOMAIN_NAME)
+
+	for _, opt := range opts {
+		opt(&handlerDependencies, cfg)
 	}
 }
