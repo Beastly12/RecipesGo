@@ -137,6 +137,7 @@ function RecipeDetailPage() {
       <div className="max-w-[900px] my-[40px] mx-[auto] px-[40px]">
         <div className=" flex flex-col justify-items-center">
           <div>
+            
             {/* Image Card */}
             <div className="rounded-4xl w-full mt-8 mb-8 shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
               <img
