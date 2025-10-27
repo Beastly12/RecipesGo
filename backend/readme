@@ -10,15 +10,16 @@ To create a new recipe:
 To get all recipes:
 	GET /recipes
 
+To delete a recipe:
+	DELETE /recipes/{recipe_id}
+
 To add recipe to favorite:
 	POST /favorites
 	JSON:
 		recipeId: string
 
 To remove recipe from favorite:
-	DELETE /favorites
-	JSON:
-		recipeId: string
+	DELETE /favorites/{recipe_id}
 	
 To get all favorites recipes:
 	GET /favorites

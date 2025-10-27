@@ -15,9 +15,7 @@ func HandleGetFavorite(ctx context.Context, req *events.APIGatewayProxyRequest) 
 		return models.UnauthorizedErrorResponse("You need to be logged in to view your favorites"), nil
 	}
 
-	dbHelper := helpers.NewDynamoHelper(ctx)
-
-	favs, err := dbHelper.GetAllFavorites(userid)
+	favs, err := helpers.NewFavoritesHelper(ctx).GetAll(userid)
 	if err != nil {
 		return models.ServerSideErrorResponse("", err), nil
 	}
