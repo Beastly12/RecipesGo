@@ -60,35 +60,37 @@ export default function Profile() {
         </button>
       </div>
 
-      <div className="w-full bg-gray-50 border-b-2 border-b-gray-500 rounded-2xl mb-6 flex space-x-2">
-        <div className="mt-8 mb-8 p-8 mr-5">
-          <img
-            className=" rounded-full border-1 object-cover w-50 h-50 sm:w-120 sm:h-42 md:w-50 md:h-50"
-            src={profile.img}
-            alt="Profile Image"
-          />
-        </div>
-
-        <div className="space-y-4 m-6 p-2">
-          <h3 className="font-bold text-3xl">{profile.name}</h3>
-          <p className="text-[16px] sm:text-[12px] md:text-[16px] md:break-all">{profile.bio}</p>
-
-          <div className="flex items-center space-x-4 mt-8">
-            <div>
-              <p className="font-bold">Recipes</p>
-              <p>{profile.recipesCount}</p>
-            </div>
-            <div>
-              <p className="font-bold">Total Likes</p>
-              <p>{profile.totalLikes}</p>
-            </div>
+      <div className="max-w-[900px] my-[40px] mx-[auto] px-[40px]">
+        <div className="w-full bg-gray-50 border-b-2 border-b-gray-500 rounded-2xl mb-6 flex space-x-2">
+          <div className="mt-8 mb-8 p-8 mr-5">
+            <img
+              className=" rounded-full border-1 object-cover w-50 h-50 sm:w-120 sm:h-42 md:w-50 md:h-50"
+              src={profile.img}
+              alt="Profile Image"
+            />
           </div>
 
-        </div>
-      </div>
+          <div className="space-y-4 m-6 p-2">
+            <h3 className="font-bold text-3xl">{profile.name}</h3>
+            <p className="text-[16px] sm:text-[12px] md:text-[16px] md:break-all">
+              {profile.bio}
+            </p>
 
-      <div className="m-10 mt-20">
-        <RecipesList recipes={rData} />
+            <div className="flex items-center space-x-4 mt-8">
+              <div>
+                <p className="font-bold text-[#1a1a1a]">Recipes</p>
+                <p>{profile.recipesCount}</p>
+              </div>
+              <div>
+                <p className="font-bold">Total Likes</p>
+                <p>{profile.totalLikes}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="m-10 mt-20">
+          <RecipesList recipes={rData} />
+        </div>
       </div>
     </div>
   );
