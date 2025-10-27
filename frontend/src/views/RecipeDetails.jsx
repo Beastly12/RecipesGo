@@ -198,7 +198,6 @@ function RecipeDetailPage() {
             <div className="grid grid- md:grid-cols-2 gap-10 mb-8 mt-15 dark  dark:bg-[#fafafa] dark:text-gray-600 dark:rounded-2xl">
               <div>
                 <div className=" grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-6">
-                  
                   {/* Time Card */}
                   <div className="flex flex-col items-center justify-center bg-gray-50 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
                     <div>

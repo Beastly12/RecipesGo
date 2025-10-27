@@ -83,11 +83,15 @@ export default function Profile() {
             <div className="flex items-center space-x-7 mt-8">
               <div>
                 <p className="font-bold text-xl">{profile.recipesCount}</p>
-                <p className="text-[#1a1a1a] dark:text-[#fafafa] text-xl">Recipes</p>
+                <p className="text-[#1a1a1a] dark:text-[#fafafa] text-xl">
+                  Recipes
+                </p>
               </div>
               <div>
                 <p className="font-bold text-xl">{profile.totalLikes}K</p>
-                <p className="text-[#1a1a1a] dark:text-[#fafafa] text-xl">Total Likes</p>
+                <p className="text-[#1a1a1a] dark:text-[#fafafa] text-xl">
+                  Total Likes
+                </p>
               </div>
             </div>
 
@@ -98,8 +102,7 @@ export default function Profile() {
           </div>
         </div>
 
-        <div className="flex space-x-20 mt-4 text-[#1a1a1a] dark:text-[#fafafa] border-b-1 border-b-gray-600">
-          {/* My Recipes Tab */}
+        <div className="flex space-x-20 mt-4 text-[#1a1a1a] border-b-1 border-b-gray-600">
           <button
             onClick={() => setActiveTab("myRecipes")}
             className={`cursor-pointer pb-2 border-b-2 ${
@@ -111,7 +114,6 @@ export default function Profile() {
             My Recipes
           </button>
 
-          {/* Favorites Tab */}
           <button
             onClick={() => setActiveTab("favorites")}
             className={`cursor-pointer pb-2 border-b-2 ${
@@ -124,7 +126,7 @@ export default function Profile() {
           </button>
         </div>
 
-        <div className="m-10 mt-20 dark:text-[#fafafa] ">
+        <div className="m-10 mt-20">
           <RecipesList recipes={rData} />
         </div>
       </div>

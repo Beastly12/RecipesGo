@@ -1,6 +1,6 @@
 import React from "react";
 
-const InstructionBox = ({instructions}) => {
+const InstructionBox = ({ instructions }) => {
   return (
     <div className="p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)] mt-6 bg-white">
       <h2 className="font-bold text-4xl mb-4">Instructions</h2>

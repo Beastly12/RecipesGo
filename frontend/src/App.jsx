@@ -1,5 +1,5 @@
 import React from "react";
-import "./App.css"
+import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import RecipeDetailPage from "./views/RecipeDetails";
 import AuthPage from "./views/AuthPage";
@@ -14,11 +14,6 @@ export default function App() {
       <Route path="/Auth" element={<AuthPage />} />
       <Route path="/" element={<RecipeFeed />} />
       <Route path="/profile" element={<Profile />} />
-
-      {/* <Route path="/" element={<h1>Home Page</h1>} /> */}
-      {/* <Route path="/login" element={<LoginSignUp />} /> */}
-      {/* <Route path="/profile" element={<Profile />} /> */}
-      {/* <Route path="/recipe-details" element={<RecipeDetailPage />} /> */}
       <Route path="/createRecipe" element={<CreateRecipePage />} />
     </Routes>
   );
