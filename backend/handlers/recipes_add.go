@@ -11,10 +11,6 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-type AddRecipeDependencies struct {
-	Dependencies utils.DynamoAndCloudfront
-}
-
 type jsonBody struct {
 	Name            string   `json:"name"`
 	ImageUrl        string   `json:"imageUrl"`
@@ -24,7 +20,7 @@ type jsonBody struct {
 }
 
 // adds new recipe to db
-func (this *AddRecipeDependencies) HandleAddRecipe(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func HandleAddRecipe(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	// converts json body into recipe
 	var recipe jsonBody
 	if err := json.Unmarshal([]byte(req.Body), &recipe); err != nil {
@@ -42,7 +38,6 @@ func (this *AddRecipeDependencies) HandleAddRecipe(ctx context.Context, req *eve
 	}
 
 	dbHelper := helpers.NewDynamoHelper(
-		&this.Dependencies,
 		ctx,
 	)
 

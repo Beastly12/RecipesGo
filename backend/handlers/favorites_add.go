@@ -11,15 +11,11 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-type AddFavoriteDependencies struct {
-	Dependencies utils.DynamoAndCloudfront
-}
-
 type favReqBody struct {
 	RecipeId string `json:"recipeId"`
 }
 
-func (this *AddFavoriteDependencies) HandleAddToFavorite(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func HandleAddToFavorite(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	// extract recipe id from body
 	var payload favReqBody
@@ -37,7 +33,7 @@ func (this *AddFavoriteDependencies) HandleAddToFavorite(ctx context.Context, re
 		return models.UnauthorizedErrorResponse("You need to be logged in to do this"), nil
 	}
 
-	dbHelper := helpers.NewDynamoHelper(&this.Dependencies, ctx)
+	dbHelper := helpers.NewDynamoHelper(ctx)
 
 	// get full details of recipe parsed
 	recipe, err := dbHelper.GetRecipe(payload.RecipeId)
