@@ -276,7 +276,7 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: !Ref MainTable
       Events:
-        AddFavorites:
+        AddRecipes:
           Type: HttpApi
           Properties:
             Path: /recipes
@@ -284,11 +284,19 @@ Resources:
             ApiId: !Ref RecipeApi
             Auth:
               Authorizer: CognitoAuthorizer
-        GetFavorites:
+        GetRecipes:
           Type: HttpApi
           Properties:
             Path: /recipes
             Method: GET
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+        DeleteRecipe:
+          Type: HttpApi
+          Properties:
+            Path: /recipes/{id}
+            Method: DELETE
             ApiId: !Ref RecipeApi
             Auth:
               Authorizer: CognitoAuthorizer

@@ -21,10 +21,12 @@ func NewRecipeHelper(ctx context.Context) *recipeHelper {
 	}
 }
 
+// adds recipe to db
 func (this *recipeHelper) Add(recipe *models.Recipe) error {
 	return NewHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(recipe))
 }
 
+// get all recipes in db
 func (this *recipeHelper) GetAll() (*[]models.Recipe, error) {
 	input := &dynamodb.QueryInput{
 		TableName:              &utils.GetDependencies().MainTableName,
@@ -50,6 +52,7 @@ func (this *recipeHelper) GetAll() (*[]models.Recipe, error) {
 	return recipes, nil
 }
 
+// get specific recipe from db
 func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 	input := &dynamodb.GetItemInput{
 		Key:       *models.RecipeKey(recipeId),
@@ -74,4 +77,21 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 
 	recipe := (*recipes)[0]
 	return &recipe, nil
+}
+
+// deletes recipe from db
+func (r *recipeHelper) Delete(recipeId string) error {
+	input := &dynamodb.DeleteItemInput{
+		Key:       *models.RecipeKey(recipeId),
+		TableName: &utils.GetDependencies().MainTableName,
+	}
+
+	_, err := utils.GetDependencies().DbClient.DeleteItem(r.Ctx, input)
+
+	if err != nil {
+		log.Println("An error occurred while trying to delete recipe")
+		return err
+	}
+
+	return nil
 }
