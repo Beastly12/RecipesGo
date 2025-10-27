@@ -29,12 +29,8 @@ func HandleRemoveFavorite(ctx context.Context, req *events.APIGatewayProxyReques
 		return models.UnauthorizedErrorResponse("You have to be logged in to do this"), nil
 	}
 
-	dbHelper := helpers.NewDynamoHelper(
-		ctx,
-	)
-
 	// remove favorite from db
-	err := dbHelper.RemoveFromFavorite(userid, reqBody.RecipeId)
+	err := helpers.NewFavoritesHelper(ctx).Remove(userid, reqBody.RecipeId)
 	if err != nil {
 		return models.ServerSideErrorResponse("", err), nil
 	}

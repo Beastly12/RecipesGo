@@ -37,17 +37,13 @@ func HandleAddRecipe(ctx context.Context, req *events.APIGatewayProxyRequest) (e
 		return models.InvalidRequestErrorResponse("Recipe must have at least 1 ingredient"), nil
 	}
 
-	dbHelper := helpers.NewDynamoHelper(
-		ctx,
-	)
-
 	// get details of user trying to create new recipe
 	userid := utils.GetAuthUserId(req)
 	if userid == "" {
 		// if user is not logged in
 		return models.UnauthorizedErrorResponse("You have to be logged in to add a new recipe!"), nil
 	}
-	user, err := dbHelper.GetUser(userid)
+	user, err := helpers.NewUserHelper(ctx).Get(userid)
 	if err != nil {
 		// if err occurs while trying to get user full details from db
 		log.Println("failed to get user")
@@ -71,7 +67,7 @@ func HandleAddRecipe(ctx context.Context, req *events.APIGatewayProxyRequest) (e
 	)
 
 	// add it to db
-	addErr := dbHelper.AddNewRecipe(newRecipe)
+	addErr := helpers.NewRecipeHelper(ctx).Add(newRecipe)
 
 	if addErr != nil {
 		// if err occurs while adding new recipe to db

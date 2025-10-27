@@ -27,12 +27,7 @@ func HandlePostSignup(ctx context.Context, event *events.CognitoEventUserPoolsPo
 		nickname,
 	)
 
-	// add new user to db
-	dynamoHelper := helpers.NewDynamoHelper(
-		ctx,
-	)
-
-	err := dynamoHelper.AddNewUser(newUser)
+	err := helpers.NewUserHelper(ctx).Add(newUser)
 
 	if err != nil {
 		return nil, err

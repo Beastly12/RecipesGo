@@ -9,9 +9,7 @@ import (
 )
 
 func HandleGetRecipes(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	dbHelper := helpers.NewDynamoHelper(ctx)
-
-	recipes, err := dbHelper.GetAllRecipes()
+	recipes, err := helpers.NewRecipeHelper(ctx).GetAll()
 	if err != nil {
 		return models.ServerSideErrorResponse("", err), nil
 	}
