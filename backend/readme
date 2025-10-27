@@ -19,9 +19,7 @@ To add recipe to favorite:
 		recipeId: string
 
 To remove recipe from favorite:
-	DELETE /favorites
-	JSON:
-		recipeId: string
+	DELETE /favorites/{recipe_id}
 	
 To get all favorites recipes:
 	GET /favorites

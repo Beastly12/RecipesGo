@@ -257,7 +257,7 @@ Resources:
         RemoveFavorites:
           Type: HttpApi
           Properties:
-            Path: /favorites
+            Path: /favorites/{id}
             Method: DELETE
             ApiId: !Ref RecipeApi
             Auth:
