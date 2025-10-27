@@ -9,7 +9,11 @@ import (
 )
 
 func HandleGetRecipes(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	recipes, err := helpers.NewRecipeHelper(ctx).GetAll()
+	lastEvalKey, hasLastId := req.QueryStringParameters["last"]
+	if !hasLastId {
+		lastEvalKey = ""
+	}
+	recipes, err := helpers.NewRecipeHelper(ctx).GetAll(lastEvalKey)
 	if err != nil {
 		return models.ServerSideErrorResponse("", err), nil
 	}

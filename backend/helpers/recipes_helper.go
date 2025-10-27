@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"backend"
 	"backend/models"
 	"backend/utils"
 	"context"
@@ -27,7 +28,7 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 }
 
 // get all recipes in db
-func (this *recipeHelper) GetAll() (*[]models.Recipe, error) {
+func (this *recipeHelper) GetAll(lastEvalKey string) (*[]models.Recipe, error) {
 	input := &dynamodb.QueryInput{
 		TableName:              &utils.GetDependencies().MainTableName,
 		IndexName:              aws.String("NicknameIndex"),
@@ -35,6 +36,12 @@ func (this *recipeHelper) GetAll() (*[]models.Recipe, error) {
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":n": &types.AttributeValueMemberS{Value: models.RecipesSkPrefix},
 		},
+		Limit: aws.Int32(backend.MAX_RECIPES_DUMP),
+	}
+
+	if lastEvalKey != "" {
+		// not first page
+		input.ExclusiveStartKey = *models.RecipeKey(lastEvalKey)
 	}
 
 	items, err := utils.GetDependencies().DbClient.Query(this.Ctx, input)

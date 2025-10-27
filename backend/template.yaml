@@ -290,8 +290,6 @@ Resources:
             Path: /recipes
             Method: GET
             ApiId: !Ref RecipeApi
-            Auth:
-              Authorizer: CognitoAuthorizer
         DeleteRecipe:
           Type: HttpApi
           Properties:

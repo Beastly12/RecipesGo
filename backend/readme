@@ -9,6 +9,8 @@ To create a new recipe:
 
 To get all recipes:
 	GET /recipes
+	To get next page:
+		GET /recipes?last={id of last recipe received}
 
 To delete a recipe:
 	DELETE /recipes/{recipe_id}
