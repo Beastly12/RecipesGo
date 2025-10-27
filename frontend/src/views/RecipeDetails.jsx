@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom";
 import {
   ArrowLeft,
   ExternalLink,
@@ -129,20 +129,24 @@ function RecipeDetailPage() {
   const hasMore = visibleComment < recipe_details.comments.length;
 
   return (
-    <div className="bg-[#fafafa] min-h-screen m-4 text-[#1a1a1a]">
+    <div className="bg-[#fafafa] dark:bg-amber-700 min-h-screen m-4 text-[#1a1a1a]">
       <div className=" flex flex-col justify-items-center">
         {/* Back Button */}
-        <Link to={"/"} className="flex items-center space-x-5 text-[#1a1a1a] p-2 hover:underline mb-4">
+        <Link
+          to={"/"}
+          className="flex items-center space-x-5 text-[#1a1a1a] p-2 hover:underline mb-4"
+        >
           <ArrowLeft /> <span className="text-2xl">Back</span>
         </Link>
       </div>
+
       <div className="max-w-[900px] my-[40px] mx-[auto] px-[40px]">
         <div className=" flex flex-col justify-items-center">
           <div>
             {/* Image Card */}
             <div className="rounded-4xl w-full mt-8 mb-8 shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
               <img
-                className="w-full h-96 object-cover rounded-x"
+                className="w-full h-96 object-cover rounded-3xl"
                 src={recipe_details.image}
                 alt="Recipe Image"
               />
@@ -154,9 +158,12 @@ function RecipeDetailPage() {
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-1 md:grid-cols-2 text-sm text-gray-500 mb-4 mt-6 p-7 shadow-[0_12px_24px_rgba(0,0,0,0.12)] rounded-2xl ">
               <div className="grid grid-cols-1 gap-3 sm:grid-rows-1">
-                <p className="font-bold text-xl text-gray-800 px-4">
-                  {recipe_details.Author}
-                </p>
+                <Link to={"/profile"}>
+                  <p className="font-bold text-xl text-gray-800 px-4 cursor-pointer">
+                    {recipe_details.Author}
+                  </p>
+                </Link>
+
                 <p className="text-sm text-gray-500 mb-2 px-4">
                   {recipe_details.Published}
                 </p>

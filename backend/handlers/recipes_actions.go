@@ -11,8 +11,13 @@ func HandleRecipesActions(ctx context.Context, req *events.APIGatewayProxyReques
 	switch req.HTTPMethod {
 	case "POST":
 		return HandleAddRecipe(ctx, req)
+
 	case "GET":
 		return HandleGetRecipes(ctx, req)
+
+	case "DELETE":
+		return HandleDeleteRecipe(ctx, req)
+
 	default:
 		return models.InvalidRequestErrorResponse("Invalid http method"), nil
 	}

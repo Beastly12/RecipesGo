@@ -33,17 +33,15 @@ func HandleAddToFavorite(ctx context.Context, req *events.APIGatewayProxyRequest
 		return models.UnauthorizedErrorResponse("You need to be logged in to do this"), nil
 	}
 
-	dbHelper := helpers.NewDynamoHelper(ctx)
-
 	// get full details of recipe parsed
-	recipe, err := dbHelper.GetRecipe(payload.RecipeId)
+	recipe, err := helpers.NewRecipeHelper(ctx).Get(payload.RecipeId)
 	if err != nil {
 		return models.ServerSideErrorResponse("", err), nil
 	}
 
 	// create a new favorite db item and add to db
 	fav := models.NewFavorite(userid, recipe)
-	dbHelper.AddToFavorite(fav)
+	helpers.NewFavoritesHelper(ctx).Add(fav)
 
 	return models.SuccessfulRequestResponse("Added to favorites", false), nil
 }
