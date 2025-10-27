@@ -12,5 +12,5 @@ func init() {
 }
 
 func main() {
-	lambda.Start(handlers.HandleGetFavorite)
+	lambda.Start(handlers.HandleFavoritesAction)
 }
