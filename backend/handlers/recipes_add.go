@@ -20,7 +20,7 @@ type jsonBody struct {
 }
 
 // adds new recipe to db
-func HandleAddRecipe(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handleAddRecipe(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	// converts json body into recipe
 	var recipe jsonBody
 	if err := json.Unmarshal([]byte(req.Body), &recipe); err != nil {

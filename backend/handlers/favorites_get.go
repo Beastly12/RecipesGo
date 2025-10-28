@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-func HandleGetFavorite(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handleGetFavorite(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	userid := utils.GetAuthUserId(req)
 	lastRecipeId := req.QueryStringParameters["next"]
 

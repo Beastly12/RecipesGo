@@ -18,7 +18,7 @@ type ratingBody struct {
 	Comment  string `json:"comment"`
 }
 
-func HandleAddRatings(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handleAddRatings(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	var reqBody ratingBody
 	if err := json.Unmarshal([]byte(req.Body), &reqBody); err != nil {
 		log.Println("failed to unmarshal rating request body")

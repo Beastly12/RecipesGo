@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-func HandleGetRecipes(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handleGetRecipes(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	lastEvalKey, hasLastId := req.QueryStringParameters["next"]
 	if !hasLastId {
 		lastEvalKey = ""
