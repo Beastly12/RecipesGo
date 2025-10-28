@@ -6,7 +6,9 @@ To create a new recipe:
 		description: string
 		categories: []string
 		ingredients: []string
+		instructions: []string
 		preparationTime: int
+		isPublic: bool
 
 To get all recipes:
 	GET /recipes
