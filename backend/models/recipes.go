@@ -25,13 +25,14 @@ type RecipeDetails struct {
 	Name            string   `dynamodbav:"name" json:"name"`
 	AuthorName      string   `dynamodbav:"authorName" json:"authorName"`
 	Description     string   `dynamodbav:"description" json:"description"`
+	Categories      []string `dynamodbav:"categories" json:"categories"`
 	Ingredients     []string `dynamodbav:"ingredients" json:"ingredients"`
 	PreparationTime int      `dynamodbav:"preparationTime" json:"preparationTime"`
 	DateCreated     string   `json:"dateCreated" dynamodbav:"lsi"`
 }
 
 // Returns a recipe struct with details provided
-func NewRecipe(name, imageUrl, authorName, description string, preparationTimeMins int, ingredients ...string) *Recipe {
+func NewRecipe(name, imageUrl, authorName, description string, preparationTimeMins int) *Recipe {
 
 	time := utils.GetTimeNow()
 
@@ -42,13 +43,20 @@ func NewRecipe(name, imageUrl, authorName, description string, preparationTimeMi
 			Name:            name,
 			AuthorName:      authorName,
 			Description:     description,
-			Ingredients:     ingredients,
 			PreparationTime: preparationTimeMins,
 			DateCreated:     time,
 		},
 		ItemType: RecipesSkPrefix, // sets nickname to be "RECIPE", to query all recipes
 		SortKey:  RecipesSkPrefix,
 	}
+}
+
+func (r *Recipe) AddIngredients(ingredients ...string) {
+	r.Ingredients = append(r.Ingredients, ingredients...)
+}
+
+func (r *Recipe) AddCategories(categories ...string) {
+	r.Categories = append(r.Categories, categories...)
 }
 
 // DANGEROUS CODE: applies prefixes for database storage

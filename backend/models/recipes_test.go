@@ -15,8 +15,10 @@ func TestNewRecipe(t *testing.T) {
 		"johnny_test",
 		"A very delicious cup of hot water",
 		1,
-		"water", "cast iron skillet",
 	)
+
+	result.AddIngredients("water", "cast iron skillet")
+	result.AddCategories("breakfast", "italian")
 
 	expect := &Recipe{
 		Id: result.Id,
@@ -26,6 +28,7 @@ func TestNewRecipe(t *testing.T) {
 			AuthorName:      "johnny_test",
 			Description:     "A very delicious cup of hot water",
 			Ingredients:     []string{"water", "cast iron skillet"},
+			Categories:      []string{"breakfast", "italian"},
 			DateCreated:     result.DateCreated,
 			PreparationTime: 1,
 		},
@@ -101,8 +104,10 @@ func TestRecipeToDatabaseFormat(t *testing.T) {
 		"mad_scientist",
 		"stuff",
 		1,
-		"water",
 	)
+
+	recipe.AddIngredients("water")
+	recipe.AddCategories("dessert")
 
 	expect := map[string]types.AttributeValue{
 		"pk":          &types.AttributeValueMemberS{Value: "RECIPE#" + recipe.Id},
@@ -113,6 +118,9 @@ func TestRecipeToDatabaseFormat(t *testing.T) {
 		"description": &types.AttributeValueMemberS{Value: "stuff"},
 		"ingredients": &types.AttributeValueMemberL{Value: []types.AttributeValue{
 			&types.AttributeValueMemberS{Value: "water"},
+		}},
+		"categories": &types.AttributeValueMemberL{Value: []types.AttributeValue{
+			&types.AttributeValueMemberS{Value: "dessert"},
 		}},
 		"lsi": &types.AttributeValueMemberS{Value: time},
 		"gsi": &types.AttributeValueMemberS{Value: "RECIPE"},

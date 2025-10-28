@@ -15,6 +15,7 @@ type jsonBody struct {
 	Name            string   `json:"name"`
 	ImageUrl        string   `json:"imageUrl"`
 	Description     string   `json:"description"`
+	Categories      []string `json:"categories"`
 	Ingredients     []string `json:"ingredients"`
 	PreparationTime int      `json:"preparationTime"`
 }
@@ -63,8 +64,10 @@ func handleAddRecipe(ctx context.Context, req *events.APIGatewayProxyRequest) (e
 		user.Nickname,
 		recipe.Description,
 		recipe.PreparationTime,
-		recipe.Ingredients...,
 	)
+
+	newRecipe.AddIngredients(recipe.Ingredients...)
+	newRecipe.AddCategories(recipe.Categories...)
 
 	// add it to db
 	addErr := helpers.NewRecipeHelper(ctx).Add(newRecipe)

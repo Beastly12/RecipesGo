@@ -4,6 +4,7 @@ To create a new recipe:
 		name: string
 		imageKey: string
 		description: string
+		categories: []string
 		ingredients: []string
 		preparationTime: int
 
