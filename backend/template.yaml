@@ -40,14 +40,14 @@ Resources:
         - AttributeName: sk
           KeyType: RANGE
       GlobalSecondaryIndexes:
-        - IndexName: gsi
+        - IndexName: gsiIndex
           KeySchema:
             - AttributeName: gsi
               KeyType: HASH
           Projection:
             ProjectionType: ALL
       LocalSecondaryIndexes:
-        - IndexName: lsi
+        - IndexName: lsiIndex
           KeySchema:
             - AttributeName: pk
               KeyType: HASH
@@ -339,6 +339,12 @@ Resources:
             ApiId: !Ref RecipeApi
             Auth:
               Authorizer: CognitoAuthorizer
+        GetRatings:
+          Type: HttpApi
+          Properties:
+            Path: /ratings/{id}
+            Method: GET
+            ApiId: !Ref RecipeApi
   
   # to generate presigned url for image uploads
   GetUploadUrl:

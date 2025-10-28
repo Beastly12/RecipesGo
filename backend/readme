@@ -38,5 +38,10 @@ To rate a recipe:
 To delete rating on a recipe:
 	DELETE /ratings/{id of recipe}
 
+To get all ratings on a recipe:
+	GET /ratings/{id of recipe}
+	To get next batch:
+		GET /ratings/{id of recipe}?next_recipe={id of last recipe returned}&next_user={user id in last rating returned}
+
 To get url to post pictures to:
 	GET /upload-url

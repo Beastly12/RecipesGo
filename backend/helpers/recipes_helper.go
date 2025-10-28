@@ -31,8 +31,8 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 func (this *recipeHelper) GetAll(lastEvalKey string) (*[]models.Recipe, error) {
 	input := &dynamodb.QueryInput{
 		TableName:              &utils.GetDependencies().MainTableName,
-		IndexName:              aws.String("NicknameIndex"),
-		KeyConditionExpression: aws.String("nickname = :n"),
+		IndexName:              aws.String("gsiIndex"),
+		KeyConditionExpression: aws.String("gsi = :n"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":n": &types.AttributeValueMemberS{Value: models.RecipesSkPrefix},
 		},
