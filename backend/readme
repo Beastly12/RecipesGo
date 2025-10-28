@@ -28,5 +28,12 @@ To get all favorites recipes:
 	To get next batch:
 		GET /favorites?next={id of last favorite returned}
 
+To rate a recipe:
+	POST /ratings
+	JSON:
+		recipeId: string
+		stars: int
+		comment: string
+
 To get url to post pictures to:
 	GET /upload-url

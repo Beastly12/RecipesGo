@@ -274,7 +274,7 @@ Resources:
             Auth:
               Authorizer: CognitoAuthorizer
 
-# to handle recipes
+  # to handle recipes
   RecipesActions:
     Type: AWS::Serverless::Function
     Properties:
@@ -306,6 +306,28 @@ Resources:
           Properties:
             Path: /recipes/{id}
             Method: DELETE
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+
+  # to handle recipes
+  RatingsActions:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-ratings-actions-${EnvironmentName}
+      CodeUri: bin/ratings_actions/ratings_actions.zip
+      Handler: bootstrap
+      Architectures: [arm64]
+      Description: Lambda function that handles crud requests for rating recipes
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MainTable
+      Events:
+        AddRating:
+          Type: HttpApi
+          Properties:
+            Path: /ratings
+            Method: POST
             ApiId: !Ref RecipeApi
             Auth:
               Authorizer: CognitoAuthorizer
