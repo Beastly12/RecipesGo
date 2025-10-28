@@ -67,16 +67,5 @@ func (this *favoritesHelper) GetAll(userId string, lastRecipeId string) (*[]mode
 }
 
 func (this *favoritesHelper) Remove(userId, recipeId string) error {
-	input := &dynamodb.DeleteItemInput{
-		Key:       *models.FavoriteKey(userId, recipeId),
-		TableName: &utils.GetDependencies().MainTableName,
-	}
-
-	_, err := utils.GetDependencies().DbClient.DeleteItem(this.Ctx, input)
-	if err != nil {
-		log.Println("An error occurred while trying to remove a recipe from favorites")
-		return err
-	}
-
-	return nil
+	return newHelper(this.Ctx).deleteFromDb(models.FavoriteKey(userId, recipeId))
 }

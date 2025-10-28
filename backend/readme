@@ -35,5 +35,8 @@ To rate a recipe:
 		stars: int
 		comment: string
 
+To delete rating on a recipe:
+	DELETE /ratings/{id of recipe}
+
 To get url to post pictures to:
 	GET /upload-url

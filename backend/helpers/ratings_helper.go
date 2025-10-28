@@ -21,3 +21,7 @@ func (r *ratingsHelper) AddRating(rating *models.Rating) error {
 
 	return err
 }
+
+func (r *ratingsHelper) RemoveRating(recipeId, userId string) error {
+	return newHelper(r.Ctx).deleteFromDb(models.RatingKey(recipeId, userId))
+}

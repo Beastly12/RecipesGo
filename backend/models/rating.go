@@ -41,3 +41,10 @@ func DbItemsToRatingsStructs(items *[]map[string]types.AttributeValue) *[]Rating
 		r.Userid = strings.TrimPrefix(r.Userid, RatingSkPrefix)
 	})
 }
+
+func RatingKey(recipeId, userId string) *map[string]types.AttributeValue {
+	return &map[string]types.AttributeValue{
+		"pk": &types.AttributeValueMemberS{Value: utils.AddPrefix(recipeId, RatingPkPrefix)},
+		"sk": &types.AttributeValueMemberS{Value: utils.AddPrefix(userId, RatingSkPrefix)},
+	}
+}

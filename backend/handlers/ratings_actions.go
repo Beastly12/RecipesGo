@@ -12,6 +12,9 @@ func HandleRatingsActions(ctx context.Context, req *events.APIGatewayProxyReques
 	case "POST":
 		return handleAddRatings(ctx, req)
 
+	case "DELETE":
+		return handleDeleteRating(ctx, req)
+
 	default:
 		return models.InvalidRequestErrorResponse("Invalid http method!"), nil
 	}

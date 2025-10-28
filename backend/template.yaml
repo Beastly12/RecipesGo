@@ -331,6 +331,14 @@ Resources:
             ApiId: !Ref RecipeApi
             Auth:
               Authorizer: CognitoAuthorizer
+        DeleteRating:
+          Type: HttpApi
+          Properties:
+            Path: /ratings/{id}
+            Method: DELETE
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
   
   # to generate presigned url for image uploads
   GetUploadUrl:

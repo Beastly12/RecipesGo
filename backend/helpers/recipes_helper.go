@@ -80,17 +80,5 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 
 // deletes recipe from db
 func (r *recipeHelper) Delete(recipeId string) error {
-	input := &dynamodb.DeleteItemInput{
-		Key:       *models.RecipeKey(recipeId),
-		TableName: &utils.GetDependencies().MainTableName,
-	}
-
-	_, err := utils.GetDependencies().DbClient.DeleteItem(r.Ctx, input)
-
-	if err != nil {
-		log.Println("An error occurred while trying to delete recipe")
-		return err
-	}
-
-	return nil
+	return newHelper(r.Ctx).deleteFromDb(models.RecipeKey(recipeId))
 }
