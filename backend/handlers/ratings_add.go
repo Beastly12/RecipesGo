@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"backend/helpers"
 	"backend/models"
 	"backend/utils"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -23,10 +25,34 @@ func HandleAddRatings(ctx context.Context, req *events.APIGatewayProxyRequest) (
 		return models.InvalidRequestErrorResponse(""), nil
 	}
 
+	if reqBody.RecipeId == "" {
+		return models.InvalidRequestErrorResponse("Invalid recipe id provided!"), nil
+	}
+
+	if reqBody.Stars < 1 || reqBody.Stars > 5 {
+		return models.InvalidRequestErrorResponse("Recipes cannot be rated lower than 1 star or higher than 5 stars"), nil
+	}
+
 	userid := utils.GetAuthUserId(req)
 	if userid == "" {
 		return models.UnauthorizedErrorResponse("You need to be logged in to use this feature!"), nil
 	}
 
-	return models.NotFoundResponse("Resource not implemented"), nil
+	recipe, recipeErr := helpers.NewRecipeHelper(ctx).Get(reqBody.RecipeId)
+	if recipeErr != nil {
+		return models.ServerSideErrorResponse("Failed to get recipe details, try again.", recipeErr), nil
+	}
+
+	if recipe == nil {
+		return models.NotFoundResponse(fmt.Sprintf("No recipe with the id %v exists!", reqBody.RecipeId)), nil
+	}
+
+	newRating := models.NewRating(userid, reqBody.RecipeId, reqBody.Comment, reqBody.Stars)
+
+	err := helpers.NewRatingsHelper(ctx).AddRating(newRating)
+	if err != nil {
+		return models.ServerSideErrorResponse("Failed to add rating, try again.", err), nil
+	}
+
+	return models.SuccessfulRequestResponse("Rated recipe successfully!", true), nil
 }
