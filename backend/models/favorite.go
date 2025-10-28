@@ -17,6 +17,7 @@ type Favorite struct {
 	UserId   string `dynamodbav:"pk" json:"userid"`
 	RecipeId string `dynamodbav:"sk" json:"-"`
 	RecipeDetails
+	DateAdded string `dynamodbav:"dateAdded" json:"dateAdded"`
 }
 
 func NewFavorite(userid string, recipe *Recipe) *Favorite {
@@ -24,6 +25,7 @@ func NewFavorite(userid string, recipe *Recipe) *Favorite {
 		UserId:        userid,
 		RecipeId:      recipe.Id,
 		RecipeDetails: recipe.RecipeDetails,
+		DateAdded:     utils.GetTimeNow(),
 	}
 }
 

@@ -15,7 +15,7 @@ const (
 type User struct {
 	Userid      string `dynamodbav:"pk" json:"userid"`
 	Description string `dynamodbav:"sk" json:"-"`
-	Nickname    string `dynamodbav:"nickname" json:"nickname"`
+	Nickname    string `dynamodbav:"gsi" json:"nickname"`
 	DpUrl       string `dynamodbav:"dpUrl" json:"dpUrl"`
 }
 

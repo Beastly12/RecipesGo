@@ -114,8 +114,8 @@ func TestRecipeToDatabaseFormat(t *testing.T) {
 		"ingredients": &types.AttributeValueMemberL{Value: []types.AttributeValue{
 			&types.AttributeValueMemberS{Value: "water"},
 		}},
-		"dateCreated": &types.AttributeValueMemberS{Value: time},
-		"nickname":    &types.AttributeValueMemberS{Value: "RECIPE"},
+		"lsi": &types.AttributeValueMemberS{Value: time},
+		"gsi": &types.AttributeValueMemberS{Value: "RECIPE"},
 	}
 
 	result := utils.ToDatabaseFormat(utils.DatabaseFormattable(recipe))

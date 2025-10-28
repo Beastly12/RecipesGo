@@ -16,7 +16,7 @@ const (
 type Recipe struct {
 	Id string `dynamodbav:"pk" json:"id"`
 	RecipeDetails
-	ItemType string `dynamodbav:"nickname" json:"-"` // nickname is gsi, so we can query by gsi
+	ItemType string `dynamodbav:"gsi" json:"-"` // nickname is gsi, so we can query by gsi
 	SortKey  string `dynamodbav:"sk" json:"-"`
 }
 
@@ -27,7 +27,7 @@ type RecipeDetails struct {
 	Description     string   `dynamodbav:"description" json:"description"`
 	Ingredients     []string `dynamodbav:"ingredients" json:"ingredients"`
 	PreparationTime int      `dynamodbav:"preparationTime" json:"preparationTime"`
-	DateCreated     string   `json:"dateCreated" dynamodbav:"dateCreated"`
+	DateCreated     string   `json:"dateCreated" dynamodbav:"lsi"`
 }
 
 // Returns a recipe struct with details provided
