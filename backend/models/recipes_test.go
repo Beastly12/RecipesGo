@@ -20,6 +20,7 @@ func TestNewRecipe(t *testing.T) {
 
 	result.AddIngredients("water", "cast iron skillet")
 	result.AddCategories("breakfast", "italian")
+	result.AddInstructions("boil for 5 mins")
 
 	expect := &Recipe{
 		Id: result.Id,
@@ -30,6 +31,7 @@ func TestNewRecipe(t *testing.T) {
 			Description:     "A very delicious cup of hot water",
 			Ingredients:     []string{"water", "cast iron skillet"},
 			Categories:      []string{"breakfast", "italian"},
+			Instructions:    []string{"boil for 5 mins"},
 			DateCreated:     result.DateCreated,
 			PreparationTime: 1,
 			Difficulty:      "easy",
@@ -52,6 +54,8 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 			AuthorName:      "johnny_test",
 			Description:     "Plain white rice",
 			Ingredients:     []string{"Rice", "Water"},
+			Categories:      []string{"dinner"},
+			Instructions:    []string{"oven"},
 			PreparationTime: 1,
 			Difficulty:      "easy",
 		},
@@ -71,7 +75,11 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 				&types.AttributeValueMemberS{Value: "Water"},
 			}},
 			"preparationTime": &types.AttributeValueMemberN{Value: "1"},
-			"difficulty":      &types.AttributeValueMemberN{Value: "easy"},
+			"categories": &types.AttributeValueMemberL{Value: []types.AttributeValue{
+				&types.AttributeValueMemberS{Value: "dinner"},
+			}},
+			"instructions": &types.AttributeValueMemberL{Value: []types.AttributeValue{&types.AttributeValueMemberS{Value: "oven"}}},
+			"difficulty":   &types.AttributeValueMemberN{Value: "easy"},
 		},
 	}
 

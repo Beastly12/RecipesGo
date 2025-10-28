@@ -29,6 +29,7 @@ type RecipeDetails struct {
 	Ingredients     []string `dynamodbav:"ingredients" json:"ingredients"`
 	PreparationTime int      `dynamodbav:"preparationTime" json:"preparationTime"`
 	Difficulty      string   `dynamodbav:"difficulty" json:"difficulty"`
+	Instructions    []string `dynamodbav:"instructions" json:"instructions"`
 	DateCreated     string   `json:"dateCreated" dynamodbav:"lsi"`
 }
 
@@ -59,6 +60,10 @@ func (r *Recipe) AddIngredients(ingredients ...string) {
 
 func (r *Recipe) AddCategories(categories ...string) {
 	r.Categories = append(r.Categories, categories...)
+}
+
+func (r *Recipe) AddInstructions(instructions ...string) {
+	r.Instructions = append(r.Instructions, instructions...)
 }
 
 // DANGEROUS CODE: applies prefixes for database storage
