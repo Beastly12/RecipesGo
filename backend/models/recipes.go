@@ -30,11 +30,12 @@ type RecipeDetails struct {
 	PreparationTime int      `dynamodbav:"preparationTime" json:"preparationTime"`
 	Difficulty      string   `dynamodbav:"difficulty" json:"difficulty"`
 	Instructions    []string `dynamodbav:"instructions" json:"instructions"`
+	IsPublic        bool     `dynamodbav:"isPublic" json:"isPublic"`
 	DateCreated     string   `json:"dateCreated" dynamodbav:"lsi"`
 }
 
 // Returns a recipe struct with details provided
-func NewRecipe(name, imageUrl, authorName, description string, preparationTimeMins int, difficulty string) *Recipe {
+func NewRecipe(name, imageUrl, authorName, description string, preparationTimeMins int, difficulty string, isPublic bool) *Recipe {
 
 	time := utils.GetTimeNow()
 
@@ -48,6 +49,7 @@ func NewRecipe(name, imageUrl, authorName, description string, preparationTimeMi
 			PreparationTime: preparationTimeMins,
 			Difficulty:      difficulty,
 			DateCreated:     time,
+			IsPublic:        isPublic,
 		},
 		ItemType: RecipesSkPrefix, // sets nickname to be "RECIPE", to query all recipes
 		SortKey:  RecipesSkPrefix,

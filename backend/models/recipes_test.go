@@ -16,6 +16,7 @@ func TestNewRecipe(t *testing.T) {
 		"A very delicious cup of hot water",
 		1,
 		"easy",
+		true,
 	)
 
 	result.AddIngredients("water", "cast iron skillet")
@@ -35,6 +36,7 @@ func TestNewRecipe(t *testing.T) {
 			DateCreated:     result.DateCreated,
 			PreparationTime: 1,
 			Difficulty:      "easy",
+			IsPublic:        true,
 		},
 		SortKey:  "RECIPE",
 		ItemType: "RECIPE",
@@ -58,6 +60,7 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 			Instructions:    []string{"oven"},
 			PreparationTime: 1,
 			Difficulty:      "easy",
+			IsPublic:        false,
 		},
 		SortKey: "RECIPE",
 	}
@@ -80,6 +83,7 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 			}},
 			"instructions": &types.AttributeValueMemberL{Value: []types.AttributeValue{&types.AttributeValueMemberS{Value: "oven"}}},
 			"difficulty":   &types.AttributeValueMemberN{Value: "easy"},
+			"isPublic":     &types.AttributeValueMemberBOOL{Value: false},
 		},
 	}
 
@@ -117,6 +121,7 @@ func TestRecipeToDatabaseFormat(t *testing.T) {
 		"stuff",
 		1,
 		"hard",
+		false,
 	)
 
 	recipe.AddIngredients("water")
@@ -138,6 +143,7 @@ func TestRecipeToDatabaseFormat(t *testing.T) {
 		"lsi":        &types.AttributeValueMemberS{Value: time},
 		"gsi":        &types.AttributeValueMemberS{Value: "RECIPE"},
 		"difficulty": &types.AttributeValueMemberS{Value: "hard"},
+		"isPublic":   &types.AttributeValueMemberBOOL{Value: false},
 	}
 
 	result := utils.ToDatabaseFormat(utils.DatabaseFormattable(recipe))
