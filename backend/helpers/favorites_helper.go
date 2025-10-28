@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"backend"
 	"backend/models"
 	"backend/utils"
 	"context"
@@ -22,10 +23,10 @@ func NewFavoritesHelper(ctx context.Context) *favoritesHelper {
 }
 
 func (this *favoritesHelper) Add(favorite *models.Favorite) error {
-	return NewHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(favorite))
+	return newHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(favorite))
 }
 
-func (this *favoritesHelper) GetAll(userId string) (*[]models.Recipe, error) {
+func (this *favoritesHelper) GetAll(userId string, lastRecipeId string) (*[]models.Recipe, error) {
 	input := &dynamodb.QueryInput{
 		TableName:              &utils.GetDependencies().MainTableName,
 		KeyConditionExpression: aws.String("pk = :pk AND begins_with(sk, :sk)"),
@@ -33,6 +34,11 @@ func (this *favoritesHelper) GetAll(userId string) (*[]models.Recipe, error) {
 			":pk": &types.AttributeValueMemberS{Value: models.FavoritePkPrefix + userId},
 			":sk": &types.AttributeValueMemberS{Value: models.FavoriteSkPrefix},
 		},
+		Limit: aws.Int32(backend.MAX_RECIPES_DUMP),
+	}
+
+	if lastRecipeId != "" {
+		input.ExclusiveStartKey = *models.FavoriteKey(userId, lastRecipeId)
 	}
 
 	items, err := utils.GetDependencies().DbClient.Query(this.Ctx, input)
@@ -41,10 +47,7 @@ func (this *favoritesHelper) GetAll(userId string) (*[]models.Recipe, error) {
 		return nil, err
 	}
 
-	favs, err := models.DbItemsToFavoriteStructs(&items.Items)
-	if err != nil {
-		return nil, err
-	}
+	favs := models.DbItemsToFavoriteStructs(&items.Items)
 
 	var recipes []models.Recipe
 	for _, fav := range *favs {
@@ -64,16 +67,5 @@ func (this *favoritesHelper) GetAll(userId string) (*[]models.Recipe, error) {
 }
 
 func (this *favoritesHelper) Remove(userId, recipeId string) error {
-	input := &dynamodb.DeleteItemInput{
-		Key:       *models.FavoriteKey(userId, recipeId),
-		TableName: &utils.GetDependencies().MainTableName,
-	}
-
-	_, err := utils.GetDependencies().DbClient.DeleteItem(this.Ctx, input)
-	if err != nil {
-		log.Println("An error occurred while trying to remove a recipe from favorites")
-		return err
-	}
-
-	return nil
+	return newHelper(this.Ctx).deleteFromDb(models.FavoriteKey(userId, recipeId))
 }

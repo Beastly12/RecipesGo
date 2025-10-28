@@ -19,7 +19,9 @@ const RecipesList = ({ recipes }) => {
               </div>
 
               <div className="p-4">
-                <div className="text-lg font-semibold mb-2">{recipe.title}</div>
+                <div className="text-lg font-semibold mb-2 dark:text-gray-600">
+                  {recipe.title}
+                </div>
                 <div className="flex items-center justify-between mt-3">
                   <div className="flex items-center gap-2">
                     <div className="w-7 h-7 rounded-full bg-gradient-to-br from-pink-300 to-red-400"></div>
@@ -28,7 +30,7 @@ const RecipesList = ({ recipes }) => {
                     </span>
                   </div>
                   <div className="flex items-center gap-1 text-sm text-gray-500">
-                    <span className="text-[#ff6b6b]">♥</span>
+                    <span className="text-[#ff6b6b] ">♥</span>
                     <span>{recipe.likes}</span>
                   </div>
                 </div>

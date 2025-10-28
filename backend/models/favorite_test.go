@@ -44,11 +44,14 @@ func TestDbItemToFavorite(t *testing.T) {
 		"water",
 	)
 
+	d := utils.GetTimeNow()
+
 	expect := &[]Favorite{
 		{
 			UserId:        "123",
 			RecipeId:      "123",
 			RecipeDetails: recipe.RecipeDetails,
+			DateAdded:     d,
 		},
 	}
 
@@ -64,11 +67,12 @@ func TestDbItemToFavorite(t *testing.T) {
 				&types.AttributeValueMemberS{Value: "water"},
 			}},
 			"preparationTime": &types.AttributeValueMemberN{Value: "1"},
-			"dateCreated":     &types.AttributeValueMemberS{Value: recipe.DateCreated},
+			"lsi":             &types.AttributeValueMemberS{Value: recipe.DateCreated},
+			"dateAdded":       &types.AttributeValueMemberS{Value: d},
 		},
 	}
 
-	result, _ := DbItemsToFavoriteStructs(&items)
+	result := DbItemsToFavoriteStructs(&items)
 
 	if !reflect.DeepEqual(result, expect) {
 		t.Errorf("Expected \n%v\n but got \n%v\n instead", expect, result)
@@ -89,7 +93,8 @@ func TestFavoriteToDatabase(t *testing.T) {
 			&types.AttributeValueMemberS{Value: "water"},
 		}},
 		"preparationTime": &types.AttributeValueMemberN{Value: "1"},
-		"dateCreated":     &types.AttributeValueMemberS{Value: dc},
+		"lsi":             &types.AttributeValueMemberS{Value: dc},
+		"dateAdded":       &types.AttributeValueMemberS{Value: dc},
 	}
 
 	rec := NewRecipe(
@@ -105,6 +110,7 @@ func TestFavoriteToDatabase(t *testing.T) {
 		"123",
 		rec,
 	)
+	fav.DateAdded = dc
 
 	result := utils.ToDatabaseFormat(fav)
 

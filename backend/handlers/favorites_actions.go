@@ -10,13 +10,13 @@ import (
 func HandleFavoritesAction(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	switch req.HTTPMethod {
 	case "POST":
-		return HandleAddToFavorite(ctx, req)
+		return handleAddToFavorite(ctx, req)
 
 	case "GET":
-		return HandleGetFavorite(ctx, req)
+		return handleGetFavorite(ctx, req)
 
 	case "DELETE":
-		return HandleRemoveFavorite(ctx, req)
+		return handleRemoveFavorite(ctx, req)
 
 	default:
 		return models.InvalidRequestErrorResponse("Invalid http method!"), nil

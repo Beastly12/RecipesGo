@@ -8,8 +8,12 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-func HandleGetRecipes(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	recipes, err := helpers.NewRecipeHelper(ctx).GetAll()
+func handleGetRecipes(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	lastEvalKey, hasLastId := req.QueryStringParameters["next"]
+	if !hasLastId {
+		lastEvalKey = ""
+	}
+	recipes, err := helpers.NewRecipeHelper(ctx).GetAll(lastEvalKey)
 	if err != nil {
 		return models.ServerSideErrorResponse("", err), nil
 	}

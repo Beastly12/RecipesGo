@@ -23,14 +23,16 @@ Resources:
   MainTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub main-table-${EnvironmentName}
+      TableName: !Sub ${AWS::StackName}-main-table-${EnvironmentName}
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: pk
           AttributeType: S
         - AttributeName: sk
           AttributeType: S
-        - AttributeName: nickname
+        - AttributeName: gsi
+          AttributeType: S
+        - AttributeName: lsi
           AttributeType: S
       KeySchema:
         - AttributeName: pk
@@ -38,19 +40,28 @@ Resources:
         - AttributeName: sk
           KeyType: RANGE
       GlobalSecondaryIndexes:
-        # to allow us to query by nickname if need be
-        - IndexName: NicknameIndex
+        - IndexName: gsiIndex
           KeySchema:
-            - AttributeName: nickname
+            - AttributeName: gsi
               KeyType: HASH
           Projection:
             ProjectionType: ALL
+      LocalSecondaryIndexes:
+        - IndexName: lsiIndex
+          KeySchema:
+            - AttributeName: pk
+              KeyType: HASH
+            - AttributeName: lsi
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+            
 
   # S3 Bucket for recipe images
   RecipeImagesBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub recipe-images-${EnvironmentName}-${AWS::AccountId}
+      BucketName: !Sub ${AWS::StackName}-recipe-images-${EnvironmentName}-${AWS::AccountId}
       CorsConfiguration:
         CorsRules:
           - AllowedHeaders:
@@ -91,7 +102,7 @@ Resources:
     Type: AWS::CloudFront::OriginAccessControl
     Properties:
       OriginAccessControlConfig:
-        Name: !Sub RecipeImagesOAC-${EnvironmentName}
+        Name: !Sub ${AWS::StackName}-recipeImagesOAC-${EnvironmentName}
         OriginAccessControlOriginType: s3
         SigningBehavior: always
         SigningProtocol: sigv4
@@ -128,7 +139,7 @@ Resources:
   CognitoUserPool:
     Type: AWS::Cognito::UserPool
     Properties:
-      UserPoolName: !Sub RecipeUserPool-${EnvironmentName}
+      UserPoolName: !Sub ${AWS::StackName}-recipeUserPool-${EnvironmentName}
       UsernameAttributes:
         - email
       Policies:
@@ -150,7 +161,7 @@ Resources:
   CognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
-      ClientName: !Sub RecipeClient-${EnvironmentName}
+      ClientName: !Sub ${AWS::StackName}-recipeClient-${EnvironmentName}
       UserPoolId: !Ref CognitoUserPool
       GenerateSecret: false
       ExplicitAuthFlows:
@@ -160,7 +171,7 @@ Resources:
   RecipeApi:
     Type: AWS::Serverless::HttpApi
     Properties:
-      Name: !Sub RecipeApi-${EnvironmentName}
+      Name: !Sub ${AWS::StackName}-recipeApi-${EnvironmentName}
       CorsConfiguration:
         AllowMethods:
           - GET
@@ -185,7 +196,7 @@ Resources:
   PreSignUp:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub PreSignup-${EnvironmentName}
+      FunctionName: !Sub ${AWS::StackName}-preSignup-${EnvironmentName}
       CodeUri: bin/pre_signup/pre_signup.zip
       Handler: bootstrap
       Architectures: [arm64]
@@ -210,7 +221,7 @@ Resources:
   PostSignUp:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub PostSignup-${EnvironmentName}
+      FunctionName: !Sub ${AWS::StackName}-postSignup-${EnvironmentName}
       CodeUri: bin/post_signup/post_signup.zip
       Handler: bootstrap
       Architectures: [arm64]
@@ -229,7 +240,7 @@ Resources:
   FavoritesActions:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub favorites-actions-${EnvironmentName}
+      FunctionName: !Sub ${AWS::StackName}-favorites-actions-${EnvironmentName}
       CodeUri: bin/favorites_actions/favorites_actions.zip
       Handler: bootstrap
       Architectures: [arm64]
@@ -263,11 +274,11 @@ Resources:
             Auth:
               Authorizer: CognitoAuthorizer
 
-# to handle recipes
+  # to handle recipes
   RecipesActions:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub recipes-actions-${EnvironmentName}
+      FunctionName: !Sub ${AWS::StackName}-recipes-actions-${EnvironmentName}
       CodeUri: bin/recipes_actions/recipes_actions.zip
       Handler: bootstrap
       Architectures: [arm64]
@@ -290,8 +301,6 @@ Resources:
             Path: /recipes
             Method: GET
             ApiId: !Ref RecipeApi
-            Auth:
-              Authorizer: CognitoAuthorizer
         DeleteRecipe:
           Type: HttpApi
           Properties:
@@ -300,12 +309,48 @@ Resources:
             ApiId: !Ref RecipeApi
             Auth:
               Authorizer: CognitoAuthorizer
+
+  # to handle recipes
+  RatingsActions:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-ratings-actions-${EnvironmentName}
+      CodeUri: bin/ratings_actions/ratings_actions.zip
+      Handler: bootstrap
+      Architectures: [arm64]
+      Description: Lambda function that handles crud requests for rating recipes
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MainTable
+      Events:
+        AddRating:
+          Type: HttpApi
+          Properties:
+            Path: /ratings
+            Method: POST
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+        DeleteRating:
+          Type: HttpApi
+          Properties:
+            Path: /ratings/{id}
+            Method: DELETE
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GetRatings:
+          Type: HttpApi
+          Properties:
+            Path: /ratings/{id}
+            Method: GET
+            ApiId: !Ref RecipeApi
   
   # to generate presigned url for image uploads
   GetUploadUrl:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub GetUploadUrl-${EnvironmentName}
+      FunctionName: !Sub ${AWS::StackName}-getUploadUrl-${EnvironmentName}
       CodeUri: bin/get_upload_url/get_upload_url.zip
       Handler: bootstrap
       Architectures: [arm64]

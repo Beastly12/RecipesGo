@@ -68,7 +68,7 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 		},
 	}
 
-	res, _ := DatabaseItemsToRecipeStructs(&items, "cdn.com")
+	res := DatabaseItemsToRecipeStructs(&items, "cdn.com")
 	result := (*res)[0]
 
 	if !reflect.DeepEqual(result, expect) {
@@ -114,8 +114,8 @@ func TestRecipeToDatabaseFormat(t *testing.T) {
 		"ingredients": &types.AttributeValueMemberL{Value: []types.AttributeValue{
 			&types.AttributeValueMemberS{Value: "water"},
 		}},
-		"dateCreated": &types.AttributeValueMemberS{Value: time},
-		"nickname":    &types.AttributeValueMemberS{Value: "RECIPE"},
+		"lsi": &types.AttributeValueMemberS{Value: time},
+		"gsi": &types.AttributeValueMemberS{Value: "RECIPE"},
 	}
 
 	result := utils.ToDatabaseFormat(utils.DatabaseFormattable(recipe))

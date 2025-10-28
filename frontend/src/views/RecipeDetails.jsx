@@ -10,6 +10,9 @@ import {
   Heart,
 } from "lucide-react";
 import { Accordion } from "../components/Accordion";
+import InstructionBox from "../components/InstructionBox";
+import IngredientsBox from "../components/IngredientsBox";
+import CommentBox from "../components/ComponentBox";
 
 function RecipeDetails() {
   return {
@@ -129,7 +132,7 @@ function RecipeDetailPage() {
   const hasMore = visibleComment < recipe_details.comments.length;
 
   return (
-    <div className="bg-[#fafafa] dark:bg-amber-700 min-h-screen m-4 text-[#1a1a1a]">
+    <div className="bg-[#fafafa] min-h-screen m-4 text-[#1a1a1a]  dark:bg-[#1a1a1a] dark:text-[#fafafa]">
       <div className=" flex flex-col justify-items-center">
         {/* Back Button */}
         <Link
@@ -140,7 +143,7 @@ function RecipeDetailPage() {
         </Link>
       </div>
 
-      <div className="max-w-[900px] my-[40px] mx-[auto] px-[40px]">
+      <div className="max-w-[900px] my-[40px] mx-[auto] px-[40px] dark:text-[#fafafa]">
         <div className=" flex flex-col justify-items-center">
           <div>
             {/* Image Card */}
@@ -156,34 +159,34 @@ function RecipeDetailPage() {
               {recipe_details.title}
             </h1>
 
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-1 md:grid-cols-2 text-sm text-gray-500 mb-4 mt-6 p-7 shadow-[0_12px_24px_rgba(0,0,0,0.12)] rounded-2xl ">
-              <div className="grid grid-cols-1 gap-3 sm:grid-rows-1">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-1 md:grid-cols-2 text-sm text-gray-500 mb-4 mt-6 p-7 shadow-[0_12px_24px_rgba(0,0,0,0.12)] rounded-2xl  dark:bg-[#fafafa]">
+              <div className="grid grid-cols-1 gap-3 sm:grid-rows-1 ">
                 <Link to={"/profile"}>
-                  <p className="font-bold text-xl text-gray-800 px-4 cursor-pointer">
+                  <p className="font-bold text-xl text-gray-800 px-4 cursor-pointer   dark:text-gray-600 ">
                     {recipe_details.Author}
                   </p>
                 </Link>
 
-                <p className="text-sm text-gray-500 mb-2 px-4">
+                <p className="text-sm text-gray-500 mb-2 px-4   dark:text-gray-600">
                   {recipe_details.Published}
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3  dark:text-[#fafafa]">
                 {/* Likes Button */}
-                <button className="cursor-pointer flex items-center justify-center gap-2 bg-[#ff6b6b] text-white py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300 w-full">
+                <button className="cursor-pointer flex items-center justify-center gap-2 bg-[#ff6b6b] text-white py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300 w-full  dark:text-[#fafafa]">
                   <Heart className="w-5 h-5" />
                   <span>Likes ({recipe_details.Likes})</span>
                 </button>
 
                 {/* Favorite Button */}
-                <button className="cursor-pointer flex items-center justify-center gap-2 bg-yellow-100 text-yellow-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full">
+                <button className="cursor-pointer flex items-center justify-center gap-2 bg-yellow-100 text-yellow-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full ">
                   <Star className="w-5 h-5" />
                   <span>Favorite</span>
                 </button>
 
                 {/* Share Button */}
-                <button className=" cursor-pointer flex items-center justify-center gap-2 bg-gray-100 text-gray-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full">
+                <button className=" cursor-pointer flex items-center justify-center gap-2 bg-gray-100 text-gray-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full ">
                   <ExternalLink className="w-5 h-5" />
                   <span>Share</span>
                 </button>
@@ -192,7 +195,7 @@ function RecipeDetailPage() {
 
             <Accordion sections={recipe_details.descriptionSections} />
 
-            <div className="grid grid- md:grid-cols-2 gap-10 mb-8 mt-15">
+            <div className="grid grid- md:grid-cols-2 gap-10 mb-8 mt-15 dark  dark:bg-[#fafafa] dark:text-gray-600 dark:rounded-2xl">
               <div>
                 <div className=" grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-6">
                   {/* Time Card */}
@@ -202,6 +205,7 @@ function RecipeDetailPage() {
                     </div>
                     <p className="font-semibold mt-4">{recipe_details.Time}</p>
                   </div>
+
                   {/* Category Card */}
                   <div className="flex flex-col items-center justify-center bg-gray-50 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
                     <Utensils className="bg-[#ff6b6b] text-white rounded-2xl mx-4" />
@@ -209,6 +213,7 @@ function RecipeDetailPage() {
                       {recipe_details.Category}
                     </p>
                   </div>
+
                   {/* Difficulty Card */}
                   <div className="flex flex-col items-center justify-center bg-gray-50 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
                     <ChartNoAxesColumn className="bg-[#ff6b6b] text-white rounded-2xl mx-4" />
@@ -218,73 +223,18 @@ function RecipeDetailPage() {
                   </div>
                 </div>
 
-                {/* Ingredients Box */}
-                <div className=" p-7 mt-9 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
-                  <h2 className="font-bold text-4xl mb-2 ">Ingredients</h2>
-                  <ul className="list-disc list-inside text-gray-800 mt-4 mb-4 space-y-10 text-[14px]">
-                    {recipe_details.ingredients?.map((ingredients, index) => (
-                      <li key={index}>{ingredients}</li>
-                    ))}
-                  </ul>
-                </div>
+                <IngredientsBox ingredients={recipe_details.ingredients} />
               </div>
 
-              {/* Instruction Box */}
-              <div className="p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)] mt-6 bg-white">
-                <h2 className="font-bold text-4xl mb-4">Instructions</h2>
-
-                <ol className="space-y-10 text-[14px]">
-                  {recipe_details.instructions?.map((instruction, index) => (
-                    <li key={index} className="flex items-start gap-4">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#ff6b6b] text-white font-bold">
-                        {index + 1}
-                      </div>
-
-                      <div className="text-gray-700 leading-relaxed">
-                        {instruction}
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              </div>
+              <InstructionBox instructions={recipe_details.instructions} />
             </div>
 
-            {/* Comments Box */}
-            <div className=" bg-[#fafafa] mt-14 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
-              <h2 className="font-bold text-3xl mb-10  text-gray-800">
-                Comments ({recipe_details.totalComments})
-              </h2>
-
-              {visibleComments?.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg mb-3 border-b border-gray-300"
-                >
-                  <img
-                    src={comment.user.profilePic}
-                    alt={comment.user.name}
-                    className="w-10 h-10 rounded-full"
-                  />
-                  <div>
-                    <h4 className="font-medium">{comment.user.name}</h4>
-                    <p className="text-sm text-gray-500">{comment.posted}</p>
-                    <p className="mt-1 text-gray-800">{comment.text}</p>
-                  </div>
-                </div>
-              ))}
-
-              {/* View More */}
-              {hasMore && (
-                <div className="text-center mt-6">
-                  <button
-                    onClick={handleViewMore}
-                    className="px-6 py-2 bg-[#ff6b6b] text-white rounded-full hover:bg-[#ff4b4b] transition-all shadow-[0_6px_16px_rgba(255,107,107,0.4)]"
-                  >
-                    View More
-                  </button>
-                </div>
-              )}
-            </div>
+            <CommentBox
+              totalComments={recipe_details.comments}
+              visibleComments={visibleComment}
+              hasMore={hasMore}
+              handleViewMore={handleViewMore}
+            />
           </div>
         </div>
       </div>

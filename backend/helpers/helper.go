@@ -12,19 +12,34 @@ type helper struct {
 	Ctx context.Context
 }
 
-func NewHelper(ctx context.Context) *helper {
+func newHelper(ctx context.Context) *helper {
 	return &helper{
 		Ctx: ctx,
 	}
 }
 
-func (this *helper) putIntoDb(item *map[string]types.AttributeValue) error {
+func (h *helper) putIntoDb(item *map[string]types.AttributeValue) error {
 	input := &dynamodb.PutItemInput{
 		Item:      *item,
 		TableName: &utils.GetDependencies().MainTableName,
 	}
 
-	_, err := utils.GetDependencies().DbClient.PutItem(this.Ctx, input)
+	_, err := utils.GetDependencies().DbClient.PutItem(h.Ctx, input)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (h *helper) deleteFromDb(itemKey *map[string]types.AttributeValue) error {
+	input := &dynamodb.DeleteItemInput{
+		Key:       *itemKey,
+		TableName: &utils.GetDependencies().MainTableName,
+	}
+
+	_, err := utils.GetDependencies().DbClient.DeleteItem(h.Ctx, input)
 
 	if err != nil {
 		return err

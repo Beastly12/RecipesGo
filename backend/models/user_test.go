@@ -26,10 +26,10 @@ func TestNewUser(t *testing.T) {
 func TestUserStructToDbItem(t *testing.T) {
 	result := *utils.ToDatabaseFormat(NewUser("123", "test"))
 	expect := map[string]types.AttributeValue{
-		"pk":       &types.AttributeValueMemberS{Value: "USER#123"},
-		"sk":       &types.AttributeValueMemberS{Value: "PROFILE"},
-		"nickname": &types.AttributeValueMemberS{Value: "test"},
-		"dpUrl":    &types.AttributeValueMemberS{Value: ""},
+		"pk":    &types.AttributeValueMemberS{Value: "USER#123"},
+		"sk":    &types.AttributeValueMemberS{Value: "PROFILE"},
+		"gsi":   &types.AttributeValueMemberS{Value: "test"},
+		"dpUrl": &types.AttributeValueMemberS{Value: ""},
 	}
 
 	if len(result) != len(expect) {
@@ -58,10 +58,10 @@ func TestUserStructToDbItem(t *testing.T) {
 func TestDbItemsToUserStructs(t *testing.T) {
 	userItem := []map[string]types.AttributeValue{
 		{
-			"pk":       &types.AttributeValueMemberS{Value: "USER#123"},
-			"sk":       &types.AttributeValueMemberS{Value: "PROFILE"},
-			"nickname": &types.AttributeValueMemberS{Value: "test"},
-			"dpUrl":    &types.AttributeValueMemberS{Value: "cdn.pic.com"},
+			"pk":    &types.AttributeValueMemberS{Value: "USER#123"},
+			"sk":    &types.AttributeValueMemberS{Value: "PROFILE"},
+			"gsi":   &types.AttributeValueMemberS{Value: "test"},
+			"dpUrl": &types.AttributeValueMemberS{Value: "cdn.pic.com"},
 		},
 	}
 
@@ -72,7 +72,7 @@ func TestDbItemsToUserStructs(t *testing.T) {
 		DpUrl:       "cdn.pic.com",
 	}
 
-	res, _ := DbItemsToUserStructs(&userItem)
+	res := DbItemsToUserStructs(&userItem)
 	result := (*res)[0]
 
 	if !reflect.DeepEqual(result, expected) {
