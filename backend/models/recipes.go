@@ -57,7 +57,7 @@ func (r *Recipe) ApplyPrefixes() {
 }
 
 // Converts db items to recipe structs
-func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue, cloudfrontDomainName string) (*[]Recipe, error) {
+func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue, cloudfrontDomainName string) *[]Recipe {
 	return utils.DatabaseItemToStruct(items, func(r *Recipe) {
 		r.Id = strings.TrimPrefix(r.Id, RecipesPkPrefix)
 		if r.ImageUrl != "" {

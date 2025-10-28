@@ -12,7 +12,7 @@ type helper struct {
 	Ctx context.Context
 }
 
-func NewHelper(ctx context.Context) *helper {
+func newHelper(ctx context.Context) *helper {
 	return &helper{
 		Ctx: ctx,
 	}

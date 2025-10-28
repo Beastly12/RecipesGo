@@ -17,7 +17,7 @@ func NewRatingsHelper(ctx context.Context) *ratingsHelper {
 }
 
 func (r *ratingsHelper) AddRating(rating *models.Rating) error {
-	err := NewHelper(r.Ctx).putIntoDb(utils.ToDatabaseFormat(rating))
+	err := newHelper(r.Ctx).putIntoDb(utils.ToDatabaseFormat(rating))
 
 	return err
 }

@@ -24,7 +24,7 @@ func NewRecipeHelper(ctx context.Context) *recipeHelper {
 
 // adds recipe to db
 func (this *recipeHelper) Add(recipe *models.Recipe) error {
-	return NewHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(recipe))
+	return newHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(recipe))
 }
 
 // get all recipes in db
@@ -50,11 +50,7 @@ func (this *recipeHelper) GetAll(lastEvalKey string) (*[]models.Recipe, error) {
 		return nil, err
 	}
 
-	recipes, rErr := models.DatabaseItemsToRecipeStructs(&items.Items, utils.GetDependencies().CloudFrontDomainName)
-	if rErr != nil {
-		log.Println("An error occurred while trying to convert db recipe items to recipe structs")
-		return nil, rErr
-	}
+	recipes := models.DatabaseItemsToRecipeStructs(&items.Items, utils.GetDependencies().CloudFrontDomainName)
 
 	return recipes, nil
 }
@@ -76,11 +72,7 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 		return nil, nil
 	}
 
-	recipes, err := models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, utils.GetDependencies().CloudFrontDomainName)
-
-	if err != nil {
-		return nil, err
-	}
+	recipes := models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, utils.GetDependencies().CloudFrontDomainName)
 
 	recipe := (*recipes)[0]
 	return &recipe, nil

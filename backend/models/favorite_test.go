@@ -72,7 +72,7 @@ func TestDbItemToFavorite(t *testing.T) {
 		},
 	}
 
-	result, _ := DbItemsToFavoriteStructs(&items)
+	result := DbItemsToFavoriteStructs(&items)
 
 	if !reflect.DeepEqual(result, expect) {
 		t.Errorf("Expected \n%v\n but got \n%v\n instead", expect, result)

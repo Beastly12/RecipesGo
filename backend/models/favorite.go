@@ -35,7 +35,7 @@ func (f *Favorite) ApplyPrefixes() {
 	f.RecipeId = utils.AddPrefix(f.RecipeId, FavoriteSkPrefix)
 }
 
-func DbItemsToFavoriteStructs(items *[]map[string]types.AttributeValue) (*[]Favorite, error) {
+func DbItemsToFavoriteStructs(items *[]map[string]types.AttributeValue) *[]Favorite {
 	return utils.DatabaseItemToStruct(items, func(f *Favorite) {
 		f.UserId = strings.TrimPrefix(f.UserId, FavoritePkPrefix)
 		f.RecipeId = strings.TrimPrefix(f.RecipeId, FavoriteSkPrefix)

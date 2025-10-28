@@ -72,7 +72,7 @@ func TestDbItemsToUserStructs(t *testing.T) {
 		DpUrl:       "cdn.pic.com",
 	}
 
-	res, _ := DbItemsToUserStructs(&userItem)
+	res := DbItemsToUserStructs(&userItem)
 	result := (*res)[0]
 
 	if !reflect.DeepEqual(result, expected) {

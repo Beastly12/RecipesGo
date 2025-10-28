@@ -22,7 +22,7 @@ func NewUserHelper(ctx context.Context) *userHelper {
 
 // adds new user to db
 func (this *userHelper) Add(user *models.User) error {
-	return NewHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(user))
+	return newHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(user))
 }
 
 // gets user details from db
@@ -39,12 +39,7 @@ func (this *userHelper) Get(userid string) (*models.User, error) {
 		return nil, err
 	}
 
-	users, uErr := models.DbItemsToUserStructs(&[]map[string]types.AttributeValue{result.Item})
-
-	if uErr != nil {
-		log.Println("Failed to convert db item to user")
-		return nil, uErr
-	}
+	users := models.DbItemsToUserStructs(&[]map[string]types.AttributeValue{result.Item})
 
 	if len(*users) < 1 {
 		return nil, nil

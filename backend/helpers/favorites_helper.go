@@ -23,7 +23,7 @@ func NewFavoritesHelper(ctx context.Context) *favoritesHelper {
 }
 
 func (this *favoritesHelper) Add(favorite *models.Favorite) error {
-	return NewHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(favorite))
+	return newHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(favorite))
 }
 
 func (this *favoritesHelper) GetAll(userId string, lastRecipeId string) (*[]models.Recipe, error) {
@@ -47,10 +47,7 @@ func (this *favoritesHelper) GetAll(userId string, lastRecipeId string) (*[]mode
 		return nil, err
 	}
 
-	favs, err := models.DbItemsToFavoriteStructs(&items.Items)
-	if err != nil {
-		return nil, err
-	}
+	favs := models.DbItemsToFavoriteStructs(&items.Items)
 
 	var recipes []models.Recipe
 	for _, fav := range *favs {

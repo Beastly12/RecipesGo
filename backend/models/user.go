@@ -43,7 +43,7 @@ func (u *User) ApplyPrefixes() {
 }
 
 // Takes dynamo database items and tries to convert them to user structs
-func DbItemsToUserStructs(items *[]map[string]types.AttributeValue) (*[]User, error) {
+func DbItemsToUserStructs(items *[]map[string]types.AttributeValue) *[]User {
 	return utils.DatabaseItemToStruct(items, func(u *User) {
 		u.Userid = strings.TrimPrefix(u.Userid, UserPkPrefix)
 	})
