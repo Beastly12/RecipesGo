@@ -11,8 +11,9 @@ import (
 )
 
 type ratingBody struct {
-	Rating  float32 `json:"rating"`
-	Comment string  `json:"comment"`
+	RecipeId string `json:"recipeId"`
+	Stars    int    `json:"stars"`
+	Comment  string `json:"comment"`
 }
 
 func HandleAddRatings(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {

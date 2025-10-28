@@ -13,16 +13,20 @@ const (
 )
 
 type Rating struct {
-	RecipeId string `dynamodbav:"sk" json:"RecipeId"`
-	Userid   string `dynamodbav:"pk" json:"userId"`
-	Comment  string `dynamodbav:"comment" json:"comment"`
+	RecipeId  string `dynamodbav:"sk" json:"RecipeId"`
+	Userid    string `dynamodbav:"pk" json:"userId"`
+	Stars     int    `dynamodbav:"stars" json:"stars"`
+	Comment   string `dynamodbav:"comment" json:"comment"`
+	DateAdded string `dynamodbav:"lsi" json:"dateAdded"`
 }
 
-func NewRating(userId, recipeId, comment string) *Rating {
+func NewRating(userId, recipeId, comment string, stars int) *Rating {
 	return &Rating{
-		RecipeId: recipeId,
-		Userid:   userId,
-		Comment:  comment,
+		RecipeId:  recipeId,
+		Userid:    userId,
+		Stars:     stars,
+		Comment:   comment,
+		DateAdded: utils.GetTimeNow(),
 	}
 }
 
