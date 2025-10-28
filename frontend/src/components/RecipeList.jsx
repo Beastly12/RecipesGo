@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const RecipesList = ({ recipes }) => {
   return (
     <>
-      <div className="px-10 pb-10 columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6">
+      <div className="px-10 pb-10 columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 dark:text-[#fafafa]">
         {recipes.map((recipe) => (
           <Link to={"/recipe-details"}>
             <div
@@ -12,11 +12,13 @@ const RecipesList = ({ recipes }) => {
               className="mb-6 bg-white rounded-2xl overflow-hidden break-inside-avoid shadow hover:shadow-xl transition transform hover:-translate-y-1 cursor-pointer"
             >
               <div
-                className="w-full aspect-[4/3] bg-cover bg-center transition-transform duration-300 hover:scale-105"
+                className="w-full aspect-[4/3] bg-cover bg-center transition-transform duration-300 hover:scale-105 "
                 style={{ backgroundImage: `url(${recipe.img})` }}
               ></div>
               <div className="p-4">
-                <div className="text-lg font-semibold mb-2">{recipe.title}</div>
+                <div className="text-lg font-semibold mb-2 dark:text-gray-600">
+                  {recipe.title}
+                </div>
                 <div className="flex items-center justify-between mt-3">
                   <div className="flex items-center gap-2">
                     <div className="w-7 h-7 rounded-full bg-gradient-to-br from-pink-300 to-red-400"></div>
@@ -25,7 +27,7 @@ const RecipesList = ({ recipes }) => {
                     </span>
                   </div>
                   <div className="flex items-center gap-1 text-sm text-gray-500">
-                    <span className="text-[#ff6b6b]">♥</span>
+                    <span className="text-[#ff6b6b] ">♥</span>
                     <span>{recipe.likes}</span>
                   </div>
                 </div>
@@ -34,8 +36,8 @@ const RecipesList = ({ recipes }) => {
           </Link>
         ))}
       </div>
-      <div className=" flex items-center justify-center py-6">
-        <button className="bg-[#ff6b6b] text-white hover:bg-[#ff5252] hover:shadow-[#ff5252]  px-14 py-2 rounded-full font-semibold transition transform hover:-translate-y-0.5 shadow hover:shadow-lg">
+      <div className=" flex items-center justify-center py-6 dark:text-[#fafafa]">
+        <button className="bg-[#ff6b6b] text-white  hover:bg-[#ff5252] hover:shadow-[#ff5252]  px-14 py-2 rounded-full font-semibold transition transform hover:-translate-y-0.5 shadow hover:shadow-lg">
           Load More
         </button>
       </div>

@@ -17,7 +17,7 @@ const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-[#fafafa]">
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#fafafa] max-w-[900px] my-[40px] mx-[auto] px-[40px]">
       {/* Left Side Panel */}
       <div className="hidden md:bg-[#FF6B6B] md:flex text-white flex-col justify-center items-center md:items-start md:w-1/2 w-full p-8 md:p-16 rounded-b-4xl md:rounded-none md:rounded-r-4xl">
         <CookingPot className="text-black bg-[#FF6B6B] w-32 h-32 md:w-60 md:h-60 mb-6 md:mb-10" />
@@ -50,7 +50,6 @@ const AuthPage = () => {
           </h1>
         </div>
 
-        {/* Toogle Buttons */}
         <div className="flex items-center border border-gray-300 rounded-3xl p-1 overflow-hidden w-full mt-10 h-15 mb-6">
           <button
             onClick={() => setIsLogin(true)}
