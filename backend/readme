@@ -1,3 +1,5 @@
+BASE URL: https://rdxqkxf7d4.execute-api.eu-west-2.amazonaws.com/prod
+
 To create a new recipe:
   POST /recipes
 	JSON:
