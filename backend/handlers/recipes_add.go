@@ -18,6 +18,7 @@ type jsonBody struct {
 	Categories      []string `json:"categories"`
 	Ingredients     []string `json:"ingredients"`
 	PreparationTime int      `json:"preparationTime"`
+	Difficulty      string   `json:"difficulty"`
 }
 
 // adds new recipe to db
@@ -64,6 +65,7 @@ func handleAddRecipe(ctx context.Context, req *events.APIGatewayProxyRequest) (e
 		user.Nickname,
 		recipe.Description,
 		recipe.PreparationTime,
+		recipe.Difficulty,
 	)
 
 	newRecipe.AddIngredients(recipe.Ingredients...)

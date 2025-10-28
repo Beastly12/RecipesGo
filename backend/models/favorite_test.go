@@ -41,6 +41,7 @@ func TestDbItemToFavorite(t *testing.T) {
 		"test",
 		"test",
 		1,
+		"medium",
 	)
 	recipe.AddIngredients("water")
 	recipe.AddCategories("italian")
@@ -71,6 +72,7 @@ func TestDbItemToFavorite(t *testing.T) {
 				&types.AttributeValueMemberS{Value: "italian"},
 			}},
 			"preparationTime": &types.AttributeValueMemberN{Value: "1"},
+			"difficulty":      &types.AttributeValueMemberN{Value: "medium"},
 			"lsi":             &types.AttributeValueMemberS{Value: recipe.DateCreated},
 			"dateAdded":       &types.AttributeValueMemberS{Value: d},
 		},
@@ -97,6 +99,7 @@ func TestFavoriteToDatabase(t *testing.T) {
 			&types.AttributeValueMemberS{Value: "water"},
 		}},
 		"preparationTime": &types.AttributeValueMemberN{Value: "1"},
+		"difficulty":      &types.AttributeValueMemberS{Value: "extreme"},
 		"lsi":             &types.AttributeValueMemberS{Value: dc},
 		"dateAdded":       &types.AttributeValueMemberS{Value: dc},
 	}
@@ -107,6 +110,7 @@ func TestFavoriteToDatabase(t *testing.T) {
 		"test_person",
 		"test food",
 		1,
+		"extreme",
 	)
 	rec.Id = "123"
 	rec.AddIngredients("water")

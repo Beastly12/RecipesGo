@@ -15,6 +15,7 @@ func TestNewRecipe(t *testing.T) {
 		"johnny_test",
 		"A very delicious cup of hot water",
 		1,
+		"easy",
 	)
 
 	result.AddIngredients("water", "cast iron skillet")
@@ -31,6 +32,7 @@ func TestNewRecipe(t *testing.T) {
 			Categories:      []string{"breakfast", "italian"},
 			DateCreated:     result.DateCreated,
 			PreparationTime: 1,
+			Difficulty:      "easy",
 		},
 		SortKey:  "RECIPE",
 		ItemType: "RECIPE",
@@ -51,6 +53,7 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 			Description:     "Plain white rice",
 			Ingredients:     []string{"Rice", "Water"},
 			PreparationTime: 1,
+			Difficulty:      "easy",
 		},
 		SortKey: "RECIPE",
 	}
@@ -68,6 +71,7 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 				&types.AttributeValueMemberS{Value: "Water"},
 			}},
 			"preparationTime": &types.AttributeValueMemberN{Value: "1"},
+			"difficulty":      &types.AttributeValueMemberN{Value: "easy"},
 		},
 	}
 
@@ -104,6 +108,7 @@ func TestRecipeToDatabaseFormat(t *testing.T) {
 		"mad_scientist",
 		"stuff",
 		1,
+		"hard",
 	)
 
 	recipe.AddIngredients("water")
@@ -122,8 +127,9 @@ func TestRecipeToDatabaseFormat(t *testing.T) {
 		"categories": &types.AttributeValueMemberL{Value: []types.AttributeValue{
 			&types.AttributeValueMemberS{Value: "dessert"},
 		}},
-		"lsi": &types.AttributeValueMemberS{Value: time},
-		"gsi": &types.AttributeValueMemberS{Value: "RECIPE"},
+		"lsi":        &types.AttributeValueMemberS{Value: time},
+		"gsi":        &types.AttributeValueMemberS{Value: "RECIPE"},
+		"difficulty": &types.AttributeValueMemberS{Value: "hard"},
 	}
 
 	result := utils.ToDatabaseFormat(utils.DatabaseFormattable(recipe))
