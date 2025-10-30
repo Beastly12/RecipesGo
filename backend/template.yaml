@@ -153,7 +153,7 @@ Resources:
         - Name: email
           Required: true
           Mutable: true
-        - Name: fullname
+        - Name: name
           AttributeDataType: String
           Required: true
           Mutable: true
