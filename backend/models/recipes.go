@@ -16,7 +16,7 @@ const (
 type Recipe struct {
 	Id string `dynamodbav:"pk" json:"id"`
 	RecipeDetails
-	ItemType string `dynamodbav:"gsi" json:"-"` // nickname is gsi, so we can query by gsi
+	ItemType string `dynamodbav:"gsi" json:"-"`
 	SortKey  string `dynamodbav:"sk" json:"-"`
 }
 
@@ -51,7 +51,7 @@ func NewRecipe(name, imageUrl, authorName, description string, preparationTimeMi
 			DateCreated:     time,
 			IsPublic:        isPublic,
 		},
-		ItemType: RecipesSkPrefix, // sets nickname to be "RECIPE", to query all recipes
+		ItemType: RecipesSkPrefix,
 		SortKey:  RecipesSkPrefix,
 	}
 }

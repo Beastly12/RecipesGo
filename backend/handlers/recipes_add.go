@@ -72,7 +72,7 @@ func handleAddRecipe(ctx context.Context, req events.APIGatewayV2HTTPRequest) (e
 	newRecipe := models.NewRecipe(
 		recipe.Name,
 		recipe.ImageUrl,
-		user.Nickname,
+		user.Fullname,
 		recipe.Description,
 		recipe.PreparationTime,
 		recipe.Difficulty,

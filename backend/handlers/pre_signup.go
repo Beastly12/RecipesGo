@@ -10,10 +10,10 @@ import (
 // VALIDATES USER SIGN UP DETAILS THEN AUTO VERIFIES USER
 
 func HandleAddUser(ctx context.Context, event *events.CognitoEventUserPoolsPreSignup) (interface{}, error) {
-	nickname, ok := event.Request.UserAttributes["nickname"]
+	fullname, ok := event.Request.UserAttributes["fullname"]
 
-	if !ok || nickname == "" {
-		return nil, fmt.Errorf("No value for nickname provided")
+	if !ok || fullname == "" {
+		return nil, fmt.Errorf("No value for fullname provided")
 	}
 
 	// auto verify user

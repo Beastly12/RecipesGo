@@ -12,7 +12,7 @@ func TestNewUser(t *testing.T) {
 	expect := &User{
 		Userid:      "123",
 		Description: "PROFILE",
-		Nickname:    "test",
+		Fullname:    "test",
 		DpUrl:       "",
 	}
 
@@ -68,7 +68,7 @@ func TestDbItemsToUserStructs(t *testing.T) {
 	expected := User{
 		Userid:      "123",
 		Description: "PROFILE",
-		Nickname:    "test",
+		Fullname:    "test",
 		DpUrl:       "cdn.pic.com",
 	}
 
