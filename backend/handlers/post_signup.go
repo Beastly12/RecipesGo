@@ -18,12 +18,12 @@ func HandlePostSignup(ctx context.Context, event *events.CognitoEventUserPoolsPo
 	}
 
 	userid := event.Request.UserAttributes["sub"]
-	fullname := event.Request.UserAttributes["fullname"]
+	name := event.Request.UserAttributes["name"]
 
 	// create new user
 	newUser := models.NewUser(
 		userid,
-		fullname,
+		name,
 	)
 
 	err := helpers.NewUserHelper(ctx).Add(newUser)

@@ -15,7 +15,7 @@ const (
 type User struct {
 	Userid      string `dynamodbav:"pk" json:"userid"`
 	Description string `dynamodbav:"sk" json:"-"`
-	Fullname    string `dynamodbav:"gsi" json:"fullname"`
+	Name        string `dynamodbav:"gsi" json:"name"`
 	DpUrl       string `dynamodbav:"dpUrl" json:"dpUrl"`
 	Bio         string `dynamodbav:"bio" json:"bio"`
 	Location    string `dynamodbav:"location" json:"location"`
@@ -30,11 +30,11 @@ func UserKey(userid string) *map[string]types.AttributeValue {
 }
 
 // Returns a new user struct with the id and name provided
-func NewUser(userid, fullname string) *User {
+func NewUser(userid, name string) *User {
 	return &User{
 		Userid:      userid,
 		Description: UserSkPrefix,
-		Fullname:    fullname,
+		Name:        name,
 		DpUrl:       "",
 	}
 }
