@@ -17,6 +17,8 @@ type User struct {
 	Description string `dynamodbav:"sk" json:"-"`
 	Fullname    string `dynamodbav:"gsi" json:"fullname"`
 	DpUrl       string `dynamodbav:"dpUrl" json:"dpUrl"`
+	Bio         string `dynamodbav:"bio" json:"bio"`
+	Location    string `dynamodbav:"location" json:"location"`
 }
 
 // Returns key to query given user from db
