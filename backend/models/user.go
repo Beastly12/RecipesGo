@@ -15,8 +15,10 @@ const (
 type User struct {
 	Userid      string `dynamodbav:"pk" json:"userid"`
 	Description string `dynamodbav:"sk" json:"-"`
-	Nickname    string `dynamodbav:"nickname" json:"nickname"`
+	Name        string `dynamodbav:"gsi" json:"name"`
 	DpUrl       string `dynamodbav:"dpUrl" json:"dpUrl"`
+	Bio         string `dynamodbav:"bio" json:"bio"`
+	Location    string `dynamodbav:"location" json:"location"`
 }
 
 // Returns key to query given user from db
@@ -28,11 +30,11 @@ func UserKey(userid string) *map[string]types.AttributeValue {
 }
 
 // Returns a new user struct with the id and name provided
-func NewUser(userid, nickname string) *User {
+func NewUser(userid, name string) *User {
 	return &User{
 		Userid:      userid,
 		Description: UserSkPrefix,
-		Nickname:    nickname,
+		Name:        name,
 		DpUrl:       "",
 	}
 }
@@ -43,7 +45,7 @@ func (u *User) ApplyPrefixes() {
 }
 
 // Takes dynamo database items and tries to convert them to user structs
-func DbItemsToUserStructs(items *[]map[string]types.AttributeValue) (*[]User, error) {
+func DbItemsToUserStructs(items *[]map[string]types.AttributeValue) *[]User {
 	return utils.DatabaseItemToStruct(items, func(u *User) {
 		u.Userid = strings.TrimPrefix(u.Userid, UserPkPrefix)
 	})

@@ -8,9 +8,9 @@ import (
 )
 
 func init() {
-	utils.InitHandlerDependencies(utils.WithDatabase(), utils.WithBucket())
+	utils.InitHandlerDependencies(utils.WithDatabase())
 }
 
 func main() {
-	lambda.Start(handlers.HandleGetUploadUrl)
+	lambda.Start(handlers.HandleRatingsActions)
 }

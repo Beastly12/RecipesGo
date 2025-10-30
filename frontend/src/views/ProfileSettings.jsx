@@ -8,7 +8,7 @@ export default function ProfileSettings() {
 
   return (
     <div className="bg-[#fafafa] text-[#1a1a1a] min-h-screen font-sans dark:bg-[#0a0a0a] dark:text-[#e5e5e5]  ">
-      <div className="max-w-[900px] py-[40px] mx-[auto] px-[40px]  ">
+      <div className="lg:max-w-[900px] py-[40px] lg:mx-[auto] px-[20px] lg:px-[40px]  ">
         <div className="mb-5">
           <Link to={"/"} className="text-xl dark:text-[#e5e5e5]  ">
             ← Back to Profile
@@ -21,20 +21,20 @@ export default function ProfileSettings() {
         </h2>
 
         <div className=" bg-white rounded-2xl dark:bg-[#1a1a1a] dark:shadow-lg dark:shadow-black/50 p-8 mb-6 shadow">
-          <label className=" pl-5 font-semibold text-2xl dark:text-white">
+          <div className="  hidden lg:block  pl-5 font-semibold lg:text-2xl dark:text-white">
             Profile picture
-          </label>
-          <div className=" flex p-2  gap-5">
+          </div>
+          <div className=" flex  flex-col items-center lg:flex-row p-2  gap-5">
             {profilePic ? (
               <img alt="Profile" />
             ) : (
-              <div className="w-40 h-40 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 cursor-pointer hover:scale-105 transition-transform"></div>
+              <div className=" w-20 h-20 lg:w-40 lg:h-40 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 cursor-pointer hover:scale-105 transition-transform"></div>
             )}
             <div className="flex flex-col gap-6 p-6">
-              <button className=" py-3 px-8 dark:text-slate-300 dark:bg-gray-700   text-slate-600 font-semibold bg-gray-200 rounded-xl ">
+              <button className=" p-3 w-full text-xs lg:py-3 lg:px-8 dark:text-slate-300 dark:bg-gray-700   text-slate-600 font-semibold bg-gray-200 rounded-xl ">
                 Upload New Photo
               </button>
-              <button className=" py-3 px-8 text-[#ff6b6b] dark:text-[#ff8080] dark:bg-[#ff6b6b]/30  font-semibold bg-[#ff6b6b]/20 rounded-xl ">
+              <button className=" p-3 w-full lg:py-3 text-xs lg:px-8 text-[#ff6b6b] dark:text-[#ff8080] dark:bg-[#ff6b6b]/30  font-semibold bg-[#ff6b6b]/20 rounded-xl ">
                 Remove Photo
               </button>
             </div>
@@ -65,11 +65,11 @@ export default function ProfileSettings() {
             <input   className="dark:bg-[#0a0a0a] dark:text-white dark:border-gray-800 dark:placeholder-gray-500" type="text" placeholder="Enter your Location..." />
           </div>
 
-          <div className=" flex gap-8 justify-end ">
-            <button className=" rounded-lg bg-gray-200 dark:bg-gray-700 py-3 px-5">
+          <div className=" flex gap-2 lg:gap-8 justify-end ">
+            <button className=" rounded-lg bg-gray-200 dark:bg-gray-700 p-3 text-sm lg:py-3 lg:px-5">
               Cancel
             </button>
-            <button className=" text-white bg-[#ff6b6b] dark:text-[#ff6b6b]  dark:bg-[#ff6b6b]/30  p-3 rounded-lg ">
+            <button className=" text-white bg-[#ff6b6b] dark:text-[#ff6b6b] text-sm  dark:bg-[#ff6b6b]/30  p-1 rounded-lg ">
               Save Changes
             </button>
           </div>
@@ -105,9 +105,9 @@ export default function ProfileSettings() {
           </div>
           <div className="flex justify-between border-b-1 mb-6 dark:border-gray-700">
             <div>
-              <div className="font-semibold dark:text-white">Dark Mode</div>
+              <div className="font-semibold dark:text-white">Private Profile</div>
               <div className="text-[14px] dark:text-slate-400">
-                Enanble dark theme across the app
+                only followers can see your recipes
               </div>
             </div>
             <div>
@@ -129,9 +129,9 @@ export default function ProfileSettings() {
           </div>
           <div className="flex justify-between border-b-1 mb-6 dark:border-gray-700">
             <div>
-              <div className="font-semibold dark:text-white">Dark Mode</div>
+              <div className="font-semibold dark:text-white">Show Activity</div>
               <div className="text-[14px] dark:text-slate-400">
-                Enanble dark theme across the app
+                    Let others see your likes and comments 
               </div>
             </div>
             <div>

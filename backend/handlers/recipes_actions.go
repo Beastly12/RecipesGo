@@ -7,16 +7,16 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-func HandleRecipesActions(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	switch req.HTTPMethod {
+func HandleRecipesActions(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
+	switch req.RequestContext.HTTP.Method {
 	case "POST":
-		return HandleAddRecipe(ctx, req)
+		return handleAddRecipe(ctx, req)
 
 	case "GET":
-		return HandleGetRecipes(ctx, req)
+		return handleGetRecipes(ctx, req)
 
 	case "DELETE":
-		return HandleDeleteRecipe(ctx, req)
+		return handleDeleteRecipe(ctx, req)
 
 	default:
 		return models.InvalidRequestErrorResponse("Invalid http method"), nil

@@ -13,10 +13,15 @@ func TestNewRecipe(t *testing.T) {
 		"Hot water",
 		"https://cdn.test.com/test.jpg",
 		"johnny_test",
+		"italian",
 		"A very delicious cup of hot water",
 		1,
-		"water", "cast iron skillet",
+		"easy",
+		true,
 	)
+
+	result.AddIngredients("water", "cast iron skillet")
+	result.AddInstructions("boil for 5 mins")
 
 	expect := &Recipe{
 		Id: result.Id,
@@ -26,11 +31,14 @@ func TestNewRecipe(t *testing.T) {
 			AuthorName:      "johnny_test",
 			Description:     "A very delicious cup of hot water",
 			Ingredients:     []string{"water", "cast iron skillet"},
+			Category:        "italian",
+			Instructions:    []string{"boil for 5 mins"},
 			DateCreated:     result.DateCreated,
 			PreparationTime: 1,
+			Difficulty:      "easy",
+			IsPublic:        true,
 		},
-		SortKey:  "RECIPE",
-		ItemType: "RECIPE",
+		SortKey: "RECIPE",
 	}
 
 	if !reflect.DeepEqual(result, expect) {
@@ -47,7 +55,11 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 			AuthorName:      "johnny_test",
 			Description:     "Plain white rice",
 			Ingredients:     []string{"Rice", "Water"},
+			Category:        "dinner",
+			Instructions:    []string{"oven"},
 			PreparationTime: 1,
+			Difficulty:      "easy",
+			IsPublic:        false,
 		},
 		SortKey: "RECIPE",
 	}
@@ -65,10 +77,14 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 				&types.AttributeValueMemberS{Value: "Water"},
 			}},
 			"preparationTime": &types.AttributeValueMemberN{Value: "1"},
+			"gsi":             &types.AttributeValueMemberS{Value: "dinner"},
+			"instructions":    &types.AttributeValueMemberL{Value: []types.AttributeValue{&types.AttributeValueMemberS{Value: "oven"}}},
+			"difficulty":      &types.AttributeValueMemberN{Value: "easy"},
+			"isPublic":        &types.AttributeValueMemberBOOL{Value: false},
 		},
 	}
 
-	res, _ := DatabaseItemsToRecipeStructs(&items, "cdn.com")
+	res := DatabaseItemsToRecipeStructs(&items, "cdn.com")
 	result := (*res)[0]
 
 	if !reflect.DeepEqual(result, expect) {
@@ -99,10 +115,14 @@ func TestRecipeToDatabaseFormat(t *testing.T) {
 		"test",
 		"",
 		"mad_scientist",
+		"dessert",
 		"stuff",
 		1,
-		"water",
+		"hard",
+		false,
 	)
+
+	recipe.AddIngredients("water")
 
 	expect := map[string]types.AttributeValue{
 		"pk":          &types.AttributeValueMemberS{Value: "RECIPE#" + recipe.Id},
@@ -114,8 +134,10 @@ func TestRecipeToDatabaseFormat(t *testing.T) {
 		"ingredients": &types.AttributeValueMemberL{Value: []types.AttributeValue{
 			&types.AttributeValueMemberS{Value: "water"},
 		}},
-		"dateCreated": &types.AttributeValueMemberS{Value: time},
-		"nickname":    &types.AttributeValueMemberS{Value: "RECIPE"},
+		"gsi":        &types.AttributeValueMemberS{Value: "dessert"},
+		"lsi":        &types.AttributeValueMemberS{Value: time},
+		"difficulty": &types.AttributeValueMemberS{Value: "hard"},
+		"isPublic":   &types.AttributeValueMemberBOOL{Value: false},
 	}
 
 	result := utils.ToDatabaseFormat(utils.DatabaseFormattable(recipe))

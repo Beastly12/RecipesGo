@@ -14,10 +14,10 @@ type ResponseBody struct {
 }
 
 // buildResponse builds a standard API Gateway proxy response
-func buildResponse(statusCode int, body ResponseBody) events.APIGatewayProxyResponse {
+func buildResponse(statusCode int, body ResponseBody) events.APIGatewayV2HTTPResponse {
 	jsonBody, _ := json.Marshal(body)
 
-	return events.APIGatewayProxyResponse{
+	return events.APIGatewayV2HTTPResponse{
 		StatusCode: statusCode,
 		Headers: map[string]string{
 			"Content-Type": "application/json",
@@ -26,21 +26,21 @@ func buildResponse(statusCode int, body ResponseBody) events.APIGatewayProxyResp
 	}
 }
 
-func InvalidRequestErrorResponse(msg string) events.APIGatewayProxyResponse {
+func InvalidRequestErrorResponse(msg string) events.APIGatewayV2HTTPResponse {
 	if msg == "" {
 		msg = "Invalid request body."
 	}
 	return buildResponse(400, ResponseBody{msg})
 }
 
-func UnauthorizedErrorResponse(msg string) events.APIGatewayProxyResponse {
+func UnauthorizedErrorResponse(msg string) events.APIGatewayV2HTTPResponse {
 	if msg == "" {
 		msg = "Unauthorized request."
 	}
 	return buildResponse(401, ResponseBody{msg})
 }
 
-func NotFoundResponse(msg string) events.APIGatewayProxyResponse {
+func NotFoundResponse(msg string) events.APIGatewayV2HTTPResponse {
 	if msg == "" {
 		msg = "Resource not found."
 	}
@@ -48,7 +48,7 @@ func NotFoundResponse(msg string) events.APIGatewayProxyResponse {
 	return buildResponse(404, ResponseBody{msg})
 }
 
-func ServerSideErrorResponse(msg string, error error) events.APIGatewayProxyResponse {
+func ServerSideErrorResponse(msg string, error error) events.APIGatewayV2HTTPResponse {
 	if msg == "" {
 		msg = "An error has occurred on our end, try again."
 	}
@@ -56,7 +56,7 @@ func ServerSideErrorResponse(msg string, error error) events.APIGatewayProxyResp
 	return buildResponse(500, ResponseBody{msg})
 }
 
-func SuccessfulRequestResponse(msg string, createdResource bool) events.APIGatewayProxyResponse {
+func SuccessfulRequestResponse(msg string, createdResource bool) events.APIGatewayV2HTTPResponse {
 	if msg == "" {
 		msg = "Request successful"
 	}
@@ -69,7 +69,7 @@ func SuccessfulRequestResponse(msg string, createdResource bool) events.APIGatew
 	return buildResponse(sCode, ResponseBody{msg})
 }
 
-func SuccessfulGetRequestResponse(body interface{}) events.APIGatewayProxyResponse {
+func SuccessfulGetRequestResponse(body interface{}) events.APIGatewayV2HTTPResponse {
 	return buildResponse(200, ResponseBody{
 		body,
 	})

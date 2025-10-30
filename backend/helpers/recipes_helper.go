@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"backend"
 	"backend/models"
 	"backend/utils"
 	"context"
@@ -23,18 +24,24 @@ func NewRecipeHelper(ctx context.Context) *recipeHelper {
 
 // adds recipe to db
 func (this *recipeHelper) Add(recipe *models.Recipe) error {
-	return NewHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(recipe))
+	return newHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(recipe))
 }
 
 // get all recipes in db
-func (this *recipeHelper) GetAll() (*[]models.Recipe, error) {
+func (this *recipeHelper) GetAll(lastEvalKey string) (*[]models.Recipe, error) {
 	input := &dynamodb.QueryInput{
 		TableName:              &utils.GetDependencies().MainTableName,
-		IndexName:              aws.String("NicknameIndex"),
-		KeyConditionExpression: aws.String("nickname = :n"),
+		IndexName:              aws.String("gsiIndex"),
+		KeyConditionExpression: aws.String("gsi = :n"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":n": &types.AttributeValueMemberS{Value: models.RecipesSkPrefix},
 		},
+		Limit: aws.Int32(backend.MAX_RECIPES_DUMP),
+	}
+
+	if lastEvalKey != "" {
+		// not first page
+		input.ExclusiveStartKey = *models.RecipeKey(lastEvalKey)
 	}
 
 	items, err := utils.GetDependencies().DbClient.Query(this.Ctx, input)
@@ -43,11 +50,7 @@ func (this *recipeHelper) GetAll() (*[]models.Recipe, error) {
 		return nil, err
 	}
 
-	recipes, rErr := models.DatabaseItemsToRecipeStructs(&items.Items, utils.GetDependencies().CloudFrontDomainName)
-	if rErr != nil {
-		log.Println("An error occurred while trying to convert db recipe items to recipe structs")
-		return nil, rErr
-	}
+	recipes := models.DatabaseItemsToRecipeStructs(&items.Items, utils.GetDependencies().CloudFrontDomainName)
 
 	return recipes, nil
 }
@@ -69,11 +72,7 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 		return nil, nil
 	}
 
-	recipes, err := models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, utils.GetDependencies().CloudFrontDomainName)
-
-	if err != nil {
-		return nil, err
-	}
+	recipes := models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, utils.GetDependencies().CloudFrontDomainName)
 
 	recipe := (*recipes)[0]
 	return &recipe, nil
@@ -81,17 +80,5 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 
 // deletes recipe from db
 func (r *recipeHelper) Delete(recipeId string) error {
-	input := &dynamodb.DeleteItemInput{
-		Key:       *models.RecipeKey(recipeId),
-		TableName: &utils.GetDependencies().MainTableName,
-	}
-
-	_, err := utils.GetDependencies().DbClient.DeleteItem(r.Ctx, input)
-
-	if err != nil {
-		log.Println("An error occurred while trying to delete recipe")
-		return err
-	}
-
-	return nil
+	return newHelper(r.Ctx).deleteFromDb(models.RecipeKey(recipeId))
 }

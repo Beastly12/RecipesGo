@@ -39,16 +39,22 @@ func TestDbItemToFavorite(t *testing.T) {
 		"test",
 		"",
 		"test",
+		"italian",
 		"test",
 		1,
-		"water",
+		"medium",
+		true,
 	)
+	recipe.AddIngredients("water")
+
+	d := utils.GetTimeNow()
 
 	expect := &[]Favorite{
 		{
 			UserId:        "123",
 			RecipeId:      "123",
 			RecipeDetails: recipe.RecipeDetails,
+			DateAdded:     d,
 		},
 	}
 
@@ -63,12 +69,16 @@ func TestDbItemToFavorite(t *testing.T) {
 			"ingredients": &types.AttributeValueMemberL{Value: []types.AttributeValue{
 				&types.AttributeValueMemberS{Value: "water"},
 			}},
+			"gsi":             &types.AttributeValueMemberS{Value: "italian"},
 			"preparationTime": &types.AttributeValueMemberN{Value: "1"},
-			"dateCreated":     &types.AttributeValueMemberS{Value: recipe.DateCreated},
+			"difficulty":      &types.AttributeValueMemberN{Value: "medium"},
+			"lsi":             &types.AttributeValueMemberS{Value: recipe.DateCreated},
+			"dateAdded":       &types.AttributeValueMemberS{Value: d},
+			"isPublic":        &types.AttributeValueMemberBOOL{Value: true},
 		},
 	}
 
-	result, _ := DbItemsToFavoriteStructs(&items)
+	result := DbItemsToFavoriteStructs(&items)
 
 	if !reflect.DeepEqual(result, expect) {
 		t.Errorf("Expected \n%v\n but got \n%v\n instead", expect, result)
@@ -89,22 +99,29 @@ func TestFavoriteToDatabase(t *testing.T) {
 			&types.AttributeValueMemberS{Value: "water"},
 		}},
 		"preparationTime": &types.AttributeValueMemberN{Value: "1"},
-		"dateCreated":     &types.AttributeValueMemberS{Value: dc},
+		"difficulty":      &types.AttributeValueMemberS{Value: "extreme"},
+		"lsi":             &types.AttributeValueMemberS{Value: dc},
+		"dateAdded":       &types.AttributeValueMemberS{Value: dc},
+		"isPublic":        &types.AttributeValueMemberBOOL{Value: true},
 	}
 
 	rec := NewRecipe(
 		"test",
 		"",
 		"test_person",
+		"italian",
 		"test food",
 		1,
-		"water",
+		"extreme",
+		true,
 	)
 	rec.Id = "123"
+	rec.AddIngredients("water")
 	fav := NewFavorite(
 		"123",
 		rec,
 	)
+	fav.DateAdded = dc
 
 	result := utils.ToDatabaseFormat(fav)
 
