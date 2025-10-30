@@ -28,7 +28,7 @@ func DatabaseItemToStruct[T any](
 	var results []T
 
 	if err := attributevalue.UnmarshalListOfMaps(*items, &results); err != nil {
-		log.Fatalf("An error occurred while trying to un marshal db items to struct %T", results)
+		log.Fatalf("An error occurred while trying to un marshal db items to struct %T: %v", results, err)
 	}
 
 	for index := range results {

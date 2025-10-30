@@ -55,6 +55,7 @@ func (this *favoritesHelper) GetAll(userId string, lastRecipeId string) (*[]mode
 			fav.Name,
 			fav.ImageUrl,
 			fav.AuthorName,
+			fav.Category,
 			fav.Description,
 			fav.PreparationTime,
 			fav.Difficulty,
@@ -62,7 +63,6 @@ func (this *favoritesHelper) GetAll(userId string, lastRecipeId string) (*[]mode
 		)
 		r.Id = fav.RecipeId
 		r.AddIngredients(fav.Ingredients...)
-		r.AddCategories(fav.Categories...)
 		recipes = append(recipes, r)
 	}
 

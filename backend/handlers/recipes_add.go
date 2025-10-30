@@ -15,7 +15,7 @@ type jsonBody struct {
 	Name            string   `json:"name"`
 	ImageUrl        string   `json:"imageUrl"`
 	Description     string   `json:"description"`
-	Categories      []string `json:"categories"`
+	Category        string   `json:"category"`
 	Ingredients     []string `json:"ingredients"`
 	Instructions    []string `json:"instructions"`
 	PreparationTime int      `json:"preparationTime"`
@@ -39,10 +39,6 @@ func handleAddRecipe(ctx context.Context, req events.APIGatewayV2HTTPRequest) (e
 
 	if len(recipe.Ingredients) < 1 {
 		return models.InvalidRequestErrorResponse("Recipe must have at least 1 ingredient"), nil
-	}
-
-	if len(recipe.Categories) < 1 {
-		return models.InvalidRequestErrorResponse("Recipe must have at least 1 category"), nil
 	}
 
 	if len(recipe.Instructions) < 1 {
@@ -73,6 +69,7 @@ func handleAddRecipe(ctx context.Context, req events.APIGatewayV2HTTPRequest) (e
 		recipe.Name,
 		recipe.ImageUrl,
 		user.Fullname,
+		recipe.Category,
 		recipe.Description,
 		recipe.PreparationTime,
 		recipe.Difficulty,
@@ -80,7 +77,6 @@ func handleAddRecipe(ctx context.Context, req events.APIGatewayV2HTTPRequest) (e
 	)
 
 	newRecipe.AddIngredients(recipe.Ingredients...)
-	newRecipe.AddCategories(recipe.Categories...)
 	newRecipe.AddInstructions(recipe.Instructions...)
 
 	// add it to db
