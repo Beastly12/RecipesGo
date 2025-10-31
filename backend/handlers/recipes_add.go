@@ -15,12 +15,16 @@ type jsonBody struct {
 	Name            string   `json:"name"`
 	ImageUrl        string   `json:"imageUrl"`
 	Description     string   `json:"description"`
+	Category        string   `json:"category"`
 	Ingredients     []string `json:"ingredients"`
+	Instructions    []string `json:"instructions"`
 	PreparationTime int      `json:"preparationTime"`
+	Difficulty      string   `json:"difficulty"`
+	IsPublic        bool     `json:"isPublic"`
 }
 
 // adds new recipe to db
-func handleAddRecipe(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handleAddRecipe(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	// converts json body into recipe
 	var recipe jsonBody
 	if err := json.Unmarshal([]byte(req.Body), &recipe); err != nil {
@@ -35,6 +39,10 @@ func handleAddRecipe(ctx context.Context, req *events.APIGatewayProxyRequest) (e
 
 	if len(recipe.Ingredients) < 1 {
 		return models.InvalidRequestErrorResponse("Recipe must have at least 1 ingredient"), nil
+	}
+
+	if len(recipe.Instructions) < 1 {
+		return models.InvalidRequestErrorResponse("Recipe must have at least one preparation instruction"), nil
 	}
 
 	// get details of user trying to create new recipe
@@ -60,11 +68,16 @@ func handleAddRecipe(ctx context.Context, req *events.APIGatewayProxyRequest) (e
 	newRecipe := models.NewRecipe(
 		recipe.Name,
 		recipe.ImageUrl,
-		user.Nickname,
+		user.Name,
+		recipe.Category,
 		recipe.Description,
 		recipe.PreparationTime,
-		recipe.Ingredients...,
+		recipe.Difficulty,
+		recipe.IsPublic,
 	)
+
+	newRecipe.AddIngredients(recipe.Ingredients...)
+	newRecipe.AddInstructions(recipe.Instructions...)
 
 	// add it to db
 	addErr := helpers.NewRecipeHelper(ctx).Add(newRecipe)

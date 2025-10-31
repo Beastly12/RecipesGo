@@ -1,11 +1,17 @@
+BASE URL FOR PRODUCTION BUILD: https://splkc2b210.execute-api.eu-west-2.amazonaws.com/prod
+
 To create a new recipe:
   POST /recipes
 	JSON:
 		name: string
 		imageKey: string
 		description: string
+		category: string
 		ingredients: []string
+		instructions: []string
 		preparationTime: int
+		isPublic: bool
+		difficulty: string
 
 To get all recipes:
 	GET /recipes

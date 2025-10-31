@@ -14,6 +14,7 @@ permissions:
 
 jobs:
   build-and-deploy:
+    if: github.repository_owner == 'Beastly12'
     runs-on: ubuntu-latest
 
     defaults:
@@ -67,7 +68,7 @@ jobs:
           sam deploy \
             --template-file template.yaml \
             --s3-bucket recipe-go-sam-${{ env.AWS_REGION }} \
-            --stack-name recipe-stack \
+            --stack-name recipe-prod-stack \
             --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
             --region ${{env.AWS_REGION}} \
             --parameter-overrides EnvironmentName=prod \

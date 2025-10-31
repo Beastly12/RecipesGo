@@ -12,7 +12,7 @@ func TestNewUser(t *testing.T) {
 	expect := &User{
 		Userid:      "123",
 		Description: "PROFILE",
-		Nickname:    "test",
+		Name:        "test",
 		DpUrl:       "",
 	}
 
@@ -26,10 +26,12 @@ func TestNewUser(t *testing.T) {
 func TestUserStructToDbItem(t *testing.T) {
 	result := *utils.ToDatabaseFormat(NewUser("123", "test"))
 	expect := map[string]types.AttributeValue{
-		"pk":    &types.AttributeValueMemberS{Value: "USER#123"},
-		"sk":    &types.AttributeValueMemberS{Value: "PROFILE"},
-		"gsi":   &types.AttributeValueMemberS{Value: "test"},
-		"dpUrl": &types.AttributeValueMemberS{Value: ""},
+		"pk":       &types.AttributeValueMemberS{Value: "USER#123"},
+		"sk":       &types.AttributeValueMemberS{Value: "PROFILE"},
+		"gsi":      &types.AttributeValueMemberS{Value: "test"},
+		"dpUrl":    &types.AttributeValueMemberS{Value: ""},
+		"bio":      &types.AttributeValueMemberS{Value: ""},
+		"location": &types.AttributeValueMemberS{Value: ""},
 	}
 
 	if len(result) != len(expect) {
@@ -58,18 +60,22 @@ func TestUserStructToDbItem(t *testing.T) {
 func TestDbItemsToUserStructs(t *testing.T) {
 	userItem := []map[string]types.AttributeValue{
 		{
-			"pk":    &types.AttributeValueMemberS{Value: "USER#123"},
-			"sk":    &types.AttributeValueMemberS{Value: "PROFILE"},
-			"gsi":   &types.AttributeValueMemberS{Value: "test"},
-			"dpUrl": &types.AttributeValueMemberS{Value: "cdn.pic.com"},
+			"pk":       &types.AttributeValueMemberS{Value: "USER#123"},
+			"sk":       &types.AttributeValueMemberS{Value: "PROFILE"},
+			"gsi":      &types.AttributeValueMemberS{Value: "test"},
+			"dpUrl":    &types.AttributeValueMemberS{Value: "cdn.pic.com"},
+			"location": &types.AttributeValueMemberS{Value: "southampton"},
+			"bio":      &types.AttributeValueMemberS{Value: "i love food"},
 		},
 	}
 
 	expected := User{
 		Userid:      "123",
 		Description: "PROFILE",
-		Nickname:    "test",
+		Name:        "test",
 		DpUrl:       "cdn.pic.com",
+		Location:    "southampton",
+		Bio:         "i love food",
 	}
 
 	res := DbItemsToUserStructs(&userItem)

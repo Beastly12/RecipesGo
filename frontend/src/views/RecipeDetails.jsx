@@ -132,14 +132,14 @@ function RecipeDetailPage() {
   const hasMore = visibleComment < recipe_details.comments.length;
 
   return (
-    <div className="bg-[#fafafa] min-h-screen m-4 text-[#1a1a1a]  dark:bg-[#1a1a1a] dark:text-[#fafafa]">
+    <div className="bg-[#fafafa] min-h-screen m-4 text-[#1a1a1a]  dark:bg-[#1a1a1a] dark:text-[#fafafa] dark:m-0">
       <div className=" flex flex-col justify-items-center">
         {/* Back Button */}
         <Link
           to={"/"}
-          className="flex items-center space-x-5 text-[#1a1a1a] p-2 hover:underline mb-4"
+          className="flex items-center space-x-5 text-[#1a1a1a] p-2 hover:underline mb-4 dark:text-white ml-5"
         >
-          <ArrowLeft /> <span className="text-2xl">Back</span>
+          <ArrowLeft /> <span className="text-2xl p-3">Back</span>
         </Link>
       </div>
 
@@ -195,7 +195,7 @@ function RecipeDetailPage() {
 
             <Accordion sections={recipe_details.descriptionSections} />
 
-            <div className="grid grid- md:grid-cols-2 gap-10 mb-8 mt-15 dark  dark:bg-[#fafafa] dark:text-gray-600 dark:rounded-2xl">
+            <div className="grid grid- md:grid-cols-2 gap-10 mb-8 mt-15 dark  dark:bg-[#fafafa] dark:text-gray-600 dark:rounded-2x dark:bg-[#1a1a1a]">
               <div>
                 <div className=" grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-6">
                   {/* Time Card */}

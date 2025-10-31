@@ -15,7 +15,7 @@ type favReqBody struct {
 	RecipeId string `json:"recipeId"`
 }
 
-func handleAddToFavorite(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handleAddToFavorite(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 
 	// extract recipe id from body
 	var payload favReqBody

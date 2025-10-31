@@ -16,8 +16,7 @@ const (
 type Recipe struct {
 	Id string `dynamodbav:"pk" json:"id"`
 	RecipeDetails
-	ItemType string `dynamodbav:"gsi" json:"-"` // nickname is gsi, so we can query by gsi
-	SortKey  string `dynamodbav:"sk" json:"-"`
+	SortKey string `dynamodbav:"sk" json:"-"`
 }
 
 type RecipeDetails struct {
@@ -25,13 +24,17 @@ type RecipeDetails struct {
 	Name            string   `dynamodbav:"name" json:"name"`
 	AuthorName      string   `dynamodbav:"authorName" json:"authorName"`
 	Description     string   `dynamodbav:"description" json:"description"`
+	Category        string   `dynamodbav:"gsi" json:"category"`
 	Ingredients     []string `dynamodbav:"ingredients" json:"ingredients"`
 	PreparationTime int      `dynamodbav:"preparationTime" json:"preparationTime"`
+	Difficulty      string   `dynamodbav:"difficulty" json:"difficulty"`
+	Instructions    []string `dynamodbav:"instructions" json:"instructions"`
+	IsPublic        bool     `dynamodbav:"isPublic" json:"isPublic"`
 	DateCreated     string   `json:"dateCreated" dynamodbav:"lsi"`
 }
 
 // Returns a recipe struct with details provided
-func NewRecipe(name, imageUrl, authorName, description string, preparationTimeMins int, ingredients ...string) *Recipe {
+func NewRecipe(name, imageUrl, authorName, category, description string, preparationTimeMins int, difficulty string, isPublic bool) *Recipe {
 
 	time := utils.GetTimeNow()
 
@@ -41,14 +44,23 @@ func NewRecipe(name, imageUrl, authorName, description string, preparationTimeMi
 			ImageUrl:        imageUrl,
 			Name:            name,
 			AuthorName:      authorName,
+			Category:        category,
 			Description:     description,
-			Ingredients:     ingredients,
 			PreparationTime: preparationTimeMins,
+			Difficulty:      difficulty,
 			DateCreated:     time,
+			IsPublic:        isPublic,
 		},
-		ItemType: RecipesSkPrefix, // sets nickname to be "RECIPE", to query all recipes
-		SortKey:  RecipesSkPrefix,
+		SortKey: RecipesSkPrefix,
 	}
+}
+
+func (r *Recipe) AddIngredients(ingredients ...string) {
+	r.Ingredients = append(r.Ingredients, ingredients...)
+}
+
+func (r *Recipe) AddInstructions(instructions ...string) {
+	r.Instructions = append(r.Instructions, instructions...)
 }
 
 // DANGEROUS CODE: applies prefixes for database storage

@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-func handleGetRatings(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handleGetRatings(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	recipeId := req.PathParameters["id"]
 	lastRecipeId := req.QueryStringParameters["next_recipe"]
 	lastUserId := req.QueryStringParameters["next_user"]

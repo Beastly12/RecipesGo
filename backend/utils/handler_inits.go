@@ -16,7 +16,7 @@ const (
 	MAIN_TABLE             = "MAIN_TABLE"
 	USER_POOL_ID           = "USER_POOL_ID"
 	CLOUDFRONT_DOMAIN_NAME = "CLOUDFRONT_DOMAIN"
-	MEDIA_BUCKET           = "MEDIA_BUCKET"
+	MEDIA_BUCKET           = "RECIPE_IMAGES_BUCKET"
 )
 
 type handlerDependenciesType struct {

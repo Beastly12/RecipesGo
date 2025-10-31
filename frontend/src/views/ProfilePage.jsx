@@ -54,9 +54,9 @@ export default function Profile() {
   const [activeTab, setActiveTab] = useState("myRecipes");
 
   return (
-    <div className="min-h-screen  bg-[#fafafa] m-4 text-[#1a1a1a] dark:bg-[#1a1a1a] dark:text-[#fafafa]">
+    <div className="min-h-screen  bg-[#fafafa] m-4 text-[#1a1a1a] dark:bg-[#1a1a1a] dark:text-[#fafafa] dark:m-0">
       <Link to="/recipe-details">
-        <div className="flex m-4 p-3 space-x-3">
+        <div className="flex m-4 p-3 space-x-3 dark:m-0">
           <ArrowLeft className="cursor-pointer" />
           <button className=" text-xl font-medium cursor-pointer hover:underline md:font-light">
             Back
@@ -102,7 +102,7 @@ export default function Profile() {
           </div>
         </div>
 
-        <div className="flex space-x-20 mt-4 text-[#1a1a1a] border-b-1 border-b-gray-600">
+        <div className="flex space-x-20 mt-4 text-[#1a1a1a] border-b-1 border-b-gray-600 dark:text-white">
           <button
             onClick={() => setActiveTab("myRecipes")}
             className={`cursor-pointer pb-2 border-b-2 ${

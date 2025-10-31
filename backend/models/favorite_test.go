@@ -39,10 +39,13 @@ func TestDbItemToFavorite(t *testing.T) {
 		"test",
 		"",
 		"test",
+		"italian",
 		"test",
 		1,
-		"water",
+		"medium",
+		true,
 	)
+	recipe.AddIngredients("water")
 
 	d := utils.GetTimeNow()
 
@@ -66,9 +69,12 @@ func TestDbItemToFavorite(t *testing.T) {
 			"ingredients": &types.AttributeValueMemberL{Value: []types.AttributeValue{
 				&types.AttributeValueMemberS{Value: "water"},
 			}},
+			"gsi":             &types.AttributeValueMemberS{Value: "italian"},
 			"preparationTime": &types.AttributeValueMemberN{Value: "1"},
+			"difficulty":      &types.AttributeValueMemberN{Value: "medium"},
 			"lsi":             &types.AttributeValueMemberS{Value: recipe.DateCreated},
 			"dateAdded":       &types.AttributeValueMemberS{Value: d},
+			"isPublic":        &types.AttributeValueMemberBOOL{Value: true},
 		},
 	}
 
@@ -93,19 +99,24 @@ func TestFavoriteToDatabase(t *testing.T) {
 			&types.AttributeValueMemberS{Value: "water"},
 		}},
 		"preparationTime": &types.AttributeValueMemberN{Value: "1"},
+		"difficulty":      &types.AttributeValueMemberS{Value: "extreme"},
 		"lsi":             &types.AttributeValueMemberS{Value: dc},
 		"dateAdded":       &types.AttributeValueMemberS{Value: dc},
+		"isPublic":        &types.AttributeValueMemberBOOL{Value: true},
 	}
 
 	rec := NewRecipe(
 		"test",
 		"",
 		"test_person",
+		"italian",
 		"test food",
 		1,
-		"water",
+		"extreme",
+		true,
 	)
 	rec.Id = "123"
+	rec.AddIngredients("water")
 	fav := NewFavorite(
 		"123",
 		rec,

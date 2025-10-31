@@ -7,8 +7,8 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-func HandleRatingsActions(ctx context.Context, req *events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	switch req.HTTPMethod {
+func HandleRatingsActions(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
+	switch req.RequestContext.HTTP.Method {
 	case "POST":
 		return handleAddRatings(ctx, req)
 
