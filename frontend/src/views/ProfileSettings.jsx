@@ -8,7 +8,7 @@ export default function ProfileSettings() {
 
   return (
     <div className="bg-[#fafafa] text-[#1a1a1a] min-h-screen font-sans dark:bg-[#0a0a0a] dark:text-[#e5e5e5]  ">
-      <div className="lg:max-w-[900px] py-[40px] lg:mx-[auto] px-[20px] lg:px-[40px]  ">
+      <div className="lg:max-w-[900px] py-10 lg:mx-auto px-5 lg:px-10  ">
         <div className="mb-5">
           <Link to={"/"} className="text-xl dark:text-[#e5e5e5]  ">
             ← Back to Profile
@@ -28,7 +28,7 @@ export default function ProfileSettings() {
             {profilePic ? (
               <img alt="Profile" />
             ) : (
-              <div className=" w-20 h-20 lg:w-40 lg:h-40 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 cursor-pointer hover:scale-105 transition-transform"></div>
+              <div className=" w-20 h-20 lg:w-40 lg:h-40 rounded-full bg-linear-to-br from-indigo-400 to-purple-600 cursor-pointer hover:scale-105 transition-transform"></div>
             )}
             <div className="flex flex-col gap-6 p-6">
               <button className=" p-3 w-full text-xs lg:py-3 lg:px-8 dark:text-slate-300 dark:bg-gray-700   text-slate-600 font-semibold bg-gray-200 rounded-xl ">
@@ -79,7 +79,7 @@ export default function ProfileSettings() {
           <div className=" text-[20px] font-bold mb-5 text-[#1a1a1a] dark:text-white ">
             Preferences and Privacy
           </div>
-          <div className="flex justify-between border-b-1 mb-6 dark:border-gray-700">
+          <div className="flex justify-between border-b mb-6 dark:border-gray-700">
             <div>
               <div className="font-semibold dark:text-white">Dark Mode</div>
               <div className="text-[14px] dark:text-slate-400">
@@ -103,7 +103,7 @@ export default function ProfileSettings() {
               </div>
             </div>
           </div>
-          <div className="flex justify-between border-b-1 mb-6 dark:border-gray-700">
+          <div className="flex justify-between border-b mb-6 dark:border-gray-700">
             <div>
               <div className="font-semibold dark:text-white">Private Profile</div>
               <div className="text-[14px] dark:text-slate-400">
@@ -127,7 +127,7 @@ export default function ProfileSettings() {
               </div>
             </div>
           </div>
-          <div className="flex justify-between border-b-1 mb-6 dark:border-gray-700">
+          <div className="flex justify-between border-b mb-6 dark:border-gray-700">
             <div>
               <div className="font-semibold dark:text-white">Show Activity</div>
               <div className="text-[14px] dark:text-slate-400">
@@ -155,7 +155,7 @@ export default function ProfileSettings() {
 
         <div className=" bg-white rounded-2xl dark:bg-[#1a1a1a] p-8 mb-6 shadow dark:shadow-lg dark:shadow-black/50">
           <div
-            className=" flex gap-3 flex-col  border-2  rounded-2xl py-[40px] px-[20px] 
+            className=" flex gap-3 flex-col  border-2  rounded-2xl py-10 px-5 
                       transition-all  border-[#ff6b6b]  dark:border-[#ff5252] bg-[#fff5f5] dark:bg-[#2a0a0a] "
           >
             <div className=" text-xl font-semibold text-[#ff6b6b] flex  gap-2 dark:text-[#ff8080] ">
