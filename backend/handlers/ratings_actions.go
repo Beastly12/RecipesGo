@@ -15,9 +15,6 @@ func HandleRatingsActions(ctx context.Context, req events.APIGatewayV2HTTPReques
 	case "DELETE":
 		return handleDeleteRating(ctx, req)
 
-	case "GET":
-		return handleGetRatings(ctx, req)
-
 	default:
 		return models.InvalidRequestErrorResponse("Invalid http method!"), nil
 	}

@@ -68,12 +68,14 @@ func handleAddRecipe(ctx context.Context, req events.APIGatewayV2HTTPRequest) (e
 	newRecipe := models.NewRecipe(
 		recipe.Name,
 		recipe.ImageUrl,
-		user.Name,
 		recipe.Category,
 		recipe.Description,
 		recipe.PreparationTime,
 		recipe.Difficulty,
 		recipe.IsPublic,
+		user.Userid,
+		user.Name,
+		user.DpUrl,
 	)
 
 	newRecipe.AddIngredients(recipe.Ingredients...)

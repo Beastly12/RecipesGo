@@ -35,15 +35,18 @@ func TestFavoriteKey(t *testing.T) {
 }
 
 func TestDbItemToFavorite(t *testing.T) {
+	a := NewUser("123", "test")
 	recipe := NewRecipe(
 		"test",
 		"",
-		"test",
 		"italian",
 		"test",
 		1,
 		"medium",
 		true,
+		a.Userid,
+		a.Name,
+		a.DpUrl,
 	)
 	recipe.AddIngredients("water")
 
@@ -55,6 +58,7 @@ func TestDbItemToFavorite(t *testing.T) {
 			RecipeId:      "123",
 			RecipeDetails: recipe.RecipeDetails,
 			DateAdded:     d,
+			Category:      recipe.Category,
 		},
 	}
 
@@ -65,6 +69,8 @@ func TestDbItemToFavorite(t *testing.T) {
 			"imageUrl":    &types.AttributeValueMemberS{Value: ""},
 			"name":        &types.AttributeValueMemberS{Value: "test"},
 			"authorName":  &types.AttributeValueMemberS{Value: "test"},
+			"authorDpUrl": &types.AttributeValueMemberS{Value: ""},
+			"authorId":    &types.AttributeValueMemberS{Value: "123"},
 			"description": &types.AttributeValueMemberS{Value: "test"},
 			"ingredients": &types.AttributeValueMemberL{Value: []types.AttributeValue{
 				&types.AttributeValueMemberS{Value: "water"},
@@ -87,6 +93,7 @@ func TestDbItemToFavorite(t *testing.T) {
 
 func TestFavoriteToDatabase(t *testing.T) {
 	dc := utils.GetTimeNow()
+	a := NewUser("123", "test_person")
 
 	expect := map[string]types.AttributeValue{
 		"pk":          &types.AttributeValueMemberS{Value: "USER#123"},
@@ -101,19 +108,20 @@ func TestFavoriteToDatabase(t *testing.T) {
 		"preparationTime": &types.AttributeValueMemberN{Value: "1"},
 		"difficulty":      &types.AttributeValueMemberS{Value: "extreme"},
 		"lsi":             &types.AttributeValueMemberS{Value: dc},
-		"dateAdded":       &types.AttributeValueMemberS{Value: dc},
 		"isPublic":        &types.AttributeValueMemberBOOL{Value: true},
 	}
 
 	rec := NewRecipe(
 		"test",
 		"",
-		"test_person",
 		"italian",
 		"test food",
 		1,
 		"extreme",
 		true,
+		a.Userid,
+		a.Name,
+		a.DpUrl,
 	)
 	rec.Id = "123"
 	rec.AddIngredients("water")

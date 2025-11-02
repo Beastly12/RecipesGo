@@ -1,5 +1,8 @@
 BASE URL FOR PRODUCTION BUILD: https://splkc2b210.execute-api.eu-west-2.amazonaws.com/prod
 
+VALIDATIONS:
+	Password must be 8 characters or more
+
 To create a new recipe:
   POST /recipes
 	JSON:
@@ -14,9 +17,9 @@ To create a new recipe:
 		difficulty: string
 
 To get all recipes:
-	GET /recipes
+	GET /recipes?category={category you want to filter by (OPTIONAL)}
 	To get next batch:
-		GET /recipes?next={id of last recipe returned}
+		GET /recipes?last={last key returned}&category={category you want to filter by (OPTIONAL)}
 
 To delete a recipe:
 	DELETE /recipes/{recipe_id}
@@ -32,7 +35,7 @@ To remove recipe from favorite:
 To get all favorites recipes:
 	GET /favorites
 	To get next batch:
-		GET /favorites?next={id of last favorite returned}
+		GET /favorites?last={id of last favorite returned}
 
 To rate a recipe:
 	POST /ratings

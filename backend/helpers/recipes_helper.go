@@ -1,11 +1,11 @@
 package helpers
 
 import (
-	"backend"
 	"backend/models"
 	"backend/utils"
 	"context"
 	"log"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -16,6 +16,11 @@ type recipeHelper struct {
 	Ctx context.Context
 }
 
+type getAllRecipesOutput struct {
+	Recipes []models.Recipe
+	NextKey map[string]types.AttributeValue
+}
+
 func NewRecipeHelper(ctx context.Context) *recipeHelper {
 	return &recipeHelper{
 		Ctx: ctx,
@@ -24,35 +29,77 @@ func NewRecipeHelper(ctx context.Context) *recipeHelper {
 
 // adds recipe to db
 func (this *recipeHelper) Add(recipe *models.Recipe) error {
-	return newHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(recipe))
+	authored := models.NewAuthoredRecipe(recipe.AuthorId, recipe.Id, recipe.RecipeDetails)
+	input := &dynamodb.TransactWriteItemsInput{
+		TransactItems: []types.TransactWriteItem{
+			{
+				Put: &types.Put{
+					Item:      *utils.ToDatabaseFormat(authored),
+					TableName: &utils.GetDependencies().MainTableName,
+				},
+			},
+			{
+				Put: &types.Put{
+					Item:      *utils.ToDatabaseFormat(recipe),
+					TableName: &utils.GetDependencies().MainTableName,
+				},
+			},
+		},
+	}
+
+	_, err := utils.GetDependencies().DbClient.TransactWriteItems(this.Ctx, input)
+	if err != nil {
+		utils.PrintTransactWriteCancellationReason(err)
+		return err
+	}
+
+	return nil
 }
 
-// get all recipes in db
-func (this *recipeHelper) GetAll(lastEvalKey string) (*[]models.Recipe, error) {
+func (r *recipeHelper) GetAllRecipes(lastKey map[string]types.AttributeValue, category string) (*getAllRecipesOutput, error) {
+	var indexName *string
+	var keyConditionExpression *string
+	var expressionAttributeValues map[string]types.AttributeValue
+
+	if category == "" {
+		// return all recipes
+		indexName = aws.String("gsiIndex")
+		keyConditionExpression = aws.String("gsi = :v")
+		expressionAttributeValues = map[string]types.AttributeValue{
+			":v": &types.AttributeValueMemberS{Value: utils.AddPrefix(models.RecipeItemType, models.RecipesGsiPrefix)}} // gsi: RECIPE_TYPE#RECIPE
+	} else {
+		// return all recipes in a category
+		indexName = aws.String("gsi2Index")
+		keyConditionExpression = aws.String("gsi2 = :v")
+		expressionAttributeValues = map[string]types.AttributeValue{
+			":v": &types.AttributeValueMemberS{Value: utils.AddPrefix(strings.ToLower(category), models.RecipesGsi2Prefix)}} // gsi2: RECIPE_CAT#{category}
+	}
+
 	input := &dynamodb.QueryInput{
-		TableName:              &utils.GetDependencies().MainTableName,
-		IndexName:              aws.String("gsiIndex"),
-		KeyConditionExpression: aws.String("gsi = :n"),
-		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":n": &types.AttributeValueMemberS{Value: models.RecipesSkPrefix},
-		},
-		Limit: aws.Int32(backend.MAX_RECIPES_DUMP),
+		TableName:                 &utils.GetDependencies().MainTableName,
+		IndexName:                 indexName,
+		KeyConditionExpression:    keyConditionExpression,
+		ExpressionAttributeValues: expressionAttributeValues,
+		ExclusiveStartKey:         lastKey,
+		ScanIndexForward:          aws.Bool(false),
+		Limit:                     aws.Int32(10),
 	}
 
-	if lastEvalKey != "" {
-		// not first page
-		input.ExclusiveStartKey = *models.RecipeKey(lastEvalKey)
-	}
-
-	items, err := utils.GetDependencies().DbClient.Query(this.Ctx, input)
+	result, err := utils.GetDependencies().DbClient.Query(r.Ctx, input)
 	if err != nil {
-		log.Println("failed to get all recipes from db")
 		return nil, err
 	}
 
-	recipes := models.DatabaseItemsToRecipeStructs(&items.Items, utils.GetDependencies().CloudFrontDomainName)
+	if result.Count < 1 {
+		return nil, nil
+	}
 
-	return recipes, nil
+	recipes := models.DatabaseItemsToRecipeStructs(&result.Items, utils.GetDependencies().CloudFrontDomainName)
+
+	return &getAllRecipesOutput{
+		Recipes: *recipes,
+		NextKey: result.LastEvaluatedKey,
+	}, nil
 }
 
 // get specific recipe from db

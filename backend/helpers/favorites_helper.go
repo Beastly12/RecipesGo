@@ -54,12 +54,14 @@ func (this *favoritesHelper) GetAll(userId string, lastRecipeId string) (*[]mode
 		r := *models.NewRecipe(
 			fav.Name,
 			fav.ImageUrl,
-			fav.AuthorName,
 			fav.Category,
 			fav.Description,
 			fav.PreparationTime,
 			fav.Difficulty,
 			fav.IsPublic,
+			fav.AuthorId,
+			fav.AuthorName,
+			fav.AuthorDpUrl,
 		)
 		r.Id = fav.RecipeId
 		r.AddIngredients(fav.Ingredients...)
