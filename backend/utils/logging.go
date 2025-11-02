@@ -20,7 +20,7 @@ func init() {
 func BasicLog(msg string, val any) {
 	if val == nil {
 		select {
-		case logChan <- "WARN: " + msg + " (nil value)":
+		case logChan <- "Message: " + msg + " (nil value)":
 		default:
 		}
 		return

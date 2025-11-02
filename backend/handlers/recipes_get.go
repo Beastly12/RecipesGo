@@ -28,7 +28,7 @@ func handleGetRecipes(ctx context.Context, req events.APIGatewayV2HTTPRequest) (
 		return models.ServerSideErrorResponse(fmt.Sprintf("Failed to get recipes in category %v", category), err), nil
 	}
 
-	if response.Recipes == nil {
+	if response == nil {
 		utils.BasicLog("no recipes found exiting function", nil)
 		return models.SuccessfulGetRequestResponse(nil, nil), nil
 	}
