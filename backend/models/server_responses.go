@@ -3,6 +3,7 @@ package models
 // a way to standardize responses from functions triggered by apigateway event
 
 import (
+	"backend/utils"
 	"encoding/base64"
 	"encoding/json"
 	"log"
@@ -80,34 +81,43 @@ func SuccessfulGetRequestResponse(body interface{}, lastKey map[string]types.Att
 }
 
 func encodeLastEvalKey(key map[string]types.AttributeValue) string {
+	utils.BasicLog("encoding last eval key", key)
 	if key == nil {
+		utils.BasicLog("no last eval key provided, skipping", nil)
 		return ""
 	}
 
 	jsonBytes, err := json.Marshal(key)
 	if err != nil {
+		utils.BasicLog("failed to encode last eval key", err)
 		log.Panicf("Failed to encode last key: %v, error: %v", key, err)
 	}
 
+	utils.BasicLog("last eval key encoded successfully!", jsonBytes)
 	return base64.StdEncoding.EncodeToString(jsonBytes)
 }
 
 func DecodeLastEvalKey(key string) (map[string]types.AttributeValue, error) {
 	var lastKey map[string]types.AttributeValue
+	utils.BasicLog("decoding last eval key", key)
 
-	if key != "" {
-		decoded, err := base64.StdEncoding.DecodeString(key)
-		if err != nil {
-			log.Println("Failed to decode last eval key")
-			return nil, err
-		}
-
-		err = json.Unmarshal(decoded, &lastKey)
-		if err != nil {
-			log.Println("failed to unmarshal last eval key")
-			return nil, err
-		}
+	if key == "" {
+		utils.BasicLog("no last key provided, skipping...", nil)
+		return lastKey, nil
 	}
 
+	decoded, err := base64.StdEncoding.DecodeString(key)
+	if err != nil {
+		utils.BasicLog("failed to convert last eval key from base 64", err)
+		return nil, err
+	}
+
+	err = json.Unmarshal(decoded, &lastKey)
+	if err != nil {
+		utils.BasicLog("failed to unmarshal last eval key", err)
+		return nil, err
+	}
+
+	utils.BasicLog("decoded last eval key successfully", lastKey)
 	return lastKey, nil
 }

@@ -17,6 +17,7 @@ type favoritesHelper struct {
 }
 
 func NewFavoritesHelper(ctx context.Context) *favoritesHelper {
+	utils.BasicLog("initializing favorite helper...", nil)
 	return &favoritesHelper{
 		Ctx: ctx,
 	}

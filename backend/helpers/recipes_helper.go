@@ -57,22 +57,27 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 }
 
 func (r *recipeHelper) GetAllRecipes(lastKey map[string]types.AttributeValue, category string) (*getAllRecipesOutput, error) {
+	utils.BasicLog("starting get all recipes helper function...", nil)
 	var indexName *string
 	var keyConditionExpression *string
 	var expressionAttributeValues map[string]types.AttributeValue
 
 	if category == "" {
 		// return all recipes
+		utils.BasicLog("no category provided will return all recipes", nil)
 		indexName = aws.String("gsiIndex")
 		keyConditionExpression = aws.String("gsi = :v")
 		expressionAttributeValues = map[string]types.AttributeValue{
 			":v": &types.AttributeValueMemberS{Value: utils.AddPrefix(models.RecipeItemType, models.RecipesGsiPrefix)}} // gsi: RECIPE_TYPE#RECIPE
+		utils.BasicLog("expression attribute values", utils.AddPrefix(models.RecipeItemType, models.RecipesGsiPrefix))
 	} else {
 		// return all recipes in a category
+		utils.BasicLog("category provided will return recipes in that category", category)
 		indexName = aws.String("gsi2Index")
 		keyConditionExpression = aws.String("gsi2 = :v")
 		expressionAttributeValues = map[string]types.AttributeValue{
 			":v": &types.AttributeValueMemberS{Value: utils.AddPrefix(strings.ToLower(category), models.RecipesGsi2Prefix)}} // gsi2: RECIPE_CAT#{category}
+		utils.BasicLog("expression attr val ", utils.AddPrefix(strings.ToLower(category), models.RecipesGsi2Prefix))
 	}
 
 	input := &dynamodb.QueryInput{
@@ -85,16 +90,25 @@ func (r *recipeHelper) GetAllRecipes(lastKey map[string]types.AttributeValue, ca
 		Limit:                     aws.Int32(10),
 	}
 
+	utils.BasicLog("gotten db input", input)
+
 	result, err := utils.GetDependencies().DbClient.Query(r.Ctx, input)
 	if err != nil {
+		utils.BasicLog("failed to query the db for recipes", err)
 		return nil, err
 	}
 
+	utils.BasicLog("db query successful", result)
+
 	if result.Count < 1 {
+		utils.BasicLog("no recipes found in db", nil)
 		return nil, nil
 	}
 
 	recipes := models.DatabaseItemsToRecipeStructs(&result.Items, utils.GetDependencies().CloudFrontDomainName)
+
+	utils.BasicLog("db item to recipes successful", recipes)
+	utils.BasicLog("last eval key", result.LastEvaluatedKey)
 
 	return &getAllRecipesOutput{
 		Recipes: *recipes,
