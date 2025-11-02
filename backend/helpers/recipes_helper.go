@@ -73,7 +73,7 @@ func (r *recipeHelper) GetAllRecipes(lastKey map[string]types.AttributeValue, ca
 	} else {
 		// return all recipes in a category
 		utils.BasicLog("category provided will return recipes in that category", category)
-		indexName = aws.String("gsi2Index")
+		indexName = aws.String("gsiIndex2")
 		keyConditionExpression = aws.String("gsi2 = :v")
 		expressionAttributeValues = map[string]types.AttributeValue{
 			":v": &types.AttributeValueMemberS{Value: utils.AddPrefix(strings.ToLower(category), models.RecipesGsi2Prefix)}} // gsi2: RECIPE_CAT#{category}
