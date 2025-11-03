@@ -45,6 +45,10 @@ func handleAddRecipe(ctx context.Context, req events.APIGatewayV2HTTPRequest) (e
 		return models.InvalidRequestErrorResponse("Recipe must have at least one preparation instruction"), nil
 	}
 
+	if recipe.ImageUrl == "" {
+		return models.InvalidRequestErrorResponse("Recipes must have a display image!"), nil
+	}
+
 	// get details of user trying to create new recipe
 	userid := utils.GetAuthUserId(req)
 	if userid == "" {
