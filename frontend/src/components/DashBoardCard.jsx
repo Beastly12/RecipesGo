@@ -1,9 +1,20 @@
-import React from 'react'
+import React from "react";
 
-const DashBoardCard = () => {
+const DashBoardCard = ({ icon, value, title }) => {
   return (
-    <div className='bg-[#fafafa] p-4 rounded-2xl shadow'></div>
-  )
-}
+    <div className="bg-[#fafafa] p-4 rounded-2xl mt-3 flex shadow hover:shadow-lg transition-all duration-300">
 
-export default DashBoardCard
+      <div className="p-2">
+        <div className="">{icon}</div>
+
+        <div className="mt-5">
+          <p className="font-bold text-4xl">{value}</p>
+          <p className="text-[14px] text-gray-500">{title}</p>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+export default DashBoardCard;
