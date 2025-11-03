@@ -16,6 +16,11 @@ type favoritesHelper struct {
 	Ctx context.Context
 }
 
+type getAllFavoritesOutput struct {
+	Favorites []models.Recipe
+	NextKey   map[string]types.AttributeValue
+}
+
 func NewFavoritesHelper(ctx context.Context) *favoritesHelper {
 	utils.BasicLog("initializing favorite helper...", nil)
 	return &favoritesHelper{
@@ -27,7 +32,7 @@ func (this *favoritesHelper) Add(favorite *models.Favorite) error {
 	return newHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(favorite))
 }
 
-func (this *favoritesHelper) GetAll(userId string, lastRecipeId string) (*[]models.Recipe, error) {
+func (this *favoritesHelper) GetAll(userId string, lastEvalKey map[string]types.AttributeValue) (*getAllFavoritesOutput, error) {
 	input := &dynamodb.QueryInput{
 		TableName:              &utils.GetDependencies().MainTableName,
 		KeyConditionExpression: aws.String("pk = :pk AND begins_with(sk, :sk)"),
@@ -35,11 +40,8 @@ func (this *favoritesHelper) GetAll(userId string, lastRecipeId string) (*[]mode
 			":pk": &types.AttributeValueMemberS{Value: models.FavoritePkPrefix + userId},
 			":sk": &types.AttributeValueMemberS{Value: models.FavoriteSkPrefix},
 		},
-		Limit: aws.Int32(backend.MAX_RECIPES_DUMP),
-	}
-
-	if lastRecipeId != "" {
-		input.ExclusiveStartKey = *models.FavoriteKey(userId, lastRecipeId)
+		Limit:             aws.Int32(backend.MAX_RECIPES_DUMP),
+		ExclusiveStartKey: lastEvalKey,
 	}
 
 	items, err := utils.GetDependencies().DbClient.Query(this.Ctx, input)
@@ -69,7 +71,10 @@ func (this *favoritesHelper) GetAll(userId string, lastRecipeId string) (*[]mode
 		recipes = append(recipes, r)
 	}
 
-	return &recipes, nil
+	return &getAllFavoritesOutput{
+		Favorites: recipes,
+		NextKey:   items.LastEvaluatedKey,
+	}, nil
 }
 
 func (this *favoritesHelper) Remove(userId, recipeId string) error {
