@@ -25,7 +25,6 @@ type jsonBody struct {
 
 // adds new recipe to db
 func handleAddRecipe(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
-	// converts json body into recipe
 	var recipe jsonBody
 	if err := json.Unmarshal([]byte(req.Body), &recipe); err != nil {
 		// if we fail to convert json to recipe struct
