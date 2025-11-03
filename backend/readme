@@ -45,7 +45,7 @@ To add recipe to favorite:
 To remove recipe from favorite:
 	DELETE /favorites/{recipe_id}
 	
-To get all favorites recipes (NOT YET WORKING):
+To get all favorites recipes:
 	GET /favorites
 	To get next batch:
 		GET /favorites?last={id of last favorite returned}
