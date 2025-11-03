@@ -7,7 +7,7 @@ To create a new recipe:
   POST /recipes
 	JSON:
 		name: string
-		imageKey: string
+		imageUrl: string
 		description: string
 		category: string
 		ingredients: []string

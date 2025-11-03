@@ -9,6 +9,7 @@ import (
 	"log"
 
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
@@ -87,32 +88,31 @@ func encodeLastEvalKey(key map[string]types.AttributeValue) string {
 		return ""
 	}
 
-	jsonBytes, err := json.Marshal(key)
+	jsonBytes, err := attributevalue.MarshalMapJSON(key)
 	if err != nil {
-		utils.BasicLog("failed to encode last eval key", err)
-		log.Panicf("Failed to encode last key: %v, error: %v", key, err)
+		utils.BasicLog("failed to marshal attribute values", err)
+		log.Panicf("Failed to marshal last key: %v, error: %v", key, err)
 	}
 
 	utils.BasicLog("last eval key encoded successfully!", jsonBytes)
-	return base64.StdEncoding.EncodeToString(jsonBytes)
+	return base64.URLEncoding.EncodeToString(jsonBytes)
 }
 
 func DecodeLastEvalKey(key string) (map[string]types.AttributeValue, error) {
-	var lastKey map[string]types.AttributeValue
 	utils.BasicLog("decoding last eval key", key)
 
 	if key == "" {
 		utils.BasicLog("no last key provided, skipping...", nil)
-		return lastKey, nil
+		return nil, nil
 	}
 
-	decoded, err := base64.StdEncoding.DecodeString(key)
+	decoded, err := base64.URLEncoding.DecodeString(key)
 	if err != nil {
-		utils.BasicLog("failed to convert last eval key from base 64", err)
+		utils.BasicLog("failed to convert last eval key from base64", err)
 		return nil, err
 	}
 
-	err = json.Unmarshal(decoded, &lastKey)
+	lastKey, err := attributevalue.UnmarshalMapJSON(decoded)
 	if err != nil {
 		utils.BasicLog("failed to unmarshal last eval key", err)
 		return nil, err
