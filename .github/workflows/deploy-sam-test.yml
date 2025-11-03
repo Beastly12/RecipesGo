@@ -1,19 +1,25 @@
 name: Build and deploy RecipeGo backend in test environment
+
 env:
   AWS_REGION: "eu-west-2"
+  
 on:
   push:
     branches-ignore:
       - main
+      
 permissions:
   id-token: write
   contents: read
+  
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    
     defaults:
       run:
         working-directory: backend
+        
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
@@ -31,8 +37,9 @@ jobs:
           path: |
             ~/go/pkg/mod
             ~/.cache/go-build
-          key: ${{ runner.os }}-go-${{ hashFiles('backend/**/go.sum') }}
+          key: ${{ runner.os }}-go-test-${{ hashFiles('backend/**/go.sum') }}
           restore-keys: |
+            ${{ runner.os }}-go-test-
             ${{ runner.os }}-go-
       
       - name: setup docker build
@@ -42,8 +49,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ hashFiles('backend/Dockerfile', 'backend/**/go.sum') }}
+          key: ${{ runner.os }}-buildx-test-${{ hashFiles('backend/Dockerfile', 'backend/**/go.sum') }}
           restore-keys: |
+            ${{ runner.os }}-buildx-test-
             ${{ runner.os }}-buildx-
       
       - name: configure aws creds
