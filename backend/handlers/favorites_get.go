@@ -16,7 +16,7 @@ func handleGetFavorite(ctx context.Context, req events.APIGatewayV2HTTPRequest) 
 		return models.InvalidRequestErrorResponse("Failed to decode last evaluated item key!"), nil
 	}
 
-	if userid != "" {
+	if userid == "" {
 		return models.UnauthorizedErrorResponse("You need to be logged in to view your favorites"), nil
 	}
 
