@@ -21,7 +21,6 @@ type ResponseBody struct {
 func buildResponse(statusCode int, body ResponseBody) events.APIGatewayV2HTTPResponse {
 	jsonBody, _ := json.Marshal(body)
 
-	utils.ShutdownLogs()
 	return events.APIGatewayV2HTTPResponse{
 		StatusCode: statusCode,
 		Headers: map[string]string{
