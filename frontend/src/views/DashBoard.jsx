@@ -37,6 +37,8 @@ const DashBoard = () => {
         </div>
 
       </div>
+
+      <section></section>
     </section>
   );
 };
