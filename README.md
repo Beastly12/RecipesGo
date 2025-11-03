@@ -2,7 +2,8 @@
 
 RecipesGo is a collaborative DevOps project focused on building, testing, and deploying a full-stack web application using modern DevOps practices. 
 
-
+# RecipesGO web app link
+- https://prepify-nu.vercel.app
 ---
 
 ##  Team Members
