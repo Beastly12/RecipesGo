@@ -313,6 +313,12 @@ Resources:
             Path: /recipes
             Method: GET
             ApiId: !Ref RecipeApi
+        GetRecipe:
+          Type: HttpApi
+          Properties:
+            Path: /recipes/{id}
+            Method: GET
+            ApiId: !Ref RecipeApi
         DeleteRecipe:
           Type: HttpApi
           Properties:
