@@ -67,3 +67,14 @@ func TestAddSuffix(t *testing.T) {
 		})
 	}
 }
+
+func TestRemoveInvalidChars(t *testing.T) {
+	expected := "italian and food"
+	subject := "italian, and food"
+	result := removeEverythingExceptValidChars(subject)
+	t.Run("remove invalid chars", func(t *testing.T) {
+		if result != expected {
+			t.Errorf("expected %v but got %v instead", expected, result)
+		}
+	})
+}

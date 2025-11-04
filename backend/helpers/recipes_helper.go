@@ -30,21 +30,24 @@ func NewRecipeHelper(ctx context.Context) *recipeHelper {
 // adds recipe to db
 func (this *recipeHelper) Add(recipe *models.Recipe) error {
 	authored := models.NewAuthoredRecipe(recipe.AuthorId, recipe.Id, recipe.RecipeDetails)
-	input := &dynamodb.TransactWriteItemsInput{
-		TransactItems: []types.TransactWriteItem{
-			{
-				Put: &types.Put{
-					Item:      *utils.ToDatabaseFormat(authored),
-					TableName: &utils.GetDependencies().MainTableName,
-				},
-			},
-			{
-				Put: &types.Put{
-					Item:      *utils.ToDatabaseFormat(recipe),
-					TableName: &utils.GetDependencies().MainTableName,
-				},
+	recipeSearchIndexTrans := NewSearchHelper().GetRecipeSearchIndexTransactions(recipe)
+	transactions := []types.TransactWriteItem{
+		{
+			Put: &types.Put{
+				Item:      *utils.ToDatabaseFormat(authored),
+				TableName: &utils.GetDependencies().MainTableName,
 			},
 		},
+		{
+			Put: &types.Put{
+				Item:      *utils.ToDatabaseFormat(recipe),
+				TableName: &utils.GetDependencies().MainTableName,
+			},
+		},
+	}
+	transactions = append(transactions, recipeSearchIndexTrans...)
+	input := &dynamodb.TransactWriteItemsInput{
+		TransactItems: transactions,
 	}
 
 	_, err := utils.GetDependencies().DbClient.TransactWriteItems(this.Ctx, input)

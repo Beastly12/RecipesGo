@@ -67,3 +67,6 @@ To get all ratings on a recipe (NOT YET WORKING):
 
 To get url to post pictures to:
 	GET /upload-url
+
+To search for a recipe:
+	GET /search?recipe={search string}

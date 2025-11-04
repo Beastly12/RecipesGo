@@ -36,4 +36,5 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.88.3
 	github.com/aws/smithy-go v1.23.1 // indirect
 	github.com/google/uuid v1.6.0
+	golang.org/x/text v0.30.0
 )
