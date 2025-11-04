@@ -25,7 +25,7 @@ type Search struct {
 
 func (s *Search) ApplyPrefixes() {
 	s.Index = utils.AddPrefix(s.Index, SearchPkPrefix)
-	s.Value = utils.AddPrefix(s.Index, SearchSkPrefix)
+	s.Value = utils.AddPrefix(s.Value, SearchSkPrefix)
 }
 
 func DatabaseItemsToSearchStructs(items *[]map[string]types.AttributeValue) *[]Search {
