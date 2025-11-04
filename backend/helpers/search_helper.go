@@ -10,11 +10,11 @@ import (
 type searchHelper struct {
 }
 
-func NewSearchHelper() *searchHelper {
+func newSearchHelper() *searchHelper {
 	return &searchHelper{}
 }
 
-func (s *searchHelper) GetUserSearchIndexTransactions(u *models.User) []types.TransactWriteItem {
+func (s *searchHelper) getUserSearchIndexTransactions(u *models.User) []types.TransactWriteItem {
 	indexes := models.GenerateSearchIndexes(u.Name, u.Userid, models.SEARCH_ITEM_TYPE_AUTHOR)
 
 	var transactionItems []types.TransactWriteItem
@@ -30,7 +30,7 @@ func (s *searchHelper) GetUserSearchIndexTransactions(u *models.User) []types.Tr
 	return transactionItems
 }
 
-func (s *searchHelper) GetRecipeSearchIndexTransactions(r *models.Recipe) []types.TransactWriteItem {
+func (s *searchHelper) getRecipeSearchIndexTransactions(r *models.Recipe) []types.TransactWriteItem {
 	indexes := models.GenerateSearchIndexes(r.Name, r.Id, models.SEARCH_ITEM_TYPE_RECIPE)
 
 	var transactionItems []types.TransactWriteItem

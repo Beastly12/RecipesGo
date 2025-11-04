@@ -26,7 +26,7 @@ func HandlePostSignup(ctx context.Context, event *events.CognitoEventUserPoolsPo
 		name,
 	)
 
-	err := helpers.NewUserHelper(ctx).Add(newUser)
+	err := helpers.NewUserHelper(ctx).AddUser(newUser)
 
 	if err != nil {
 		return nil, err

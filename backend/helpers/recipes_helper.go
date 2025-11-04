@@ -30,7 +30,7 @@ func NewRecipeHelper(ctx context.Context) *recipeHelper {
 // adds recipe to db
 func (this *recipeHelper) Add(recipe *models.Recipe) error {
 	authored := models.NewAuthoredRecipe(recipe.AuthorId, recipe.Id, recipe.RecipeDetails)
-	recipeSearchIndexTrans := NewSearchHelper().GetRecipeSearchIndexTransactions(recipe)
+	recipeSearchIndexTrans := newSearchHelper().getRecipeSearchIndexTransactions(recipe)
 	transactions := []types.TransactWriteItem{
 		{
 			Put: &types.Put{
