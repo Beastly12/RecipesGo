@@ -20,6 +20,11 @@ func AddSuffix(s, suffix string) string {
 	return parts[0] + suffix
 }
 
+func RemovePrefix(s string, delimiter string) string {
+	parts := strings.Split(s, delimiter)
+	return parts[len(parts)-1]
+}
+
 // remove diacritics (è → e, ç → c, etc.)
 func removeDiacritics(s string) string {
 	t := transform.Chain(

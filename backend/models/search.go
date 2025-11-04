@@ -43,8 +43,11 @@ func GenerateSearchIndexes(name, id, itemType string) *[]Search {
 	if len(name) < minSearchIndexWordLen {
 		return &[]Search{}
 	}
+
+	id = utils.RemovePrefix(id, "#") // id may already be formatted for db, so we need to remove existing prefixes before adding search prefixes to it
+
 	cleanName := utils.NormalizeString(name)
-	tokens := utils.SplitOnDelimiter(cleanName, " ", ".", ",", "_")
+	tokens := utils.SplitOnDelimiter(cleanName, " ", ".", ",", "_", "-", "&")
 	var indexes []Search
 	seen := make(map[string]struct{})
 
