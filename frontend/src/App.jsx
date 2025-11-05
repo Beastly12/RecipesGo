@@ -9,6 +9,7 @@ import Profile from "./views/ProfilePage";
 import ProfileSettings from "./views/ProfileSettings";
 import DashBoard from "./views/DashBoard";
 
+
 export default function App() {
   return (
     <Routes>

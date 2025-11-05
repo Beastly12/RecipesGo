@@ -1,6 +1,8 @@
 import React from "react";
 import DashBoardCard from "../components/DashBoardCard";
 import { HeartIcon, NotebookPen, Eye, MessageCircleMore } from "lucide-react";
+import DashBoardManagementTable from "../components/DashBoardManagementTable";
+
 
 var userName = "Daniel";
 
@@ -18,7 +20,6 @@ const DashBoard = () => {
   return (
     <section className="min-h-screen bg-[#fafafa]">
       <div className="m-2 max-w-[900px] my-[40px] mx-[auto] px-[40px] dark:text-[#fafafa]">
-        
         <div className="border flex flex-col bg-blue-500 text-white rounded-3xl mt-4 mb-2 p-7 space-y-3">
           <p className="font-medium text-xl mt-2">Good {greeting}</p>
           <h1 className="font-bold text-4xl mt-2">
@@ -29,16 +30,33 @@ const DashBoard = () => {
           </button>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <DashBoardCard icon={<NotebookPen className="w-12 h-12 text-yellow-500"/>} value="47" title="Total Recipes"/>
-        <DashBoardCard icon={<Eye className="w-12 h-12 text-blue-500"/>} value="12.5K" title="Total Views"/>
-        <DashBoardCard icon={<HeartIcon className=" w-12 h-12 text-red-500"/>} value="346" title="Total Comments"/>
-        <DashBoardCard icon={<MessageCircleMore className="w-12 h-12 text-purple-500" />} value="8,234" title="Total Likes"/>
+        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
+          <DashBoardCard
+            icon={<NotebookPen className="w-12 h-12 text-yellow-500" />}
+            value="47"
+            title="Total Recipes"
+          />
+          <DashBoardCard
+            icon={<Eye className="w-12 h-12 text-blue-500" />}
+            value="12.5K"
+            title="Total Views"
+          />
+          <DashBoardCard
+            icon={<HeartIcon className=" w-12 h-12 text-red-500" />}
+            value="346"
+            title="Total Comments"
+          />
+          <DashBoardCard
+            icon={<MessageCircleMore className="w-12 h-12 text-purple-500" />}
+            value="8,234"
+            title="Total Likes"
+          />
         </div>
 
-      </div>
+        <DashBoardManagementTable/>
 
-      <section></section>
+      
+      </div>
     </section>
   );
 };
