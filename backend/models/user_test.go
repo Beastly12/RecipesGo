@@ -28,7 +28,7 @@ func TestUserStructToDbItem(t *testing.T) {
 	expect := map[string]types.AttributeValue{
 		"pk":       &types.AttributeValueMemberS{Value: "USER#123"},
 		"sk":       &types.AttributeValueMemberS{Value: "PROFILE"},
-		"gsi":      &types.AttributeValueMemberS{Value: "test"},
+		"gsi":      &types.AttributeValueMemberS{Value: "USER_NAME#test"},
 		"dpUrl":    &types.AttributeValueMemberS{Value: ""},
 		"bio":      &types.AttributeValueMemberS{Value: ""},
 		"location": &types.AttributeValueMemberS{Value: ""},
