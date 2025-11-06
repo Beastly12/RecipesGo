@@ -13,8 +13,8 @@ func HandleRecipesActions(ctx context.Context, req events.APIGatewayV2HTTPReques
 		return handleAddRecipe(ctx, req)
 
 	case "GET":
-		_, exists := req.PathParameters["id"]
-		if exists {
+		recipeId, _ := req.PathParameters["id"]
+		if recipeId != "" {
 			return handleGetRecipeDetails(ctx, req)
 		}
 		return handleGetRecipes(ctx, req)

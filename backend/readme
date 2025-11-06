@@ -82,7 +82,8 @@ To edit user details (NOT YET WORKING):
 		location: string
 
 To get url to post pictures to:
-	GET /upload-url?ext={the file extension of the image e.g jpg, png, gif, etc}
+	GET /upload-url?ext={the file extension of the image e.g .jpg, .png, .gif, etc}
+			/upload-url?id={recipe or user id}&ext={file extension of image}
 
 To search for a recipe (not yet working):
 	GET /search?recipe={search string}

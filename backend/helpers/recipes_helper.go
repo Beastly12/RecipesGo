@@ -107,7 +107,10 @@ func (r *recipeHelper) GetAllRecipes(lastKey map[string]types.AttributeValue, ca
 
 	if result.Count < 1 {
 		utils.BasicLog("no recipes found in db", nil)
-		return nil, nil
+		return &getAllRecipesOutput{
+			Recipes: []models.Recipe{},
+			NextKey: nil,
+		}, nil
 	}
 
 	recipes := models.DatabaseItemsToRecipeStructs(&result.Items, utils.GetDependencies().CloudFrontDomainName)
