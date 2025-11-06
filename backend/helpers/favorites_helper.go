@@ -50,6 +50,13 @@ func (this *favoritesHelper) GetAll(userId string, lastEvalKey map[string]types.
 		return nil, err
 	}
 
+	if items.Count < 1 {
+		return &getAllFavoritesOutput{
+			Favorites: []models.Recipe{},
+			NextKey:   nil,
+		}, nil
+	}
+
 	favs := models.DbItemsToFavoriteStructs(&items.Items)
 
 	var recipes []models.Recipe
