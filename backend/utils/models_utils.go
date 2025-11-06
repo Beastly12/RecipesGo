@@ -25,7 +25,7 @@ func DatabaseItemsToStructs[T any](
 	items *[]map[string]types.AttributeValue,
 	postProcess func(*T),
 ) *[]T {
-	var results []T
+	results := []T{}
 
 	if err := attributevalue.UnmarshalListOfMaps(*items, &results); err != nil {
 		log.Fatalf("An error occurred while trying to un marshal db items to struct %T: %v", results, err)
