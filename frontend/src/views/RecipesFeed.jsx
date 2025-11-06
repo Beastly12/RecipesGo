@@ -6,9 +6,11 @@ import useDarkMode from "../hooks/useDarkMode";
 import HeroSection from "../components/HeroSection";
 import { Link } from "react-router-dom";
 import { getCurrentUser, fetchAuthSession } from "aws-amplify/auth";
+import { getAllRecipes } from "../services/RecipesService.mjs";
 
 export default function RecipeFeed() {
   const [userId, setUserId] = useState(null);
+  const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -22,6 +24,29 @@ export default function RecipeFeed() {
     };
 
     fetchUserInfo();
+  }, []);
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const response = await getAllRecipes();
+        const data = response.data.message.map((recipe) => ({
+          key: recipe.id,
+          title: recipe.name,
+          author: recipe.authorName,
+          likes: 2,
+          profilePic:
+            "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600",
+          img: recipe.imageUrl,
+        }));
+        console.log(data)
+        setRecipes((prev) => [...prev, ...data]);
+      } catch (error) {
+        console.error("Failed to fetch recipes:", error);
+      }
+    };
+
+    fetchRecipes();
   }, []);
 
   var fData = [
@@ -58,46 +83,12 @@ export default function RecipeFeed() {
       title: "Quick & Easy",
     },
   ];
-  var rData = [
-    {
-      key: 0,
-      title: "Chocolate Chip Cookies",
-      author: "Lis Park",
-      likes: 183,
-      profilePic: "",
-      img: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600",
-    },
-    {
-      key: 1,
-      title: "Creamy Mushroom Pasta",
-      author: " Sara Chen",
-      likes: 189,
-      profilePic: "",
-      img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600",
-    },
-    {
-      key: 2,
-      title: "Fresh Garden Salad Bowl",
-      author: " Sara Chen",
-      likes: 103,
-      profilePic: "",
-      img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600",
-    },
-    {
-      key: 3,
-      title: "Creamy Mushroom Pasta",
-      author: " Sara Chen",
-      likes: 203,
-      profilePic: "",
-      img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600",
-    },
-  ];
 
   const [colorTheme, setTheme] = useDarkMode();
 
   return (
     <div className="bg-[#fafafa] dark:bg-[#1a1a1a] text-[#1a1a1a] dark:text-[#fafafa] min-h-screen font-sans transition-colors duration-300">
-     {/* Desktop Navigation */}
+      {/* Desktop Navigation */}
       <nav className="bg-white hidden md:flex dark:bg-[#1a1a1a] px-10 py-4 shadow-sm sticky top-0 z-50  items-center justify-between">
         <Link
           to={"/"}
@@ -146,7 +137,7 @@ export default function RecipeFeed() {
           >
             Prepify
           </Link>
-          
+
           <div className="flex-1 relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
               🔍
@@ -159,7 +150,10 @@ export default function RecipeFeed() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span onClick={() => setTheme(colorTheme)} className="cursor-pointer p-2">
+            <span
+              onClick={() => setTheme(colorTheme)}
+              className="cursor-pointer p-2"
+            >
               {colorTheme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
             </span>
             {userId ? (
@@ -167,7 +161,10 @@ export default function RecipeFeed() {
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600"></div>
               </Link>
             ) : (
-              <Link to={"/auth"} className="text-sm font-medium text-[#ff6b6b] whitespace-nowrap">
+              <Link
+                to={"/auth"}
+                className="text-sm font-medium text-[#ff6b6b] whitespace-nowrap"
+              >
                 Login
               </Link>
             )}
@@ -186,7 +183,7 @@ export default function RecipeFeed() {
       <div className="sticky top-20 z-30 bg-[#fafafa] dark:bg-[#1a1a1a] transition-colors duration-300 ">
         <FilterTab filterData={fData} />
       </div>
-      <RecipesList recipes={rData} />
+      <RecipesList recipes={recipes} />
     </div>
   );
 }

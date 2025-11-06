@@ -15,7 +15,7 @@ instance.interceptors.request.use(
       const accessToken = session.tokens?.idToken;
 
       if (accessToken) {
-        const expirationTime = (token.payload.exp ?? 0) * 1000;
+        const expirationTime = (accessToken.payload.exp ?? 0) * 1000;
         const currentTime = Date.now();
         const timeUntilExpiry = expirationTime - currentTime;
 
@@ -30,7 +30,7 @@ instance.interceptors.request.use(
             config.headers.Authorization = `Bearer ${refreshedToken}`;
           }
         } else {
-          config.headers.Authorization = `Bearer ${token.toString()}`;
+          config.headers.Authorization = `Bearer ${accessToken.toString()}`;
         }
       }
     } catch (error) {

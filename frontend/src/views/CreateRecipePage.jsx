@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { createRecipeService } from "../services/RecipesService.mjs";
+import { getUploadUrl } from "../services/ImageUploadService.mjs";
+import axios from "axios";
 
 const CreateRecipePage = () => {
   const navigate = useNavigate();
@@ -19,7 +21,9 @@ const CreateRecipePage = () => {
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    if (file) setRecipeImage(file);
+    if (!file) return;
+
+    setRecipeImage(file);
   };
 
   const updateIngredient = (i, value) => {
@@ -75,29 +79,44 @@ const CreateRecipePage = () => {
       return;
     }
 
-    const recipeData = {
-      name: title,
-      description,
-      preparationTime: cookTime,
-      difficulty,
-      category,
-      ingredients,
-      instructions: steps,
-      isPublic: privacy,
-      imageUrl: recipeImage,
-    };
+    if (!recipeImage) {
+      alert("Please upload a recipe image.");
+      return;
+    }
 
     try {
       setLoading(true);
+
+      const ext = recipeImage.type.split("/")[1];
+
+      const uploadres = await getUploadUrl(ext);
+
+      await axios.put(uploadres.message.uploadUrl, recipeImage, {
+        headers: {
+          "Content-Type": recipeImage.type,
+        },
+      });
+      
+      const recipeData = {
+        name: title,
+        description,
+        preparationTime: parseInt(cookTime, 10),
+        difficulty,
+        category,
+        ingredients,
+        instructions: steps,
+        isPublic: privacy,
+        imageUrl: uploadres.message.imageKey,
+      };
+
       await createRecipeService(recipeData);
       navigate("/recipe-details", { state: recipeData });
     } catch (e) {
       alert("Failed to publish recipe");
+      console.error("Upload error:", e);
     } finally {
       setLoading(false);
     }
-
-    navigate("/recipe-details", { state: recipeData });
   };
 
   return (
@@ -128,7 +147,7 @@ const CreateRecipePage = () => {
           <label className="border-dashed border-[#dee2e6] border-2 rounded-2xl py-[60px] px-5 text-center cursor-pointer transition-all bg-[#f8f9fa] hover:border-[#ff6b6b] hover:bg-[#fff5f5] dark:border-gray-600 dark:bg-[#0a0a0a] dark:hover:border-[#ff5252] dark:hover:bg-[#2a0a0a] block">
             {recipeImage ? (
               <img
-                src={recipeImage}
+                src={URL.createObjectURL(recipeImage)}
                 className="mx-auto rounded-xl w-48"
                 alt="Recipe Preview"
               />

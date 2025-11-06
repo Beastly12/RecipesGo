@@ -11,6 +11,17 @@ export async function createRecipeService({
   isPublic,
   difficulty,
 }) {
+  console.log({
+    name,
+    imageUrl,
+    description,
+    category,
+    ingredients,
+    instructions,
+    preparationTime,
+    isPublic,
+    difficulty,
+  });
   await axios.post("/recipes", {
     name,
     imageUrl,
