@@ -55,7 +55,15 @@ To rate a recipe:
 	JSON:
 		recipeId: string
 		stars: int
-		comment: string
+		comment: string(optional)
+
+To edit rating:
+	post to the rating again it will override existing rating
+	POST /ratings
+	JSON:
+		recipeId: string
+		stars: int
+		comment: string(optional)
 
 To delete rating on a recipe:
 	DELETE /ratings/{id of recipe}
