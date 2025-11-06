@@ -22,7 +22,7 @@ func handleAddRatings(ctx context.Context, req events.APIGatewayV2HTTPRequest) (
 	var reqBody ratingBody
 	if err := json.Unmarshal([]byte(req.Body), &reqBody); err != nil {
 		log.Printf("failed to unmarshal rating request body, %v", err)
-		return models.InvalidRequestErrorResponse(""), nil
+		return models.InvalidRequestErrorResponse("Invalid request body. Tip: stars should be a number not a string!"), nil
 	}
 
 	if reqBody.RecipeId == "" {

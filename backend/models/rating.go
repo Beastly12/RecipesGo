@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	RatingPkPrefix  = "RECIPE#"
+	RatingPkPrefix  = "RECIPE_RATED#"
 	RatingSkPrefix  = "RATED_BY#"
 	RatingGsiPrefix = "RATER_NAME#"
 )
