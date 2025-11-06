@@ -25,7 +25,6 @@ type jsonBody struct {
 
 // adds new recipe to db
 func handleAddRecipe(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
-	// converts json body into recipe
 	var recipe jsonBody
 	if err := json.Unmarshal([]byte(req.Body), &recipe); err != nil {
 		// if we fail to convert json to recipe struct
@@ -43,6 +42,10 @@ func handleAddRecipe(ctx context.Context, req events.APIGatewayV2HTTPRequest) (e
 
 	if len(recipe.Instructions) < 1 {
 		return models.InvalidRequestErrorResponse("Recipe must have at least one preparation instruction"), nil
+	}
+
+	if recipe.ImageUrl == "" {
+		return models.InvalidRequestErrorResponse("Recipes must have a display image!"), nil
 	}
 
 	// get details of user trying to create new recipe
@@ -68,12 +71,14 @@ func handleAddRecipe(ctx context.Context, req events.APIGatewayV2HTTPRequest) (e
 	newRecipe := models.NewRecipe(
 		recipe.Name,
 		recipe.ImageUrl,
-		user.Name,
 		recipe.Category,
 		recipe.Description,
 		recipe.PreparationTime,
 		recipe.Difficulty,
 		recipe.IsPublic,
+		user.Userid,
+		user.Name,
+		user.DpUrl,
 	)
 
 	newRecipe.AddIngredients(recipe.Ingredients...)

@@ -10,7 +10,7 @@ const RecipesList = ({ recipes }) => {
             <div className="mb-6 bg-white dark:bg-[#1a1a1a] dark:shadow-lg dark:shadow-black/50 rounded-2xl overflow-hidden shadow hover:shadow-xl transition-transform duration-300 ease-out hover:-translate-y-1 cursor-pointer">
               <div className="overflow-hidden">
                 <div
-                  className="w-full aspect-[4/3] bg-cover bg-center transition-transform duration-300 ease-out hover:scale-105 will-change-transform"
+                  className="w-full aspect-4/3 bg-cover bg-center transition-transform duration-300 ease-out hover:scale-105 will-change-transform"
                   style={{
                     backgroundImage: `url(${recipe.img})`,
                     transform: "translateZ(0)",
@@ -24,7 +24,7 @@ const RecipesList = ({ recipes }) => {
                 </div>
                 <div className="flex items-center justify-between mt-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-pink-300 to-red-400"></div>
+                    <div className="w-7 h-7 rounded-full bg-linear-to-br from-pink-300 to-red-400"></div>
                     <span className="text-sm text-gray-600 font-medium">
                       {recipe.author}
                     </span>

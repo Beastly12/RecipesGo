@@ -11,16 +11,19 @@ import (
 
 func handleGetFavorite(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	userid := utils.GetAuthUserId(req)
-	lastRecipeId := req.QueryStringParameters["next"]
+	last, err := models.DecodeLastEvalKey(req.QueryStringParameters["last"])
+	if err != nil {
+		return models.InvalidRequestErrorResponse("Failed to decode last evaluated item key!"), nil
+	}
 
-	if userid != "" {
+	if userid == "" {
 		return models.UnauthorizedErrorResponse("You need to be logged in to view your favorites"), nil
 	}
 
-	favs, err := helpers.NewFavoritesHelper(ctx).GetAll(userid, lastRecipeId)
+	result, err := helpers.NewFavoritesHelper(ctx).GetAll(userid, last)
 	if err != nil {
-		return models.ServerSideErrorResponse("", err), nil
+		return models.ServerSideErrorResponse("Failed to get favorites, try again.", err), nil
 	}
 
-	return models.SuccessfulGetRequestResponse(favs), nil
+	return models.SuccessfulGetRequestResponse(result.Favorites, result.NextKey), nil
 }

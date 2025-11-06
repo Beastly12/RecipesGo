@@ -1,6 +1,8 @@
 package utils
 
-import "strings"
+import (
+	"strings"
+)
 
 func AddPrefix(s, prefix string) string {
 	parts := strings.Split(s, prefix)

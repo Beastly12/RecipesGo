@@ -9,49 +9,60 @@ import (
 )
 
 const (
-	RecipesPkPrefix = "RECIPE#"
-	RecipesSkPrefix = "RECIPE"
+	RecipesPkPrefix   = "RECIPE#"
+	RecipesSkPrefix   = "RECIPE"
+	RecipesGsiPrefix  = "RECIPE_TYPE#"
+	RecipesGsi2Prefix = "RECIPE_CAT#"
+	RecipesLsiPrefix  = "RECIPE_DATE#"
+	RecipeItemType    = "RECIPE"
 )
 
+// pk: id, sk: category, gsi: type
+// can query by id, category, all
+
 type Recipe struct {
-	Id string `dynamodbav:"pk" json:"id"`
+	Id          string `dynamodbav:"pk" json:"id"`
+	SortKey     string `dynamodbav:"sk" json:"-"`
+	ItemType    string `dynamodbav:"gsi" json:"-"`
+	Category    string `dynamodbav:"gsi2" json:"category"`
+	DateCreated string `json:"dateCreated" dynamodbav:"lsi"`
 	RecipeDetails
-	SortKey string `dynamodbav:"sk" json:"-"`
 }
 
 type RecipeDetails struct {
 	ImageUrl        string   `dynamodbav:"imageUrl" json:"imageUrl,omitempty"`
 	Name            string   `dynamodbav:"name" json:"name"`
-	AuthorName      string   `dynamodbav:"authorName" json:"authorName"`
 	Description     string   `dynamodbav:"description" json:"description"`
-	Category        string   `dynamodbav:"gsi" json:"category"`
+	AuthorId        string   `dynamodbav:"authorId" json:"authorId"`
+	AuthorName      string   `dynamodbav:"authorName" json:"authorName"`
+	AuthorDpUrl     string   `dynamodbav:"authorDpUrl" json:"authorDpUrl"`
 	Ingredients     []string `dynamodbav:"ingredients" json:"ingredients"`
 	PreparationTime int      `dynamodbav:"preparationTime" json:"preparationTime"`
 	Difficulty      string   `dynamodbav:"difficulty" json:"difficulty"`
 	Instructions    []string `dynamodbav:"instructions" json:"instructions"`
 	IsPublic        bool     `dynamodbav:"isPublic" json:"isPublic"`
-	DateCreated     string   `json:"dateCreated" dynamodbav:"lsi"`
 }
 
 // Returns a recipe struct with details provided
-func NewRecipe(name, imageUrl, authorName, category, description string, preparationTimeMins int, difficulty string, isPublic bool) *Recipe {
-
-	time := utils.GetTimeNow()
+func NewRecipe(name, imageUrl, category, description string, preparationTimeMins int, difficulty string, isPublic bool, authorId, authorName, authorDpUrl string) *Recipe {
 
 	return &Recipe{
-		Id: uuid.New().String(),
+		Id:      uuid.New().String(),
+		SortKey: RecipesSkPrefix,
 		RecipeDetails: RecipeDetails{
 			ImageUrl:        imageUrl,
 			Name:            name,
 			AuthorName:      authorName,
-			Category:        category,
 			Description:     description,
 			PreparationTime: preparationTimeMins,
 			Difficulty:      difficulty,
-			DateCreated:     time,
 			IsPublic:        isPublic,
+			AuthorId:        authorId,
+			AuthorDpUrl:     authorDpUrl,
 		},
-		SortKey: RecipesSkPrefix,
+		DateCreated: utils.GetTimeNow(),
+		ItemType:    RecipeItemType,            // query by item time, sort by date
+		Category:    strings.ToLower(category), // query by category, sort by date
 	}
 }
 
@@ -66,12 +77,18 @@ func (r *Recipe) AddInstructions(instructions ...string) {
 // DANGEROUS CODE: applies prefixes for database storage
 func (r *Recipe) ApplyPrefixes() {
 	r.Id = utils.AddPrefix(r.Id, RecipesPkPrefix)
+	r.ItemType = utils.AddPrefix(r.ItemType, RecipesGsiPrefix)
+	r.Category = utils.AddPrefix(r.Category, RecipesGsi2Prefix)
+	r.DateCreated = utils.AddPrefix(r.DateCreated, RecipesLsiPrefix)
 }
 
 // Converts db items to recipe structs
 func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue, cloudfrontDomainName string) *[]Recipe {
-	return utils.DatabaseItemToStruct(items, func(r *Recipe) {
+	return utils.DatabaseItemsToStructs(items, func(r *Recipe) {
 		r.Id = strings.TrimPrefix(r.Id, RecipesPkPrefix)
+		r.ItemType = strings.TrimPrefix(r.ItemType, RecipesGsiPrefix)
+		r.Category = strings.TrimPrefix(r.Category, RecipesGsi2Prefix)
+		r.DateCreated = strings.TrimPrefix(r.DateCreated, RecipesLsiPrefix)
 		if r.ImageUrl != "" {
 			r.ImageUrl = utils.GenerateViewURL(r.ImageUrl, cloudfrontDomainName)
 		}

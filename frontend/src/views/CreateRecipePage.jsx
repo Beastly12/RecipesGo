@@ -18,15 +18,15 @@ const CreateRecipePage = () => {
         </Link>
       </nav>
 
-      <div className="lg:max-w-[900px] py-[40px] lg:mx-[auto] px-[20px] lg:px-[40px] ">
+      <div className="lg:max-w-[900px] py-10 lg:mx-auto px-5 lg:px-10 ">
         <h1 className="text-4xl my-10 font-bold dark:text-white">Create New Recipe</h1>
 
         <div className="bg-white rounded-2xl p-8 mb-6 shadow dark:bg-[#1a1a1a] dark:shadow-lg dark:shadow-black/50">
           <div className="text-[20px] font-bold mb-5 text-[#1a1a1a] dark:text-white">
             Recipe Image
           </div>
-          <div className="border-dashed border-[#dee2e6] border-2 rounded-2xl py-[60px] px-[20px] text-center cursor-pointer transition-all bg-[#f8f9fa] hover:border-[#ff6b6b] hover:bg-[#fff5f5] dark:border-gray-600 dark:bg-[#0a0a0a] dark:hover:border-[#ff5252] dark:hover:bg-[#2a0a0a]">
-            <div className="text-5xl mb-[14px]">📸</div>
+          <div className="border-dashed border-[#dee2e6] border-2 rounded-2xl py-[60px] px-5 text-center cursor-pointer transition-all bg-[#f8f9fa] hover:border-[#ff6b6b] hover:bg-[#fff5f5] dark:border-gray-600 dark:bg-[#0a0a0a] dark:hover:border-[#ff5252] dark:hover:bg-[#2a0a0a]">
+            <div className="text-5xl mb-3.5">📸</div>
             <div className="text-[16px] font-medium text-[#495057] dark:text-gray-300">
               Click to upload recipe photo
             </div>
@@ -89,12 +89,12 @@ const CreateRecipePage = () => {
               type="text"
               placeholder="e.g., 2 cups of flour"
             />
-            <button className="py-[12px] px-[16px] bg-[#f8f9fa] rounded-lg cursor-pointer dark:bg-gray-700 dark:text-white">
+            <button className="py-3 px-4 bg-[#f8f9fa] rounded-lg cursor-pointer dark:bg-gray-700 dark:text-white">
               ✕
             </button>
           </div>
           <div>
-            <button className="border-dashed mt-2 border-[#dee2e6] text-sm font-semibold text-[#495057] px-2 py-1 border-2 rounded-[6px] bg-[#f8f9fa] dark:border-gray-600 dark:text-gray-300 dark:bg-gray-700">
+            <button className="border-dashed mt-2 border-[#dee2e6] text-sm font-semibold text-[#495057] px-2 py-1 border-2 rounded-md bg-[#f8f9fa] dark:border-gray-600 dark:text-gray-300 dark:bg-gray-700">
               + Add Ingredient
             </button>
           </div>
@@ -112,12 +112,12 @@ const CreateRecipePage = () => {
               className="dark:bg-[#0a0a0a] dark:text-white dark:border-gray-600 dark:placeholder-gray-500"
               placeholder="e.g., 2 cups of flour"
             ></textarea>
-            <button className="py-[50px] px-[16px] bg-[#f8f9fa] rounded-lg cursor-pointer dark:bg-gray-700 dark:text-white">
+            <button className="py-[50px] px-4 bg-[#f8f9fa] rounded-lg cursor-pointer dark:bg-gray-700 dark:text-white">
               ✕
             </button>
           </div>
           <div className="mt-2">
-            <button className="border-dashed mt-2 border-[#dee2e6] text-sm font-semibold text-[#495057] px-2 py-1 border-2 rounded-[6px] bg-[#f8f9fa] dark:border-gray-600 dark:text-gray-300 dark:bg-gray-700">
+            <button className="border-dashed mt-2 border-[#dee2e6] text-sm font-semibold text-[#495057] px-2 py-1 border-2 rounded-md bg-[#f8f9fa] dark:border-gray-600 dark:text-gray-300 dark:bg-gray-700">
               + Add Step
             </button>
           </div>
@@ -128,8 +128,8 @@ const CreateRecipePage = () => {
             Privacy Settings
           </div>
           <div className="flex gap-3">
-            <div className="flex-1 border-[#dee2e6] border-2 rounded-2xl py-[40px] px-[20px] text-center cursor-pointer transition-all bg-[#f8f9fa] hover:border-[#ff6b6b] hover:bg-[#fff5f5] dark:border-gray-600 dark:bg-[#0a0a0a] dark:hover:border-[#ff5252] dark:hover:bg-[#2a0a0a]">
-              <div className="text-5xl mb-[14px]">🌍</div>
+            <div className="flex-1 border-[#dee2e6] border-2 rounded-2xl py-10 px-5 text-center cursor-pointer transition-all bg-[#f8f9fa] hover:border-[#ff6b6b] hover:bg-[#fff5f5] dark:border-gray-600 dark:bg-[#0a0a0a] dark:hover:border-[#ff5252] dark:hover:bg-[#2a0a0a]">
+              <div className="text-5xl mb-3.5">🌍</div>
               <div className="text-[16px] font-medium text-[#495057] dark:text-gray-300">
                 Public
               </div>
@@ -138,8 +138,8 @@ const CreateRecipePage = () => {
               </div>
             </div>
 
-            <div className="flex-1 border-[#dee2e6] border-2 rounded-2xl py-[40px] px-[20px] text-center cursor-pointer transition-all bg-[#f8f9fa] hover:border-[#ff6b6b] hover:bg-[#fff5f5] dark:border-gray-600 dark:bg-[#0a0a0a] dark:hover:border-[#ff5252] dark:hover:bg-[#2a0a0a]">
-              <div className="text-5xl mb-[14px]">🔒</div>
+            <div className="flex-1 border-[#dee2e6] border-2 rounded-2xl py-10 px-5 text-center cursor-pointer transition-all bg-[#f8f9fa] hover:border-[#ff6b6b] hover:bg-[#fff5f5] dark:border-gray-600 dark:bg-[#0a0a0a] dark:hover:border-[#ff5252] dark:hover:bg-[#2a0a0a]">
+              <div className="text-5xl mb-3.5">🔒</div>
               <div className="text-[16px] font-medium text-[#495057] dark:text-gray-300">
                 Private
               </div>

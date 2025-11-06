@@ -8,6 +8,17 @@ import CreateRecipePage from "./views/CreateRecipePage";
 import Profile from "./views/ProfilePage";
 import ProfileSettings from "./views/ProfileSettings";
 import DashBoard from "./views/DashBoard";
+import { Amplify } from 'aws-amplify';
+
+
+
+
+ Amplify.configure({Auth:{
+    Cognito:{
+      userPoolId: "eu-west-2_raKAsXGjN",
+      userPoolClientId: "6pio1e475d7i7vjqf2obl6novf",
+    }
+  }});
 
 
 export default function App() {

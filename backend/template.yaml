@@ -32,6 +32,8 @@ Resources:
           AttributeType: S
         - AttributeName: gsi
           AttributeType: S
+        - AttributeName: gsi2
+          AttributeType: S
         - AttributeName: lsi
           AttributeType: S
       KeySchema:
@@ -44,6 +46,16 @@ Resources:
           KeySchema:
             - AttributeName: gsi
               KeyType: HASH
+            - AttributeName: lsi
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: gsiIndex2
+          KeySchema:
+            - AttributeName: gsi2
+              KeyType: HASH
+            - AttributeName: lsi
+              KeyType: RANGE
           Projection:
             ProjectionType: ALL
       LocalSecondaryIndexes:
@@ -299,6 +311,12 @@ Resources:
           Type: HttpApi
           Properties:
             Path: /recipes
+            Method: GET
+            ApiId: !Ref RecipeApi
+        GetRecipe:
+          Type: HttpApi
+          Properties:
+            Path: /recipes/{id}
             Method: GET
             ApiId: !Ref RecipeApi
         DeleteRecipe:

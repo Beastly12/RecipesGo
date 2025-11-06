@@ -52,5 +52,5 @@ func HandleGetUploadUrl(ctx context.Context, req events.APIGatewayV2HTTPRequest)
 		ImageKey:  imageKey,
 	}
 
-	return models.SuccessfulGetRequestResponse(res), nil
+	return models.SuccessfulGetRequestResponse(res, nil), nil
 }

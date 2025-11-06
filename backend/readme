@@ -1,10 +1,13 @@
-BASE URL FOR PRODUCTION BUILD: https://splkc2b210.execute-api.eu-west-2.amazonaws.com/prod
+BASE URL FOR PRODUCTION BUILD: https://zn23g4uvg2.execute-api.eu-west-2.amazonaws.com/prod
+
+VALIDATIONS:
+	Password must be 8 characters or more
 
 To create a new recipe:
   POST /recipes
 	JSON:
 		name: string
-		imageKey: string
+		imageUrl: string
 		description: string
 		category: string
 		ingredients: []string
@@ -14,9 +17,22 @@ To create a new recipe:
 		difficulty: string
 
 To get all recipes:
-	GET /recipes
+	GET /recipes?category={category you want to filter by (OPTIONAL)}
 	To get next batch:
-		GET /recipes?next={id of last recipe returned}
+		GET /recipes?last={last key returned}&category={category you want to filter by (OPTIONAL)}
+
+To edit a recipe (NOT YET WORKING):
+	PUT /recipes/{recipe_id}
+	JSON:
+		name: string
+		imageUrl: string
+		description: string
+		category: string
+		ingredients: []string
+		instructions: []string
+		preparationTime: int
+		isPublic: bool
+		difficulty: string
 
 To delete a recipe:
 	DELETE /recipes/{recipe_id}
@@ -32,22 +48,22 @@ To remove recipe from favorite:
 To get all favorites recipes:
 	GET /favorites
 	To get next batch:
-		GET /favorites?next={id of last favorite returned}
+		GET /favorites?last={id of last favorite returned}
 
-To rate a recipe:
+To rate a recipe (NOT YET WORKING):
 	POST /ratings
 	JSON:
 		recipeId: string
 		stars: int
 		comment: string
 
-To delete rating on a recipe:
+To delete rating on a recipe (NOT YET WORKING):
 	DELETE /ratings/{id of recipe}
 
-To get all ratings on a recipe:
+To get all ratings on a recipe (NOT YET WORKING):
 	GET /ratings/{id of recipe}
 	To get next batch:
-		GET /ratings/{id of recipe}?next_recipe={id of last recipe returned}&next_user={user id in last rating returned}
+		GET /ratings/{id of recipe}?last={last key returned}
 
 To get url to post pictures to:
 	GET /upload-url

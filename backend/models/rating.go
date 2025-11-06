@@ -36,7 +36,7 @@ func (r *Rating) ApplyPrefixes() {
 }
 
 func DbItemsToRatingsStructs(items *[]map[string]types.AttributeValue) *[]Rating {
-	return utils.DatabaseItemToStruct(items, func(r *Rating) {
+	return utils.DatabaseItemsToStructs(items, func(r *Rating) {
 		r.RecipeId = strings.TrimPrefix(r.RecipeId, RatingPkPrefix)
 		r.Userid = strings.TrimPrefix(r.Userid, RatingSkPrefix)
 	})
