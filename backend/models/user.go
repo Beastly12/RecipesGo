@@ -8,8 +8,9 @@ import (
 )
 
 const (
-	UserPkPrefix = "USER#"
-	UserSkPrefix = "PROFILE"
+	UserPkPrefix  = "USER#"
+	UserGsiPrefix = "USER_NAME#"
+	UserSkPrefix  = "PROFILE"
 )
 
 type User struct {
@@ -42,11 +43,13 @@ func NewUser(userid, name string) *User {
 // DANGEROUS CODE: applies prefixes for database storage
 func (u *User) ApplyPrefixes() {
 	u.Userid = utils.AddPrefix(u.Userid, UserPkPrefix)
+	u.Name = utils.AddPrefix(u.Name, UserGsiPrefix)
 }
 
 // Takes dynamo database items and tries to convert them to user structs
 func DbItemsToUserStructs(items *[]map[string]types.AttributeValue) *[]User {
 	return utils.DatabaseItemsToStructs(items, func(u *User) {
 		u.Userid = strings.TrimPrefix(u.Userid, UserPkPrefix)
+		u.Name = utils.RemovePrefix(u.Name, "#")
 	})
 }

@@ -21,11 +21,11 @@ To get all recipes:
 	To get next batch:
 		GET /recipes?last={last key returned}&category={category you want to filter by (OPTIONAL)}
 
-To edit a recipe (NOT YET WORKING):
+To edit a recipe:
 	PUT /recipes/{recipe_id}
 	JSON:
+		(only include properties to update not all of them)
 		name: string
-		imageUrl: string
 		description: string
 		category: string
 		ingredients: []string
@@ -50,20 +50,39 @@ To get all favorites recipes:
 	To get next batch:
 		GET /favorites?last={id of last favorite returned}
 
-To rate a recipe (NOT YET WORKING):
+To rate a recipe:
 	POST /ratings
 	JSON:
 		recipeId: string
 		stars: int
-		comment: string
+		comment: string(optional)
 
-To delete rating on a recipe (NOT YET WORKING):
+To edit rating:
+	post to the rating again it will override existing rating
+	POST /ratings
+	JSON:
+		recipeId: string
+		stars: int
+		comment: string(optional)
+
+To delete rating on a recipe:
 	DELETE /ratings/{id of recipe}
 
-To get all ratings on a recipe (NOT YET WORKING):
+To get all ratings on a recipe:
 	GET /ratings/{id of recipe}
 	To get next batch:
 		GET /ratings/{id of recipe}?last={last key returned}
 
+To edit user details (NOT YET WORKING):
+	PUT /users
+	JSON:
+		(only include properties to update not all of them)
+		name: string
+		bio: string 
+		location: string
+
 To get url to post pictures to:
-	GET /upload-url
+	GET /upload-url?ext={the file extension of the image e.g jpg, png, gif, etc}
+
+To search for a recipe (not yet working):
+	GET /search?recipe={search string}

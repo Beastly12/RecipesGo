@@ -4,10 +4,12 @@ import (
 	"backend/models"
 	"backend/utils"
 	"context"
+	"fmt"
 	"log"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
@@ -30,21 +32,24 @@ func NewRecipeHelper(ctx context.Context) *recipeHelper {
 // adds recipe to db
 func (this *recipeHelper) Add(recipe *models.Recipe) error {
 	authored := models.NewAuthoredRecipe(recipe.AuthorId, recipe.Id, recipe.RecipeDetails)
-	input := &dynamodb.TransactWriteItemsInput{
-		TransactItems: []types.TransactWriteItem{
-			{
-				Put: &types.Put{
-					Item:      *utils.ToDatabaseFormat(authored),
-					TableName: &utils.GetDependencies().MainTableName,
-				},
-			},
-			{
-				Put: &types.Put{
-					Item:      *utils.ToDatabaseFormat(recipe),
-					TableName: &utils.GetDependencies().MainTableName,
-				},
+	recipeSearchIndexTrans := newSearchHelper().getRecipeSearchIndexTransactions(recipe)
+	transactions := []types.TransactWriteItem{
+		{
+			Put: &types.Put{
+				Item:      *utils.ToDatabaseFormat(authored),
+				TableName: &utils.GetDependencies().MainTableName,
 			},
 		},
+		{
+			Put: &types.Put{
+				Item:      *utils.ToDatabaseFormat(recipe),
+				TableName: &utils.GetDependencies().MainTableName,
+			},
+		},
+	}
+	transactions = append(transactions, recipeSearchIndexTrans...)
+	input := &dynamodb.TransactWriteItemsInput{
+		TransactItems: transactions,
 	}
 
 	_, err := utils.GetDependencies().DbClient.TransactWriteItems(this.Ctx, input)
@@ -142,4 +147,74 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 // deletes recipe from db
 func (r *recipeHelper) Delete(recipeId string) error {
 	return newHelper(r.Ctx).deleteFromDb(models.RecipeKey(recipeId))
+}
+
+func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error {
+	update := expression.UpdateBuilder{}
+	hasUpdates := false
+
+	if recipe.ImageUrl != "" {
+		update = update.Set(expression.Name("imageUrl"), expression.Value(recipe.ImageUrl))
+		hasUpdates = true
+	}
+	if recipe.Name != "" {
+		update = update.Set(expression.Name("name"), expression.Value(recipe.Name))
+		hasUpdates = true
+	}
+	if recipe.Description != "" {
+		update = update.Set(expression.Name("description"), expression.Value(recipe.Description))
+		hasUpdates = true
+	}
+	if recipe.AuthorName != "" {
+		update = update.Set(expression.Name("authorName"), expression.Value(recipe.AuthorName))
+		hasUpdates = true
+	}
+	if recipe.Category != "" {
+		update = update.Set(expression.Name("gsi2"), expression.Value(recipe.Category))
+		hasUpdates = true
+	}
+	if len(recipe.Ingredients) > 0 {
+		update = update.Set(expression.Name("ingredients"), expression.Value(recipe.Ingredients))
+		hasUpdates = true
+	}
+	if recipe.PreparationTime > 0 {
+		update = update.Set(expression.Name("preparationTime"), expression.Value(recipe.PreparationTime))
+		hasUpdates = true
+	}
+	if recipe.Difficulty != "" {
+		update = update.Set(expression.Name("difficulty"), expression.Value(recipe.Difficulty))
+		hasUpdates = true
+	}
+	if len(recipe.Instructions) > 0 {
+		update = update.Set(expression.Name("instructions"), expression.Value(recipe.Instructions))
+		hasUpdates = true
+	}
+
+	update = update.Set(expression.Name("isPublic"), expression.Value(recipe.IsPublic))
+	hasUpdates = true
+
+	if !hasUpdates {
+		return fmt.Errorf("no fields to update")
+	}
+
+	expr, err := expression.NewBuilder().WithUpdate(update).Build()
+	if err != nil {
+		return fmt.Errorf("failed to build expression: %w", err)
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		Key:                       *models.RecipeKey(recipeId),
+		TableName:                 &utils.GetDependencies().MainTableName,
+		UpdateExpression:          expr.Update(),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+	}
+
+	_, err = utils.GetDependencies().DbClient.UpdateItem(r.Ctx, input)
+	if err != nil {
+		log.Println("Failed to update recipe")
+		return err
+	}
+
+	return nil
 }

@@ -18,6 +18,7 @@ const (
 type Authored struct {
 	UserId      string `dynamodbav:"pk" json:"userId"`
 	RecipeId    string `dynamodbav:"sk" json:"recipeId"`
+	RecipeIdGsi string `dynamodbav:"gsi2" json:"-"`
 	DateCreated string `dynamodbav:"lsi" json:"dateCreated"`
 	RecipeDetails
 }
@@ -26,6 +27,7 @@ func NewAuthoredRecipe(userId, recipeId string, recipeDetails RecipeDetails) *Au
 	return &Authored{
 		UserId:        userId,
 		RecipeId:      recipeId,
+		RecipeIdGsi:   utils.RemovePrefix(recipeId, "#"),
 		DateCreated:   utils.GetTimeNow(),
 		RecipeDetails: recipeDetails,
 	}

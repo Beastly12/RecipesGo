@@ -22,6 +22,9 @@ func HandleRecipesActions(ctx context.Context, req events.APIGatewayV2HTTPReques
 	case "DELETE":
 		return handleDeleteRecipe(ctx, req)
 
+	case "PUT":
+		return handleUpdateRecipe(ctx, req)
+
 	default:
 		return models.InvalidRequestErrorResponse("Invalid http method"), nil
 	}
