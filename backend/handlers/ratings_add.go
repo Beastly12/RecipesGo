@@ -21,8 +21,8 @@ type ratingBody struct {
 func handleAddRatings(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	var reqBody ratingBody
 	if err := json.Unmarshal([]byte(req.Body), &reqBody); err != nil {
-		log.Println("failed to unmarshal rating request body")
-		return models.InvalidRequestErrorResponse(""), nil
+		log.Printf("failed to unmarshal rating request body, %v", err)
+		return models.InvalidRequestErrorResponse("Invalid request body. Tip: stars should be a number not a string!"), nil
 	}
 
 	if reqBody.RecipeId == "" {
@@ -38,6 +38,15 @@ func handleAddRatings(ctx context.Context, req events.APIGatewayV2HTTPRequest) (
 		return models.UnauthorizedErrorResponse("You need to be logged in to use this feature!"), nil
 	}
 
+	user, err := helpers.NewUserHelper(ctx).Get(userid)
+	if err != nil {
+		return models.ServerSideErrorResponse("Failed to get user details!", err), nil
+	}
+
+	if user == nil {
+		return models.NotFoundResponse("No such user exists!"), nil
+	}
+
 	recipe, recipeErr := helpers.NewRecipeHelper(ctx).Get(reqBody.RecipeId)
 	if recipeErr != nil {
 		return models.ServerSideErrorResponse("Failed to get recipe details, try again.", recipeErr), nil
@@ -47,9 +56,9 @@ func handleAddRatings(ctx context.Context, req events.APIGatewayV2HTTPRequest) (
 		return models.NotFoundResponse(fmt.Sprintf("No recipe with the id %v exists!", reqBody.RecipeId)), nil
 	}
 
-	newRating := models.NewRating(userid, reqBody.RecipeId, reqBody.Comment, reqBody.Stars)
+	newRating := models.NewRating(*user, reqBody.RecipeId, reqBody.Comment, reqBody.Stars)
 
-	err := helpers.NewRatingsHelper(ctx).AddRating(newRating)
+	err = helpers.NewRatingsHelper(ctx).AddRating(newRating)
 	if err != nil {
 		return models.ServerSideErrorResponse("Failed to add rating, try again.", err), nil
 	}

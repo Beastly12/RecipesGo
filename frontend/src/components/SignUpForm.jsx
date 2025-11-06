@@ -12,7 +12,7 @@ const SignUpForm = ({onSignup}) => {
   
   return (
     <>
-      <form className="space-y-7 w-full mt-4 p-3 ">
+      <form onSubmit={formhandler} className="space-y-7 w-full mt-4 p-3 ">
         <div>
           <label className="block text-2xl font-medium text-gray-700 mb-1">
             Full Name
@@ -34,6 +34,7 @@ const SignUpForm = ({onSignup}) => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
             placeholder="Enter your email"
             className="w-full border border-gray-300 rounded-2xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B] md:text-sm md:font-light"
           />
@@ -53,7 +54,7 @@ const SignUpForm = ({onSignup}) => {
         </div>
 
         <button
-          onClick={formhandler}
+         type="submit"
           className="w-full items-center p-3 mt-7 font-medium rounded-3xl bg-[#FF686B] text-2xl text-white focus:ring-2 focus:ring-[#FF486B] md:font-medium"
         >
           Sign Up
