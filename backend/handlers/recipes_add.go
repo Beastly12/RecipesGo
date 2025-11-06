@@ -12,15 +12,7 @@ import (
 )
 
 type jsonBody struct {
-	Name            string   `json:"name"`
-	ImageUrl        string   `json:"imageUrl"`
-	Description     string   `json:"description"`
-	Category        string   `json:"category"`
-	Ingredients     []string `json:"ingredients"`
-	Instructions    []string `json:"instructions"`
-	PreparationTime int      `json:"preparationTime"`
-	Difficulty      string   `json:"difficulty"`
-	IsPublic        bool     `json:"isPublic"`
+	models.Recipe
 }
 
 // adds new recipe to db

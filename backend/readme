@@ -25,7 +25,6 @@ To edit a recipe (NOT YET WORKING):
 	PUT /recipes/{recipe_id}
 	JSON:
 		name: string
-		imageUrl: string
 		description: string
 		category: string
 		ingredients: []string
