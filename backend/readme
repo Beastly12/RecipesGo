@@ -50,17 +50,17 @@ To get all favorites recipes:
 	To get next batch:
 		GET /favorites?last={id of last favorite returned}
 
-To rate a recipe (NOT YET WORKING):
+To rate a recipe:
 	POST /ratings
 	JSON:
 		recipeId: string
 		stars: int
 		comment: string
 
-To delete rating on a recipe (NOT YET WORKING):
+To delete rating on a recipe:
 	DELETE /ratings/{id of recipe}
 
-To get all ratings on a recipe (NOT YET WORKING):
+To get all ratings on a recipe:
 	GET /ratings/{id of recipe}
 	To get next batch:
 		GET /ratings/{id of recipe}?last={last key returned}
