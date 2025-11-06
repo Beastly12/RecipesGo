@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { CookingPot } from "lucide-react";
 import LoginForm from "../components/LoginForm";
 import SignUpForm from "../components/SignUpForm";
-import { SignUpService } from "../services/AuthService.mjs";
+import { LoginService, SignUpService } from "../services/AuthService.mjs";
+import { useNavigate } from "react-router-dom";
 
 function FeaturesList() {
   return [
@@ -16,8 +17,9 @@ function FeaturesList() {
 const AuthPage = () => {
   const features = FeaturesList();
   const [isLogin, setIsLogin] = useState(true);
+  const navigate = useNavigate();
 
-  const handleSignup = async (password, email, username) => {
+  const handleSignup = async (email,password,username) => {
     if (!password || !email || !username) {
       // setStatus({
       //   message: "Error: No field should be left empty",
@@ -26,9 +28,29 @@ const AuthPage = () => {
       //TODO: add properregex
       return;
     }
-    await SignUpService(email,password,username);
+    const signedUp = await SignUpService(email, password, username);
+    if (signedUp) {
+      navigate("/"); //TODO ; MAKE GO TO LOGIN FOR THEM TO LOGIN BEFORE THEY SIGNUP
+    }
+  };
+
+
+  const handleLogin= async (email,password)=>{
+     if (!password || !email) {
+      // setStatus({
+      //   message: "Error: No field should be left empty",
+      //   isSuccess: false,
+      // });
+      //TODO: add properregex
+      return;
+    }
+
+     const loggedIn = await LoginService(email,password);
+    if (loggedIn) {
+      navigate("/");
+    }
+  };
   
-  }
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#fafafa] max-w-[900px] my-10 mx-auto px-10">
@@ -89,7 +111,7 @@ const AuthPage = () => {
         </div>
 
         {/* Form */}
-        {isLogin ? <LoginForm /> : <SignUpForm onSignup={handleSignup} />}
+        {isLogin ? <LoginForm onLogin={handleLogin} /> : <SignUpForm onSignup={handleSignup} />}
       </div>
     </div>
   );

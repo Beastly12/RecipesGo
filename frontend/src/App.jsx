@@ -14,8 +14,8 @@ import { Amplify } from 'aws-amplify';
 
  Amplify.configure({Auth:{
     Cognito:{
-      userPoolId: "eu-west-2_raKAsXGjN",
-      userPoolClientId: "6pio1e475d7i7vjqf2obl6novf",
+      userPoolId: "eu-west-2_6n3usgeg2",
+      userPoolClientId: "4s8ph1fau9kf3em58ta9cfmrgv",
     }
   }});
 
