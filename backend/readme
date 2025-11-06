@@ -21,9 +21,10 @@ To get all recipes:
 	To get next batch:
 		GET /recipes?last={last key returned}&category={category you want to filter by (OPTIONAL)}
 
-To edit a recipe (NOT YET WORKING):
+To edit a recipe:
 	PUT /recipes/{recipe_id}
 	JSON:
+		(only include properties to update not all of them)
 		name: string
 		description: string
 		category: string
@@ -64,8 +65,16 @@ To get all ratings on a recipe (NOT YET WORKING):
 	To get next batch:
 		GET /ratings/{id of recipe}?last={last key returned}
 
+To edit user details (NOT YET WORKING):
+	PUT /users
+	JSON:
+		(only include properties to update not all of them)
+		name: string
+		bio: string 
+		location: string
+
 To get url to post pictures to:
 	GET /upload-url
 
-To search for a recipe:
+To search for a recipe (not yet working):
 	GET /search?recipe={search string}

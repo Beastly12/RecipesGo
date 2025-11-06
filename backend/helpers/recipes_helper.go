@@ -165,16 +165,8 @@ func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error
 		update = update.Set(expression.Name("description"), expression.Value(recipe.Description))
 		hasUpdates = true
 	}
-	if recipe.AuthorId != "" {
-		update = update.Set(expression.Name("authorId"), expression.Value(recipe.AuthorId))
-		hasUpdates = true
-	}
 	if recipe.AuthorName != "" {
 		update = update.Set(expression.Name("authorName"), expression.Value(recipe.AuthorName))
-		hasUpdates = true
-	}
-	if recipe.AuthorDpUrl != "" {
-		update = update.Set(expression.Name("authorDpUrl"), expression.Value(recipe.AuthorDpUrl))
 		hasUpdates = true
 	}
 	if recipe.Category != "" {
