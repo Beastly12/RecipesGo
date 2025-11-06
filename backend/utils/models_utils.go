@@ -21,7 +21,7 @@ func ToDatabaseFormat[T DatabaseFormattable](item T) *map[string]types.Attribute
 	return &dbItem
 }
 
-func DatabaseItemToStruct[T any](
+func DatabaseItemsToStructs[T any](
 	items *[]map[string]types.AttributeValue,
 	postProcess func(*T),
 ) *[]T {
@@ -36,4 +36,19 @@ func DatabaseItemToStruct[T any](
 	}
 
 	return &results
+}
+
+func DatabaseItemToStruct[T any](
+	item *map[string]types.AttributeValue,
+	postProcess func(*T),
+) *T {
+	var result T
+
+	if err := attributevalue.UnmarshalMap(*item, &result); err != nil {
+		log.Fatalf("An error occurred while trying to un marshal db items to struct %T: %v", result, err)
+	}
+
+	postProcess(&result)
+
+	return &result
 }

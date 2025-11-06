@@ -8,22 +8,24 @@ import (
 )
 
 const (
-	FavoritePkPrefix = UserPkPrefix
-	FavoriteSkPrefix = "FAVORITE#"
+	FavoritePkPrefix  = UserPkPrefix
+	FavoriteSkPrefix  = "FAVORITE#"
+	FavoriteGsiPrefix = "FAVORITE_CAT#"
 )
 
-// pk: USER#{userid} sk: FAVORITE#{recipe_id} recipe_details: ...
 type Favorite struct {
 	UserId   string `dynamodbav:"pk" json:"userid"`
 	RecipeId string `dynamodbav:"sk" json:"-"`
+	Category string `dynamodbav:"gsi" json:"category"`
 	RecipeDetails
-	DateAdded string `dynamodbav:"dateAdded" json:"dateAdded"`
+	DateAdded string `dynamodbav:"lsi" json:"dateAdded"`
 }
 
 func NewFavorite(userid string, recipe *Recipe) *Favorite {
 	return &Favorite{
 		UserId:        userid,
 		RecipeId:      recipe.Id,
+		Category:      recipe.Category,
 		RecipeDetails: recipe.RecipeDetails,
 		DateAdded:     utils.GetTimeNow(),
 	}
@@ -33,12 +35,14 @@ func NewFavorite(userid string, recipe *Recipe) *Favorite {
 func (f *Favorite) ApplyPrefixes() {
 	f.UserId = utils.AddPrefix(f.UserId, FavoritePkPrefix)
 	f.RecipeId = utils.AddPrefix(f.RecipeId, FavoriteSkPrefix)
+	f.Category = utils.AddPrefix(f.Category, FavoriteGsiPrefix)
 }
 
 func DbItemsToFavoriteStructs(items *[]map[string]types.AttributeValue) *[]Favorite {
-	return utils.DatabaseItemToStruct(items, func(f *Favorite) {
+	return utils.DatabaseItemsToStructs(items, func(f *Favorite) {
 		f.UserId = strings.TrimPrefix(f.UserId, FavoritePkPrefix)
 		f.RecipeId = strings.TrimPrefix(f.RecipeId, FavoriteSkPrefix)
+		f.Category = strings.TrimPrefix(f.Category, FavoriteGsiPrefix)
 	})
 }
 

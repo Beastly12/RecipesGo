@@ -9,15 +9,18 @@ import (
 )
 
 func TestNewRecipe(t *testing.T) {
+	a := NewUser("123", "johnny_test")
 	result := NewRecipe(
 		"Hot water",
 		"https://cdn.test.com/test.jpg",
-		"johnny_test",
 		"italian",
 		"A very delicious cup of hot water",
 		1,
 		"easy",
 		true,
+		a.Userid,
+		a.Name,
+		a.DpUrl,
 	)
 
 	result.AddIngredients("water", "cast iron skillet")
@@ -31,14 +34,16 @@ func TestNewRecipe(t *testing.T) {
 			AuthorName:      "johnny_test",
 			Description:     "A very delicious cup of hot water",
 			Ingredients:     []string{"water", "cast iron skillet"},
-			Category:        "italian",
 			Instructions:    []string{"boil for 5 mins"},
-			DateCreated:     result.DateCreated,
 			PreparationTime: 1,
 			Difficulty:      "easy",
 			IsPublic:        true,
+			AuthorId:        "123",
 		},
-		SortKey: "RECIPE",
+		DateCreated: result.DateCreated,
+		SortKey:     "RECIPE",
+		Category:    "italian",
+		ItemType:    "RECIPE",
 	}
 
 	if !reflect.DeepEqual(result, expect) {
@@ -47,21 +52,26 @@ func TestNewRecipe(t *testing.T) {
 }
 
 func TestDbItemToRecipesStruct(t *testing.T) {
+	d := utils.GetTimeNow()
 	expect := Recipe{
-		Id: "123",
+		Id:      "123",
+		SortKey: "RECIPE",
 		RecipeDetails: RecipeDetails{
 			ImageUrl:        "https://cdn.com/test.jpg",
 			Name:            "White rice",
 			AuthorName:      "johnny_test",
 			Description:     "Plain white rice",
+			AuthorId:        "123",
+			AuthorDpUrl:     "",
 			Ingredients:     []string{"Rice", "Water"},
-			Category:        "dinner",
 			Instructions:    []string{"oven"},
 			PreparationTime: 1,
 			Difficulty:      "easy",
 			IsPublic:        false,
 		},
-		SortKey: "RECIPE",
+		DateCreated: d,
+		ItemType:    "RECIPE",
+		Category:    "dinner",
 	}
 
 	items := []map[string]types.AttributeValue{
@@ -72,14 +82,18 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 			"name":        &types.AttributeValueMemberS{Value: "White rice"},
 			"description": &types.AttributeValueMemberS{Value: "Plain white rice"},
 			"authorName":  &types.AttributeValueMemberS{Value: "johnny_test"},
+			"authorId":    &types.AttributeValueMemberS{Value: "123"},
+			"authorDpUrl": &types.AttributeValueMemberS{Value: ""},
 			"ingredients": &types.AttributeValueMemberL{Value: []types.AttributeValue{
 				&types.AttributeValueMemberS{Value: "Rice"},
 				&types.AttributeValueMemberS{Value: "Water"},
 			}},
 			"preparationTime": &types.AttributeValueMemberN{Value: "1"},
-			"gsi":             &types.AttributeValueMemberS{Value: "dinner"},
+			"gsi":             &types.AttributeValueMemberS{Value: "RECIPE_TYPE#RECIPE"},
+			"gsi2":            &types.AttributeValueMemberS{Value: "RECIPE_CAT#dinner"},
 			"instructions":    &types.AttributeValueMemberL{Value: []types.AttributeValue{&types.AttributeValueMemberS{Value: "oven"}}},
 			"difficulty":      &types.AttributeValueMemberN{Value: "easy"},
+			"lsi":             &types.AttributeValueMemberN{Value: expect.DateCreated},
 			"isPublic":        &types.AttributeValueMemberBOOL{Value: false},
 		},
 	}
@@ -110,16 +124,19 @@ func TestRecipesConstants(t *testing.T) {
 
 func TestRecipeToDatabaseFormat(t *testing.T) {
 	time := utils.GetTimeNow()
+	u := NewUser("123", "mad_scientist")
 
 	recipe := NewRecipe(
 		"test",
 		"",
-		"mad_scientist",
 		"dessert",
 		"stuff",
 		1,
 		"hard",
 		false,
+		u.Userid,
+		u.Name,
+		u.DpUrl,
 	)
 
 	recipe.AddIngredients("water")
@@ -134,8 +151,8 @@ func TestRecipeToDatabaseFormat(t *testing.T) {
 		"ingredients": &types.AttributeValueMemberL{Value: []types.AttributeValue{
 			&types.AttributeValueMemberS{Value: "water"},
 		}},
-		"gsi":        &types.AttributeValueMemberS{Value: "dessert"},
-		"lsi":        &types.AttributeValueMemberS{Value: time},
+		"gsi":        &types.AttributeValueMemberS{Value: "RECIPE_TYPE#" + "RECIPE"},
+		"lsi":        &types.AttributeValueMemberS{Value: "RECIPE_DATE#" + time},
 		"difficulty": &types.AttributeValueMemberS{Value: "hard"},
 		"isPublic":   &types.AttributeValueMemberBOOL{Value: false},
 	}
