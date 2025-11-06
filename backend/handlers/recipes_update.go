@@ -3,6 +3,7 @@ package handlers
 import (
 	"backend/helpers"
 	"backend/models"
+	"backend/utils"
 	"context"
 	"encoding/json"
 
@@ -15,12 +16,28 @@ func handleUpdateRecipe(ctx context.Context, req events.APIGatewayV2HTTPRequest)
 		return models.InvalidRequestErrorResponse("No recipe id provided!"), nil
 	}
 
+	recipeHelper := helpers.NewRecipeHelper(ctx)
+
+	recipe, err := recipeHelper.Get(recipeId)
+	if err != nil {
+		return models.ServerSideErrorResponse("Failed to get recipe details, try again.", err), nil
+	}
+
+	if recipe == nil {
+		return models.NotFoundResponse("No such recipe exists!"), nil
+	}
+
+	if recipe.AuthorId != utils.GetAuthUserId(req) {
+		// naughty naughty!!!
+		return models.UnauthorizedErrorResponse("Only the author of a recipe can edit it!"), nil
+	}
+
 	var newRecipe models.Recipe
 	if err := json.Unmarshal([]byte(req.Body), &newRecipe); err != nil {
 		return models.InvalidRequestErrorResponse("Invalid recipe details in body!"), nil
 	}
 
-	err := helpers.NewRecipeHelper(ctx).UpdateRecipe(recipeId, newRecipe)
+	err = recipeHelper.UpdateRecipe(recipeId, newRecipe)
 	if err != nil {
 		return models.ServerSideErrorResponse("Failed to update recipe, try again.", err), nil
 	}

@@ -327,6 +327,14 @@ Resources:
             ApiId: !Ref RecipeApi
             Auth:
               Authorizer: CognitoAuthorizer
+        UpdateRecipe:
+          Type: HttpApi
+          Properties:
+            Path: /recipes/{id}
+            Method: PUT
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
 
   # to handle recipes
   RatingsActions:
