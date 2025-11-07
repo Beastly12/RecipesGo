@@ -40,7 +40,7 @@ export default function RecipeFeed() {
           key: recipe.id,
           title: recipe.name,
           author: recipe.authorName,
-          likes: 2,
+          likes: recipe.likes,
           profilePic: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600',
           img: recipe.imageUrl,
         }));
