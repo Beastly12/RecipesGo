@@ -259,22 +259,29 @@ func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error
 }
 
 func (r *recipeHelper) UpdateRecipeLikes(userId string, recipeId string, difference int) error {
-	input := &dynamodb.UpdateItemInput{
-		Key:              *models.RecipeKey(recipeId),
-		TableName:        &utils.GetDependencies().MainTableName,
-		UpdateExpression: aws.String("ADD likes :inc"),
-		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":inc": &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", difference)},
-		},
-	}
+	var input *dynamodb.UpdateItemInput
 
 	if difference < 0 {
-		minValue := -difference
-		input.ExpressionAttributeValues[":minValue"] = &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", minValue)}
-		input.ConditionExpression = aws.String("attribute_exists(likes) AND likes >= :minValue")
+		input = &dynamodb.UpdateItemInput{
+			Key:              *models.RecipeKey(recipeId),
+			TableName:        &utils.GetDependencies().MainTableName,
+			UpdateExpression: aws.String("SET likes = if_not_exists(likes, :zero) + :inc"),
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":inc":  &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", difference)},
+				":zero": &types.AttributeValueMemberN{Value: "0"},
+				":min":  &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", -difference)},
+			},
+			ConditionExpression: aws.String("attribute_not_exists(likes) OR likes >= :min"),
+		}
 	} else {
-		input.ExpressionAttributeValues[":zero"] = &types.AttributeValueMemberN{Value: "0"}
-		input.ConditionExpression = aws.String("attribute_not_exists(likes) OR likes >= :zero")
+		input = &dynamodb.UpdateItemInput{
+			Key:              *models.RecipeKey(recipeId),
+			TableName:        &utils.GetDependencies().MainTableName,
+			UpdateExpression: aws.String("ADD likes :inc"),
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":inc": &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", difference)},
+			},
+		}
 	}
 
 	_, err := utils.GetDependencies().DbClient.UpdateItem(r.Ctx, input)
