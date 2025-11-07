@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import FilterTab from "../components/FilterTab";
 import RecipesList from "../components/RecipeList";
 import { Sun, Moon } from "lucide-react";
@@ -28,6 +28,8 @@ export default function RecipeFeed() {
 
   useEffect(() => {
     const fetchRecipes = async () => {
+        let isMounted = true;
+
       try {
         const response = await getAllRecipes();
         const data = response.data.message.map((recipe) => ({
@@ -39,14 +41,15 @@ export default function RecipeFeed() {
             "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600",
           img: recipe.imageUrl,
         }));
-        console.log(data)
-        setRecipes((prev) => [...prev, ...data]);
+        console.log(data);
+        if (isMounted) setRecipes([...data]);
       } catch (error) {
-        console.error("Failed to fetch recipes:", error);
+        if (isMounted) console.error("Failed to fetch recipes:", error);
       }
     };
 
     fetchRecipes();
+    return () => { isMounted = false; };
   }, []);
 
   var fData = [
@@ -83,6 +86,24 @@ export default function RecipeFeed() {
       title: "Quick & Easy",
     },
   ];
+
+  const handleFilter = async (category) => {
+    console.log(category)
+    try {
+      const response = await getAllRecipes({ category });
+      const data = response.data.message.map((recipe) => ({
+        key: recipe.id,
+        title: recipe.name,
+        author: recipe.authorName,
+        likes: 2,
+        profilePic:
+          "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600",
+        img: recipe.imageUrl,
+      }));
+      console.log(data);
+      setRecipes([...data]);
+    } catch (error) {console.error("Failed to fetch recipes:", error);}
+  };
 
   const [colorTheme, setTheme] = useDarkMode();
 
@@ -123,7 +144,7 @@ export default function RecipeFeed() {
               <div className="w-10 h-10 rounded-full bg-linear-to-br from-indigo-400 to-purple-600 cursor-pointer hover:scale-105 transition-transform"></div>
             </Link>
           ) : (
-            <div>Login/Signup</div>
+            <Link to={"/Auth"} >Login/Signup</Link>
           )}
         </div>
       </nav>
@@ -158,7 +179,7 @@ export default function RecipeFeed() {
             </span>
             {userId ? (
               <Link to={"/Settings"}>
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600"></div>
+                <div className="w-8 h-8 rounded-full bg-linear-to-br from-indigo-400 to-purple-600"></div>
               </Link>
             ) : (
               <Link
@@ -181,9 +202,9 @@ export default function RecipeFeed() {
       </Link>
       <HeroSection />
       <div className="sticky top-20 z-30 bg-[#fafafa] dark:bg-[#1a1a1a] transition-colors duration-300 ">
-        <FilterTab filterData={fData} />
+        <FilterTab filterData={fData} onTabClick={handleFilter} />
       </div>
-      <RecipesList recipes={recipes} />
+      <RecipesList recipes={recipes}  />
     </div>
   );
 }
