@@ -57,7 +57,7 @@ func GenerateSearchIndexes(name, id, itemType string) *[]Search {
 		}
 
 		index := token[:minSearchIndexWordLen]
-		value := token + "#" + id
+		value := token + "," + id // concat id to add uniqueness to each search item
 		if _, ok := seen[index+value]; !ok {
 			seen[index+value] = struct{}{}
 			indexes = append(indexes, Search{
