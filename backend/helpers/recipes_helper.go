@@ -267,7 +267,13 @@ func (r *recipeHelper) UpdateRecipeLikes(userId string, recipeId string, differe
 			":inc":  &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", difference)},
 			":zero": &types.AttributeValueMemberN{Value: "0"},
 		},
-		ConditionExpression: aws.String("attribute_not_exists(likes) OR (likes + :inc) >= :zero"),
+		ConditionExpression: aws.String("likes >= :zero"),
+	}
+
+	if difference < 0 {
+		minValue := -difference
+		input.ExpressionAttributeValues[":minValue"] = &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", minValue)}
+		input.ConditionExpression = aws.String("likes >= :minValue")
 	}
 
 	_, err := utils.GetDependencies().DbClient.UpdateItem(r.Ctx, input)
