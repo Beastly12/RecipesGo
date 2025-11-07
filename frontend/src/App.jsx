@@ -23,6 +23,7 @@ import { Amplify } from 'aws-amplify';
 export default function App() {
   return (
     <Routes>
+      <Route path="/recipe-details/:id" element={<RecipeDetailPage />} />
       <Route path="/recipe-details" element={<RecipeDetailPage />} />
       <Route path="/Auth" element={<AuthPage />} />
       <Route path="/" element={<RecipeFeed />} />

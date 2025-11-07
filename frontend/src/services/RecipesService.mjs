@@ -51,3 +51,8 @@ export async function getAllRecipes({ category, last } = {}) {
 export async function editRecipe(recipeId, data) {
   return await axios.put(`/recipes/${recipeId}`, data);
 }
+
+
+export async function getRecipebyId(recipeId){
+    return await axios.get(`/recipes/${recipeId}`); 
+}
