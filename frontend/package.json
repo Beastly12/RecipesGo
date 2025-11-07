@@ -11,11 +11,7 @@
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.14",
-<<<<<<< HEAD
-    "ant-design-vue": "^4.2.6",
-=======
     "antd": "^5.28.0",
->>>>>>> upstream
     "aws-amplify": "^6.15.7",
     "axios": "^1.13.1",
     "lucide-react": "^0.546.0",

@@ -2,6 +2,7 @@ import React from "react";
 import DashBoardCard from "../components/DashBoardCard";
 import { HeartIcon, NotebookPen, Eye, MessageCircleMore } from "lucide-react";
 import DashBoardManagementTable from "../components/DashBoardManagementTable";
+import DashBoardManagementTableTailwind from "../components/DashBoardManagementTable";
 
 
 var userName = "Daniel";
@@ -53,7 +54,8 @@ const DashBoard = () => {
           />
         </div>
 
-        <DashBoardManagementTable/>
+        {/* <DashBoardManagementTable/> */}
+        <DashBoardManagementTableTailwind/>
 
       
       </div>
