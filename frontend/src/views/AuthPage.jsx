@@ -30,7 +30,8 @@ const AuthPage = () => {
     }
     const signedUp = await SignUpService(email, password, username);
     if (signedUp) {
-      navigate("/"); //TODO ; MAKE GO TO LOGIN FOR THEM TO LOGIN BEFORE THEY SIGNUP
+       //TODO ; MAKE GO TO LOGIN FOR THEM TO LOGIN BEFORE THEY SIGNUP
+       setIsLogin(true)
     }
   };
 
