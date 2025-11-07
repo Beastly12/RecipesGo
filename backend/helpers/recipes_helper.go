@@ -264,7 +264,7 @@ func (r *recipeHelper) UpdateRecipeLikes(userId string, recipeId string, differe
 		TableName:        &utils.GetDependencies().MainTableName,
 		UpdateExpression: aws.String("ADD likes :inc"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":inc":  &types.AttributeValueMemberS{Value: fmt.Sprintf("%d", difference)},
+			":inc":  &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", difference)},
 			":zero": &types.AttributeValueMemberN{Value: "0"},
 		},
 		ConditionExpression: aws.String("attribute_not_exists(likes) OR (likes + :inc) >= :zero"),
