@@ -21,7 +21,7 @@ const DashBoard = () => {
   return (
     <section className="min-h-screen bg-[#fafafa]">
       <div className="m-2 max-w-[900px] my-[40px] mx-[auto] px-[40px] dark:text-[#fafafa]">
-        <div className="border flex flex-col bg-blue-500 text-white rounded-3xl mt-4 mb-2 p-7 space-y-3">
+        <div className="border flex flex-col bg-[#ff6b6b] text-white rounded-3xl mt-4 mb-2 p-7 space-y-3">
           <p className="font-medium text-xl mt-2">Good {greeting}</p>
           <h1 className="font-bold text-4xl mt-2">
             Welcome back, {userName}! 👋
