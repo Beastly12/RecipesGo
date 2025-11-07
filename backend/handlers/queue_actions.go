@@ -32,6 +32,7 @@ func HandleQueueActions(ctx context.Context, sqs events.SQSEvent) error {
 			}
 
 			log.Print("Updated recipe likes successfully!")
+			continue
 
 		case backend.QUEUE_ACTION_REMOVE_FAVORITE_RECIPE:
 			if action.RecipientId == "" || action.SenderId == "" {
@@ -46,6 +47,7 @@ func HandleQueueActions(ctx context.Context, sqs events.SQSEvent) error {
 			}
 
 			log.Print("Updated recipe likes successfully!")
+			continue
 		}
 	}
 
