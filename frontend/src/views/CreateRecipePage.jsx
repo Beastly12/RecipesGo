@@ -1,20 +1,22 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { createRecipeService } from "../services/RecipesService.mjs";
-import { getUploadUrl } from "../services/ImageUploadService.mjs";
-import axios from "axios";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { createRecipeService } from '../services/RecipesService.mjs';
+import { getUploadUrl } from '../services/ImageUploadService.mjs';
+import axios from 'axios';
+import { Spin, message } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const CreateRecipePage = () => {
   const navigate = useNavigate();
 
   const [recipeImage, setRecipeImage] = useState(null);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [cookTime, setCookTime] = useState("");
-  const [difficulty, setDifficulty] = useState("Easy");
-  const [category, setCategory] = useState("Breakfast");
-  const [ingredients, setIngredients] = useState([""]);
-  const [steps, setSteps] = useState([""]);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [cookTime, setCookTime] = useState('');
+  const [difficulty, setDifficulty] = useState('Easy');
+  const [category, setCategory] = useState('Breakfast');
+  const [ingredients, setIngredients] = useState(['']);
+  const [steps, setSteps] = useState(['']);
   const [privacy, setPrivacy] = useState(true);
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -32,11 +34,10 @@ const CreateRecipePage = () => {
     setIngredients(newIngredients);
   };
 
-  const addIngredient = () => setIngredients([...ingredients, ""]);
+  const addIngredient = () => setIngredients([...ingredients, '']);
 
   const removeIngredient = (i) => {
-    if (ingredients.length > 1)
-      setIngredients(ingredients.filter((_, index) => index !== i));
+    if (ingredients.length > 1) setIngredients(ingredients.filter((_, index) => index !== i));
   };
 
   const updateStep = (i, value) => {
@@ -45,29 +46,28 @@ const CreateRecipePage = () => {
     setSteps(newSteps);
   };
 
-  const addStep = () => setSteps([...steps, ""]);
+  const addStep = () => setSteps([...steps, '']);
 
   const removeStep = (i) => {
     if (steps.length > 1) setSteps(steps.filter((_, index) => index !== i));
   };
 
   const validateRecipe = () => {
-    if (!recipeImage) return "Please upload a recipe image.";
-    if (!title.trim()) return "Recipe title is required.";
-    if (!description.trim()) return "Description is required.";
+    if (!recipeImage) return 'Please upload a recipe image.';
+    if (!title.trim()) return 'Recipe title is required.';
+    if (!description.trim()) return 'Description is required.';
 
     if (!cookTime.trim() || isNaN(cookTime) || Number(cookTime) <= 0) {
-      return "Please enter a valid cook time (greater than 0).";
+      return 'Please enter a valid cook time (greater than 0).';
     }
 
     const invalidIngredients = ingredients.filter((ing) => !ing.trim());
-    if (invalidIngredients.length > 0)
-      return "All ingredients must be filled out.";
-    if (ingredients.length === 0) return "Add at least one ingredient.";
+    if (invalidIngredients.length > 0) return 'All ingredients must be filled out.';
+    if (ingredients.length === 0) return 'Add at least one ingredient.';
 
     const invalidSteps = steps.filter((step) => !step.trim());
-    if (invalidSteps.length > 0) return "All steps must be filled out.";
-    if (steps.length === 0) return "Add at least one step.";
+    if (invalidSteps.length > 0) return 'All steps must be filled out.';
+    if (steps.length === 0) return 'Add at least one step.';
 
     return null;
   };
@@ -75,28 +75,30 @@ const CreateRecipePage = () => {
   const handlePublish = async () => {
     const error = validateRecipe();
     if (error) {
-      alert(error);
+      message.error(error);
       return;
     }
 
     if (!recipeImage) {
-      alert("Please upload a recipe image.");
+      message.error('Please upload a recipe image.');
       return;
     }
+
+    const hideLoading = message.loading('Publishing your recipe...', 0);
 
     try {
       setLoading(true);
 
-      const ext = recipeImage.type.split("/")[1];
+      const ext = recipeImage.type.split('/')[1];
 
       const uploadres = await getUploadUrl(ext);
 
       await axios.put(uploadres.message.uploadUrl, recipeImage, {
         headers: {
-          "Content-Type": recipeImage.type,
+          'Content-Type': recipeImage.type,
         },
       });
-      
+
       const recipeData = {
         name: title,
         description,
@@ -110,10 +112,13 @@ const CreateRecipePage = () => {
       };
 
       await createRecipeService(recipeData);
-      navigate("/recipe-details", { state: recipeData });
+      hideLoading();
+      message.success('Recipe published successfully!');
+      navigate('/recipe-details', { state: recipeData });
     } catch (e) {
-      alert("Failed to publish recipe");
-      console.error("Upload error:", e);
+      hideLoading();
+      message.error('Failed to publish recipe. Please try again.');
+      console.error('Upload error:', e);
     } finally {
       setLoading(false);
     }
@@ -128,16 +133,16 @@ const CreateRecipePage = () => {
 
         <button
           onClick={handlePublish}
-          className="bg-[#ff6b6b] text-white hover:bg-[#ff5252] hover:shadow-[#ff5252] dark:bg-[#ff5252] dark:hover:bg-[#ff6b6b] px-6 py-3 rounded-xl font-semibold transition transform hover:-translate-y-0.5 shadow hover:shadow-lg"
+          disabled={loading}
+          className="bg-[#ff6b6b] text-white hover:bg-[#ff5252] hover:shadow-[#ff5252] dark:bg-[#ff5252] dark:hover:bg-[#ff6b6b] px-6 py-3 rounded-xl font-semibold transition transform hover:-translate-y-0.5 shadow hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2"
         >
-          Publish Recipe
+          {loading && <Spin indicator={<LoadingOutlined spin />} size="small" />}
+          {loading ? 'Publishing...' : 'Publish Recipe'}
         </button>
       </nav>
 
       <div className="lg:max-w-[900px] py-10 lg:mx-auto px-5 lg:px-10">
-        <h1 className="text-4xl my-10 font-bold dark:text-white">
-          Create New Recipe
-        </h1>
+        <h1 className="text-4xl my-10 font-bold dark:text-white">Create New Recipe</h1>
 
         {/* Image Upload */}
         <div className="bg-white rounded-2xl p-8 mb-6 shadow dark:bg-[#1a1a1a] dark:shadow-lg dark:shadow-black/50">
@@ -162,12 +167,7 @@ const CreateRecipePage = () => {
                 </div>
               </>
             )}
-            <input
-              type="file"
-              className="hidden"
-              accept="image/*"
-              onChange={handleImageUpload}
-            />
+            <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
           </label>
         </div>
 
@@ -237,6 +237,8 @@ const CreateRecipePage = () => {
                 <option>Dinner</option>
                 <option>Dessert</option>
                 <option>Snack</option>
+                <option>Vegan</option>
+                <option>Quick & Easy</option>
               </select>
             </div>
           </div>
@@ -253,6 +255,7 @@ const CreateRecipePage = () => {
               <input
                 className="flex-1 p-2 border rounded-md dark:bg-[#0a0a0a] dark:text-white dark:border-gray-600"
                 value={ing}
+                type="text"
                 onChange={(e) => updateIngredient(i, e.target.value)}
                 placeholder="e.g., 2 cups of flour"
               />
@@ -317,8 +320,8 @@ const CreateRecipePage = () => {
               onClick={() => setPrivacy(true)}
               className={`flex-1 border-[#dee2e6] border-2 rounded-2xl py-10 px-5 text-center cursor-pointer transition-all bg-[#f8f9fa] dark:border-gray-600 dark:bg-[#0a0a0a] ${
                 privacy === true
-                  ? "border-[#ff6b6b] bg-[#fff5f5] dark:border-[#ff5252] dark:bg-[#2a0a0a]"
-                  : ""
+                  ? 'border-[#ff6b6b] bg-[#fff5f5] dark:border-[#ff5252] dark:bg-[#2a0a0a]'
+                  : ''
               }`}
             >
               <div className="text-5xl mb-3.5">🌍</div>
@@ -334,8 +337,8 @@ const CreateRecipePage = () => {
               onClick={() => setPrivacy(false)}
               className={`flex-1 border-[#dee2e6] border-2 rounded-2xl py-10 px-5 text-center cursor-pointer transition-all bg-[#f8f9fa] dark:border-gray-600 dark:bg-[#0a0a0a] ${
                 privacy === false
-                  ? "border-[#ff6b6b] bg-[#fff5f5] dark:border-[#ff5252] dark:bg-[#2a0a0a]"
-                  : ""
+                  ? 'border-[#ff6b6b] bg-[#fff5f5] dark:border-[#ff5252] dark:bg-[#2a0a0a]'
+                  : ''
               }`}
             >
               <div className="text-5xl mb-3.5">🔒</div>
