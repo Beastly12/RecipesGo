@@ -9,7 +9,7 @@ import (
 )
 
 func TestFavoriteConst(t *testing.T) {
-	expectPk := "USER#"
+	expectPk := "FAVORITE_BY#"
 	expectSk := "FAVORITE#"
 
 	if expectPk != FavoritePkPrefix {
@@ -23,7 +23,7 @@ func TestFavoriteConst(t *testing.T) {
 
 func TestFavoriteKey(t *testing.T) {
 	expect := &map[string]types.AttributeValue{
-		"pk": &types.AttributeValueMemberS{Value: "USER#123"},
+		"pk": &types.AttributeValueMemberS{Value: "FAVORITE_BY#123"},
 		"sk": &types.AttributeValueMemberS{Value: "FAVORITE#123"},
 	}
 
@@ -64,7 +64,7 @@ func TestDbItemToFavorite(t *testing.T) {
 
 	items := []map[string]types.AttributeValue{
 		{
-			"pk":          &types.AttributeValueMemberS{Value: "USER#123"},
+			"pk":          &types.AttributeValueMemberS{Value: "FAVORITE_BY#123"},
 			"sk":          &types.AttributeValueMemberS{Value: "FAVORITE#123"},
 			"imageUrl":    &types.AttributeValueMemberS{Value: ""},
 			"name":        &types.AttributeValueMemberS{Value: "test"},
@@ -96,7 +96,7 @@ func TestFavoriteToDatabase(t *testing.T) {
 	a := NewUser("123", "test_person")
 
 	expect := map[string]types.AttributeValue{
-		"pk":          &types.AttributeValueMemberS{Value: "USER#123"},
+		"pk":          &types.AttributeValueMemberS{Value: "FAVORITE_BY#123"},
 		"sk":          &types.AttributeValueMemberS{Value: "FAVORITE#123"},
 		"imageUrl":    &types.AttributeValueMemberS{Value: ""},
 		"name":        &types.AttributeValueMemberS{Value: "test"},
