@@ -28,8 +28,13 @@ func NewRatingsHelper(ctx context.Context) *ratingsHelper {
 
 func (r *ratingsHelper) AddRating(rating *models.Rating) error {
 	err := newHelper(r.Ctx).putIntoDb(utils.ToDatabaseFormat(rating))
+	if err != nil {
+		return err
+	}
 
-	return err
+	// NewQueueHelper(r.Ctx).PutInQueue(WithRateAction(*rating))
+
+	return nil
 }
 
 func (r *ratingsHelper) RemoveRating(recipeId, userId string) error {

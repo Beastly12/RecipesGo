@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	FavoritePkPrefix  = UserPkPrefix
+	FavoritePkPrefix  = "FAVORITE_BY#"
 	FavoriteSkPrefix  = "FAVORITE#"
 	FavoriteGsiPrefix = "FAVORITE_CAT#"
 )

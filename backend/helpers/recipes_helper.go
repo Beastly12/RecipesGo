@@ -67,7 +67,7 @@ func (r *recipeHelper) GetAllRecipes(lastKey map[string]types.AttributeValue, ca
 	var keyConditionExpression *string
 	var expressionAttributeValues map[string]types.AttributeValue
 
-	if category == "" {
+	if category == "" || strings.ToLower(category) == "all" {
 		// return all recipes
 		utils.BasicLog("no category provided will return all recipes", nil)
 		indexName = aws.String("gsiIndex")
@@ -216,6 +216,27 @@ func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error
 	_, err = utils.GetDependencies().DbClient.UpdateItem(r.Ctx, input)
 	if err != nil {
 		log.Println("Failed to update recipe")
+		return err
+	}
+
+	return nil
+}
+
+func (r *recipeHelper) UpdateRecipeLikes(userId string, recipeId string, difference int) error {
+	input := &dynamodb.UpdateItemInput{
+		Key:              *models.RecipeKey(recipeId),
+		TableName:        &utils.GetDependencies().MainTableName,
+		UpdateExpression: aws.String("ADD likes :inc"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":inc":  &types.AttributeValueMemberS{Value: fmt.Sprintf("%d", difference)},
+			":zero": &types.AttributeValueMemberN{Value: "0"},
+		},
+		ConditionExpression: aws.String("attribute_not_exists(likes) OR (likes + :inc) >= :zero"),
+	}
+
+	_, err := utils.GetDependencies().DbClient.UpdateItem(r.Ctx, input)
+	if err != nil {
+		log.Printf("failed to update like count. Difference: %v, ERROR: %v", difference, err)
 		return err
 	}
 
