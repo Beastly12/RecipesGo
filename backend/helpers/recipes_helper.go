@@ -67,7 +67,7 @@ func (r *recipeHelper) GetAllRecipes(lastKey map[string]types.AttributeValue, ca
 	var keyConditionExpression *string
 	var expressionAttributeValues map[string]types.AttributeValue
 
-	if category == "" {
+	if category == "" || strings.ToLower(category) == "all" {
 		// return all recipes
 		utils.BasicLog("no category provided will return all recipes", nil)
 		indexName = aws.String("gsiIndex")
