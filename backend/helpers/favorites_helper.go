@@ -28,8 +28,38 @@ func NewFavoritesHelper(ctx context.Context) *favoritesHelper {
 	}
 }
 
+func (r *favoritesHelper) recipeInUserFavorites(userId, recipeId string) (bool, error) {
+	input := &dynamodb.GetItemInput{
+		Key:       *models.FavoriteKey(userId, recipeId),
+		TableName: &utils.GetDependencies().MainTableName,
+	}
+	result, err := utils.GetDependencies().DbClient.GetItem(r.Ctx, input)
+	if err != nil {
+		log.Printf("failed to check if user already has current recipe in favorites! ERROR: %v", err)
+		return false, err
+	}
+
+	return len(result.Item) > 0, nil
+}
+
 func (this *favoritesHelper) Add(favorite *models.Favorite) error {
-	return newHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(favorite))
+	recipeInFavorites, err := this.recipeInUserFavorites(favorite.UserId, favorite.RecipeId)
+	if err != nil {
+		return err
+	}
+
+	if recipeInFavorites {
+		return nil
+	}
+
+	err = newHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(favorite))
+	if err != nil {
+		return err
+	}
+
+	NewQueueHelper(this.Ctx).PutInQueue(WithLikeAction(favorite.UserId, favorite.RecipeId, true))
+
+	return nil
 }
 
 func (this *favoritesHelper) GetAll(userId string, lastEvalKey map[string]types.AttributeValue) (*getAllFavoritesOutput, error) {
@@ -78,5 +108,20 @@ func (this *favoritesHelper) GetAll(userId string, lastEvalKey map[string]types.
 }
 
 func (this *favoritesHelper) Remove(userId, recipeId string) error {
-	return newHelper(this.Ctx).deleteFromDb(models.FavoriteKey(userId, recipeId))
+	recipeInFavorites, err := this.recipeInUserFavorites(userId, recipeId)
+	if err != nil {
+		return err
+	}
+
+	if !recipeInFavorites {
+		return nil
+	}
+
+	err = newHelper(this.Ctx).deleteFromDb(models.FavoriteKey(userId, recipeId))
+	if err != nil {
+		return err
+	}
+
+	NewQueueHelper(this.Ctx).PutInQueue(WithLikeAction(userId, recipeId, false))
+	return nil
 }

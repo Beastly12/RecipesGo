@@ -33,6 +33,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.20.21
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.8.21
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.88.3
+	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.13
 	github.com/aws/smithy-go v1.23.2 // indirect
 	github.com/google/uuid v1.6.0
 	golang.org/x/text v0.30.0

@@ -7,11 +7,13 @@ Globals:
     Timeout: 10
     Runtime: provided.al2023
     MemorySize: 128
+    Architectures: [arm64]
     Environment:
       Variables:
         MAIN_TABLE: !Ref MainTable
         RECIPE_IMAGES_BUCKET: !Ref RecipeImagesBucket
         CLOUDFRONT_DOMAIN: !GetAtt RecipeImagesDistribution.DomainName
+        RECIPES_QUEUE: !GetAtt RecipesQueue.QueueName
 
 Parameters:
   EnvironmentName:
@@ -211,11 +213,13 @@ Resources:
       FunctionName: !Sub ${AWS::StackName}-preSignup-${EnvironmentName}
       CodeUri: bin/pre_signup/pre_signup.zip
       Handler: bootstrap
-      Architectures: [arm64]
+      
       Description: Lambda function that runs to auto verify user after they sign up
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref MainTable
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt RecipesQueue.QueueName
         - Statement:
             Effect: Allow
             Action:
@@ -236,11 +240,12 @@ Resources:
       FunctionName: !Sub ${AWS::StackName}-postSignup-${EnvironmentName}
       CodeUri: bin/post_signup/post_signup.zip
       Handler: bootstrap
-      Architectures: [arm64]
       Description: Lambda function that runs after auto verifying user and adds them to dynamodb
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref MainTable
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt RecipesQueue.QueueName
       Events:
         CognitoTrigger:
           Type: Cognito
@@ -255,11 +260,12 @@ Resources:
       FunctionName: !Sub ${AWS::StackName}-favorites-actions-${EnvironmentName}
       CodeUri: bin/favorites_actions/favorites_actions.zip
       Handler: bootstrap
-      Architectures: [arm64]
       Description: Lambda function that handles crud requests for favorite recipes
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref MainTable
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt RecipesQueue.QueueName
       Events:
         AddFavorites:
           Type: HttpApi
@@ -293,11 +299,12 @@ Resources:
       FunctionName: !Sub ${AWS::StackName}-recipes-actions-${EnvironmentName}
       CodeUri: bin/recipes_actions/recipes_actions.zip
       Handler: bootstrap
-      Architectures: [arm64]
       Description: Lambda function that handles crud requests for recipes
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref MainTable
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt RecipesQueue.QueueName
       Events:
         AddRecipes:
           Type: HttpApi
@@ -343,11 +350,12 @@ Resources:
       FunctionName: !Sub ${AWS::StackName}-ratings-actions-${EnvironmentName}
       CodeUri: bin/ratings_actions/ratings_actions.zip
       Handler: bootstrap
-      Architectures: [arm64]
       Description: Lambda function that handles crud requests for rating recipes
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref MainTable
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt RecipesQueue.QueueName
       Events:
         AddRating:
           Type: HttpApi
@@ -379,7 +387,6 @@ Resources:
       FunctionName: !Sub ${AWS::StackName}-getUploadUrl-${EnvironmentName}
       CodeUri: bin/get_upload_url/get_upload_url.zip
       Handler: bootstrap
-      Architectures: [arm64]
       Description: Lambda function that generates presigned URLs for S3 uploads
       Environment:
         Variables:
@@ -397,6 +404,38 @@ Resources:
             ApiId: !Ref RecipeApi
             Auth:
               Authorizer: CognitoAuthorizer
+
+  RecipeQueueActions:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-recipes-queue-actions-${EnvironmentName}
+      CodeUri: bin/queue_actions/queue_actions.zip
+      Handler: bootstrap
+      Description: function to handle stuff in queue like like count or rating count
+      Policies: 
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MainTable
+        - SQSPollerPolicy:
+            QueueName: !GetAtt RecipesQueue.QueueName
+      Events:
+        RecipesQueueEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt RecipesQueue.Arn
+
+  RecipesQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${AWS::StackName}-recipes-queue-${EnvironmentName}
+      MessageRetentionPeriod: 86400
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt RecipesDeadLetterQueue.Arn
+        maxReceiveCount: 3
+
+  RecipesDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${AWS::StackName}-recipes-dlq-${EnvironmentName}
 
 Outputs:
   RecipeImagesBucketName:
