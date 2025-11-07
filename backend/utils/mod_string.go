@@ -12,7 +12,7 @@ import (
 
 func AddPrefix(s, prefix string) string {
 	parts := strings.Split(s, prefix)
-	return prefix + parts[len(parts)-1]
+	return prefix + RemovePrefix(parts[len(parts)-1], "#")
 }
 
 func AddSuffix(s, suffix string) string {
