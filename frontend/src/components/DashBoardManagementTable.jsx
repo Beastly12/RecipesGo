@@ -55,44 +55,54 @@ const recipesData = [
 const DashBoardManagementTable = () => {
   const [searchRecipe, SetSearchRecipe] = useState("");
   const [recipe, setRecipe] = useState(recipesData);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const filteredRecipes = recipe.filter((r) =>
+    r.name.toLowerCase().includes(searchRecipe.toLowerCase())
+  );
 
   return (
     <section className=" bg-white rounded-3xl shadow mt-10">
-      <div className="flex flex-col sm:flex-row md:flex-col border-b-2">
-        <div className="flex justify-between items-center p-8 sm:space-x-7">
-          <h2 className="text-2xl font-bold ">My Recipes</h2>
+      
+      <div className="flex flex-col sm:flex-row md:flex-col shadow">
+        <div className="flex justify-between items-center p-8 sm:space-x-9">
+          <h2 className="text-2xl font-bold mb-3 md:mb-0">My Recipes</h2>
 
-          <div className="flex gap-5 items-center">
+          <div className="w-full">
             <input
               type="text"
               placeholder="Search recipes..."
-              className="outline-none text-sm text-gray-500 rounded-full w-500"
+              className="focus:outline-none text-sm text-gray-500 rounded-full w-full border-gray-300 px-4 py-2"
+              value={searchRecipe}
+              onChange={(e) => {
+                SetSearchRecipe(e.target.value);
+              }}
             />
           </div>
         </div>
       </div>
 
-      <div className="flex justify-between p-5 text-gray-700 bg-gray-200">
+      {/* <div className=" hidden md:grid grid-cols-5 gap-4 px-6 py-3 justify-between text-gray-700 bg-gray-200 font-semibold">
         <h2>RECIPE</h2>
         <h2>STATUS</h2>
         <h2>ENGAGEMENT</h2>
         <h2>DATE</h2>
         <h2>ACTIONS</h2>
-      </div>
+      </div> */}
 
-      <ul className="space-y-1 ">
-        {recipesData.map((recipe) => (
+      <ul className="divide-y">
+        {filteredRecipes.map((recipe) => (
           <li
             key={recipe.id}
-            className="flex items-center justify-between p-4 hover:bg-gray-50 cursor-pointer transition shadow"
+            className="flex items-center justify-between p-5 hover:bg-gray-50 cursor-pointer transition shadow"
           >
-            <div className="flex space-x-3 items-center">
+            <div className="flex space-x-3 items-center sm:mr-7">
               <img
                 src={recipe.image}
                 alt="Recipe Image"
-                className="w-20 h-20 object-cover rounded-md"
+                className="w-37 h-37 object-cover rounded-md"
               />
-              <div className="space-y-1">
+              <div className="sm:flex-row justify-between items-center">
                 <h2 className="font-semibold">{recipe.name}</h2>
                 <p className="text- text-gray-500">
                   {recipe.category}•{recipe.meal}•{recipe.time}
@@ -100,23 +110,23 @@ const DashBoardManagementTable = () => {
               </div>
             </div>
 
-            <div className="flex items-center space-x-13">
+            <div className="flex items-center space-x-13 sm:flex-row md:flex-row mr-2 sm:ml-8">
               <span> {recipe.status}</span>
 
-              <div className="space-x-3">
+              <div className="flex sm:flex-col md:flex-row gap-2">
                 <span>❤️{recipe.likes}</span> <span>💬 {recipe.comments}</span>
                 <span className="text-gray-500">{recipe.date}</span>
               </div>
             </div>
 
             <div className="flex items-center space-x-5">
-              <button className="cursor-pointer">
+              <button className="cursor-pointer hover:scale-105">
                 <PenLine
                   size={23}
                   className="bg-[#ff6b6b] rounded-md text-white p-1"
                 />
               </button>
-              <button className="cursor-pointer">
+              <button className="cursor-pointer hover:scale-105">
                 <Trash2
                   size={23}
                   className="bg-[#ff6b6b] rounded-md text-white p-1"
@@ -127,7 +137,7 @@ const DashBoardManagementTable = () => {
         ))}
       </ul>
 
-      {recipesData.length === 0 && (
+      {filteredRecipes.length === 0 && (
         <p className="text-center text-gray-500 py-6 text-xl">
           No Recipe Found
         </p>
