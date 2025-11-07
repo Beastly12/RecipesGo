@@ -27,6 +27,11 @@ func GenerateImageKey(userID, extension string) string {
 	return fmt.Sprintf("images/%s/%d_%s.%s", userID, timestamp, uniqueID, extension)
 }
 
+func GenerateStaticImageKey(imageId, extension string) string {
+	// format: images/{id}.{ext}
+	return fmt.Sprintf("images/%s.%s", imageId, extension)
+}
+
 // returns the MIME type for the file extension
 func GetContentType(extension string) string {
 	contentTypes := map[string]string{

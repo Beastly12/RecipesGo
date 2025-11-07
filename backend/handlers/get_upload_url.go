@@ -18,13 +18,13 @@ type response struct {
 }
 
 func HandleGetUploadUrl(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
-
 	userid := utils.GetAuthUserId(req)
 	if userid == "" {
 		return models.InvalidRequestErrorResponse("User id not found"), nil
 	}
 
 	fileExtension := req.QueryStringParameters["ext"]
+	fileId := req.QueryStringParameters["id"]
 
 	fileExtension = strings.ToLower(strings.TrimPrefix(fileExtension, "."))
 
@@ -33,6 +33,9 @@ func HandleGetUploadUrl(ctx context.Context, req events.APIGatewayV2HTTPRequest)
 	}
 
 	imageKey := utils.GenerateImageKey(userid, fileExtension)
+	if fileId != "" {
+		imageKey = utils.GenerateStaticImageKey(fileId, fileExtension)
+	}
 
 	// presign
 	presignClient := s3.NewPresignClient(utils.GetDependencies().S3Client)
