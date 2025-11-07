@@ -148,8 +148,44 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 }
 
 // deletes recipe from db
-func (r *recipeHelper) Delete(recipeId string) error {
-	return newHelper(r.Ctx).deleteFromDb(models.RecipeKey(recipeId))
+func (r *recipeHelper) Delete(recipe models.Recipe) error {
+	// delete recipe and author items
+	deleteTransactions := []types.TransactWriteItem{
+		{
+			Delete: &types.Delete{
+				Key:       *models.RecipeKey(recipe.Id),
+				TableName: &utils.GetDependencies().MainTableName,
+			},
+		},
+		{
+			Delete: &types.Delete{
+				Key:       models.AuthoredKey(recipe.AuthorId, recipe.Id),
+				TableName: &utils.GetDependencies().MainTableName,
+			},
+		},
+	}
+
+	input := &dynamodb.TransactWriteItemsInput{
+		TransactItems: deleteTransactions,
+	}
+
+	_, err := utils.GetDependencies().DbClient.TransactWriteItems(r.Ctx, input)
+	if err != nil {
+		return err
+	}
+
+	// del search indexes
+	keysToDelete := models.GetSearchItemKeys(recipe.Name, recipe.Id, models.SEARCH_ITEM_TYPE_RECIPE)
+
+	helper := newHelper(r.Ctx)
+	for _, key := range *keysToDelete {
+		err := helper.deleteFromDb(&key)
+		if err != nil {
+			log.Printf("An error occurred while trying to delete recipe search index! ERROR: %v", err)
+		}
+	}
+
+	return nil
 }
 
 func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error {

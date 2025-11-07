@@ -33,7 +33,7 @@ func handleDeleteRecipe(ctx context.Context, req events.APIGatewayV2HTTPRequest)
 		return models.UnauthorizedErrorResponse("Only the person that created a recipe can delete it!"), nil
 	}
 
-	err = recipeHelper.Delete(recipeId)
+	err = recipeHelper.Delete(*recipe)
 	if err != nil {
 		return models.ServerSideErrorResponse("Failed to delete recipe, try again.", err), nil
 	}
