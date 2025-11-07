@@ -258,35 +258,41 @@ func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error
 	return nil
 }
 
-func (r *recipeHelper) UpdateRecipeLikes(userId string, recipeId string, difference int) error {
-	var input *dynamodb.UpdateItemInput
-
-	if difference < 0 {
-		input = &dynamodb.UpdateItemInput{
-			Key:              *models.RecipeKey(recipeId),
-			TableName:        &utils.GetDependencies().MainTableName,
-			UpdateExpression: aws.String("SET likes = if_not_exists(likes, :zero) + :inc"),
-			ExpressionAttributeValues: map[string]types.AttributeValue{
-				":inc":  &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", difference)},
-				":zero": &types.AttributeValueMemberN{Value: "0"},
-				":min":  &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", -difference)},
-			},
-			ConditionExpression: aws.String("attribute_not_exists(likes) OR likes >= :min"),
-		}
-	} else {
-		input = &dynamodb.UpdateItemInput{
-			Key:              *models.RecipeKey(recipeId),
-			TableName:        &utils.GetDependencies().MainTableName,
-			UpdateExpression: aws.String("ADD likes :inc"),
-			ExpressionAttributeValues: map[string]types.AttributeValue{
-				":inc": &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", difference)},
-			},
-		}
+func (r *recipeHelper) RecipeLikesPlus1(userId, recipeId string) error {
+	input := &dynamodb.UpdateItemInput{
+		Key:              *models.RecipeKey(recipeId),
+		TableName:        &utils.GetDependencies().MainTableName,
+		UpdateExpression: aws.String("ADD likes :inc"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":inc": &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", 1)},
+		},
 	}
 
 	_, err := utils.GetDependencies().DbClient.UpdateItem(r.Ctx, input)
 	if err != nil {
-		log.Printf("failed to update like count. Difference: %v, ERROR: %v", difference, err)
+		log.Printf("failed to increase like count!!!, ERROR: %v", err)
+		return err
+	}
+
+	return nil
+}
+
+func (r *recipeHelper) RecipeLikesMinus1(userId, recipeId string) error {
+	input := &dynamodb.UpdateItemInput{
+		Key:              *models.RecipeKey(recipeId),
+		TableName:        &utils.GetDependencies().MainTableName,
+		UpdateExpression: aws.String("SET likes = if_not_exists(likes, :zero) - :inc"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":inc":  &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", 1)},
+			":zero": &types.AttributeValueMemberN{Value: "0"},
+			":min":  &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", 0)},
+		},
+		ConditionExpression: aws.String("attribute_not_exists(likes) OR likes >= :min"),
+	}
+
+	_, err := utils.GetDependencies().DbClient.UpdateItem(r.Ctx, input)
+	if err != nil {
+		log.Printf("failed to decrease like count!!! ERROR: %v", err)
 		return err
 	}
 

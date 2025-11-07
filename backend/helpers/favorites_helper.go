@@ -57,7 +57,7 @@ func (this *favoritesHelper) Add(favorite *models.Favorite) error {
 		return err
 	}
 
-	NewQueueHelper(this.Ctx).PutInQueue(WithLikeAction(favorite.UserId, favorite.RecipeId, true))
+	NewQueueHelper(this.Ctx).PutInQueue(WithLikeAction(favorite.UserId, favorite.RecipeId))
 
 	return nil
 }
@@ -114,6 +114,6 @@ func (this *favoritesHelper) Remove(userId, recipeId string) error {
 		return err
 	}
 
-	NewQueueHelper(this.Ctx).PutInQueue(WithLikeAction(userId, recipeId, false))
+	NewQueueHelper(this.Ctx).PutInQueue(WithUnlikeAction(userId, recipeId))
 	return nil
 }

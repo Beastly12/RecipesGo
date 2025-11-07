@@ -29,19 +29,19 @@ func NewQueueHelper(ctx context.Context) *queueHelper {
 	}
 }
 
-func WithLikeAction(userId, recipeId string, increaseLike bool) QueueAction {
-	if !increaseLike {
-		return QueueAction{
-			SenderId:    userId,
-			RecipientId: recipeId,
-			Action:      backend.QUEUE_ACTION_REMOVE_FAVORITE_RECIPE,
-		}
-	}
-
+func WithLikeAction(userId, recipeId string) QueueAction {
 	return QueueAction{
 		SenderId:    userId,
 		RecipientId: recipeId,
 		Action:      backend.QUEUE_ACTION_FAVORITE_RECIPE,
+	}
+}
+
+func WithUnlikeAction(userId, recipeId string) QueueAction {
+	return QueueAction{
+		SenderId:    userId,
+		RecipientId: recipeId,
+		Action:      backend.QUEUE_ACTION_REMOVE_FAVORITE_RECIPE,
 	}
 }
 

@@ -25,7 +25,7 @@ func HandleQueueActions(ctx context.Context, sqs events.SQSEvent) error {
 				continue
 			}
 
-			err := helpers.NewRecipeHelper(ctx).UpdateRecipeLikes(action.SenderId, action.RecipientId, 1)
+			err := helpers.NewRecipeHelper(ctx).RecipeLikesPlus1(action.SenderId, action.RecipientId)
 			if err != nil {
 				log.Printf("FAILED TO INCREASE RECIPE LIKES! ERROR: %v", err)
 				continue
@@ -39,7 +39,7 @@ func HandleQueueActions(ctx context.Context, sqs events.SQSEvent) error {
 				continue
 			}
 
-			err := helpers.NewRecipeHelper(ctx).UpdateRecipeLikes(action.SenderId, action.RecipientId, -1)
+			err := helpers.NewRecipeHelper(ctx).RecipeLikesMinus1(action.SenderId, action.RecipientId)
 			if err != nil {
 				log.Printf("FAILED TO DECREASE RECIPE LIKES! ERROR: %v", err)
 				continue
