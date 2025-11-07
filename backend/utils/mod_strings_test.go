@@ -19,9 +19,9 @@ func TestAddPrefix(t *testing.T) {
 			expect: "first test",
 		},
 		{
-			word:   "#test",
-			prefix: "##",
-			expect: "###test",
+			word:   "first#test",
+			prefix: "user#",
+			expect: "user#test",
 		},
 	}
 
