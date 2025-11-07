@@ -52,7 +52,7 @@ func (this *favoritesHelper) GetAll(userId string, lastEvalKey map[string]types.
 
 	favs := models.DbItemsToFavoriteStructs(&items.Items)
 
-	var recipes []models.Recipe
+	recipes := []models.Recipe{}
 	for _, fav := range *favs {
 		r := *models.NewRecipe(
 			fav.Name,

@@ -54,7 +54,10 @@ func (r *ratingsHelper) GetRecipeRatings(recipeId string, lastKey map[string]typ
 	}
 
 	if result.Count < 1 {
-		return nil, nil
+		return &getRatingsOutput{
+			Ratings: &[]models.Rating{},
+			LastKey: nil,
+		}, nil
 	}
 
 	ratings := models.DbItemsToRatingsStructs(&result.Items)
