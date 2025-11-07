@@ -82,23 +82,15 @@ func (this *favoritesHelper) GetAll(userId string, lastEvalKey map[string]types.
 
 	favs := models.DbItemsToFavoriteStructs(&items.Items)
 
+	recipeHelper := NewRecipeHelper(this.Ctx)
 	recipes := []models.Recipe{}
 	for _, fav := range *favs {
-		r := *models.NewRecipe(
-			fav.Name,
-			fav.ImageUrl,
-			fav.Category,
-			fav.Description,
-			fav.PreparationTime,
-			fav.Difficulty,
-			fav.IsPublic,
-			fav.AuthorId,
-			fav.AuthorName,
-			fav.AuthorDpUrl,
-		)
-		r.Id = fav.RecipeId
-		r.AddIngredients(fav.Ingredients...)
-		recipes = append(recipes, r)
+		r, err := recipeHelper.Get(fav.RecipeId)
+		if err != nil {
+			log.Printf("Failed to get recipe details for %v, ERROR: %v", fav.RecipeId, err)
+			continue
+		}
+		recipes = append(recipes, *r)
 	}
 
 	return &getAllFavoritesOutput{
