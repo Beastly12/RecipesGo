@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PenLine, Trash2 } from "lucide-react";
+import { Globe, Lock, PenLine, Trash2 } from "lucide-react";
 
 const recipesData = [
   {
@@ -61,6 +61,26 @@ const DashBoardManagementTable = () => {
     r.name.toLowerCase().includes(searchRecipe.toLowerCase())
   );
 
+  const statusTheme = (status) => {
+    const isPublished = status === "Public";
+    return (
+      <span
+        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+          isPublished
+            ? "bg-green-100 text-green-700"
+            : "bg-purple-100 text-purple-700"
+        }`}
+      >
+        {isPublished ? (
+          <Globe size={16} className="p-1" />
+        ) : (
+          <Lock size={16} className="p-1" />
+        )}
+        {isPublished ? "Public" : "Private"}
+      </span>
+    );
+  };
+
   return (
     <section className=" bg-white rounded-3xl shadow mt-10">
       
@@ -111,7 +131,7 @@ const DashBoardManagementTable = () => {
             </div>
 
             <div className="flex items-center space-x-13 sm:flex-row md:flex-row mr-2 sm:ml-8">
-              <span> {recipe.status}</span>
+              <span> {statusTheme(recipe.status)}</span>
 
               <div className="flex sm:flex-col md:flex-row gap-2">
                 <span>❤️{recipe.likes}</span> <span>💬 {recipe.comments}</span>
