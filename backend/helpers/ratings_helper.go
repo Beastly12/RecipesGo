@@ -32,7 +32,7 @@ func (r *ratingsHelper) AddRating(rating *models.Rating) error {
 		return err
 	}
 
-	// NewQueueHelper(r.Ctx).PutInQueue(WithRateAction(*rating))
+	NewQueueHelper(r.Ctx).PutInQueue(WithRateAction(*rating))
 
 	return nil
 }
@@ -71,4 +71,33 @@ func (r *ratingsHelper) GetRecipeRatings(recipeId string, lastKey map[string]typ
 		Ratings: ratings,
 		LastKey: result.LastEvaluatedKey,
 	}, nil
+}
+
+func (r *ratingsHelper) GetRecipeRatingAverage(recipeId string) (float32, error) {
+	var sum float32
+	var count int
+	var last map[string]types.AttributeValue
+
+	for {
+		results, err := r.GetRecipeRatings(recipeId, last)
+		if err != nil {
+			return 0, err
+		}
+		for _, rating := range *results.Ratings {
+			sum += float32(rating.Stars)
+			count++
+		}
+
+		if len(results.LastKey) == 0 {
+			break
+		}
+
+		last = results.LastKey
+	}
+
+	if count == 0 {
+		return 0, nil
+	}
+
+	return sum / float32(count), nil
 }

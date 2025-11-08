@@ -48,6 +48,21 @@ func HandleQueueActions(ctx context.Context, sqs events.SQSEvent) error {
 
 			log.Print("Updated recipe likes successfully!")
 			continue
+
+		case backend.QUEUE_ACTION_RATE_RECIPE:
+			if action.RecipientId == "" {
+				log.Print("skipping invalid message")
+				continue
+			}
+
+			err := helpers.NewRecipeHelper(ctx).UpdateRecipeRating(action.RecipientId)
+			if err != nil {
+				log.Printf("FAILED TO UPDATE RECIPE RATINGS! ERROR: %v", err)
+				continue
+			}
+
+			log.Print("Updated recipe ratings successfully!")
+			continue
 		}
 	}
 
