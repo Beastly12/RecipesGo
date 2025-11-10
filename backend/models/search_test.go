@@ -22,13 +22,13 @@ func TestGenerateSearchIndexes(t *testing.T) {
 			expected: []Search{
 				{
 					Index:    "jo",
-					Value:    "johnny#123",
+					Value:    "johnny,123",
 					ItemType: "author",
 					Id:       "123",
 				},
 				{
 					Index:    "da",
-					Value:    "dang#123",
+					Value:    "dang,123",
 					ItemType: "author",
 					Id:       "123",
 				},
@@ -41,7 +41,7 @@ func TestGenerateSearchIndexes(t *testing.T) {
 			expected: []Search{
 				{
 					Index:    "da",
-					Value:    "dang#123",
+					Value:    "dang,123",
 					ItemType: "author",
 					Id:       "123",
 				},
@@ -54,31 +54,31 @@ func TestGenerateSearchIndexes(t *testing.T) {
 			expected: []Search{
 				{
 					Index:    "ve",
-					Value:    "very#123",
+					Value:    "very,123",
 					ItemType: "recipe",
 					Id:       "123",
 				},
 				{
 					Index:    "de",
-					Value:    "delicious#123",
+					Value:    "delicious,123",
 					ItemType: "recipe",
 					Id:       "123",
 				},
 				{
 					Index:    "ge",
-					Value:    "german#123",
+					Value:    "german,123",
 					ItemType: "recipe",
 					Id:       "123",
 				},
 				{
 					Index:    "do",
-					Value:    "donner#123",
+					Value:    "donner,123",
 					ItemType: "recipe",
 					Id:       "123",
 				},
 				{
 					Index:    "ke",
-					Value:    "kebab#123",
+					Value:    "kebab,123",
 					ItemType: "recipe",
 					Id:       "123",
 				},
@@ -110,11 +110,11 @@ func TestGetSearchKeys(t *testing.T) {
 			expected: []map[string]types.AttributeValue{
 				{
 					"pk": &types.AttributeValueMemberS{Value: "SEARCH_INDEX#" + "te"},
-					"sk": &types.AttributeValueMemberS{Value: "SEARCH_VALUE#" + "test#123"},
+					"sk": &types.AttributeValueMemberS{Value: "SEARCH_VALUE#" + "test,123"},
 				},
 				{
 					"pk": &types.AttributeValueMemberS{Value: "SEARCH_INDEX#" + "re"},
-					"sk": &types.AttributeValueMemberS{Value: "SEARCH_VALUE#" + "recipe#123"},
+					"sk": &types.AttributeValueMemberS{Value: "SEARCH_VALUE#" + "recipe,123"},
 				},
 			},
 		},

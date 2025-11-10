@@ -17,7 +17,7 @@ const RecipesList = ({ recipes, hasmore, handlePagination, loading }) => {
     <>
       {recipes.length > 0 ? (
         <>
-          <div className="px-10 mt-2 pb-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="px-10 mt-2 min-h-[50vh] pb-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {recipes.map((recipe) => (
               <Link to={`/recipe-details/${recipe.key}`} key={recipe.key}>
                 <div className="mb-6 bg-white dark:bg-[#1a1a1a] dark:shadow-lg dark:shadow-black/50 rounded-2xl overflow-hidden shadow hover:shadow-xl transition-transform duration-300 ease-out hover:-translate-y-1 cursor-pointer">
@@ -37,7 +37,15 @@ const RecipesList = ({ recipes, hasmore, handlePagination, loading }) => {
                     </div>
                     <div className="flex items-center justify-between mt-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-linear-to-br from-pink-300 to-red-400"></div>
+                        {recipe.authorDpUrl ? (
+                          <img
+                            className="w-7 h-7 rounded-full"
+                            src={recipe.authorDpUrl}
+                            alt="authordp"
+                          />
+                        ) : (
+                          <div className="w-7 h-7 rounded-full bg-linear-to-br from-pink-300 to-red-400"></div>
+                        )}
                         <span className="text-sm text-gray-600 font-medium">{recipe.author}</span>
                       </div>
                       <div className="flex items-center gap-1 text-sm text-gray-500">
@@ -63,7 +71,7 @@ const RecipesList = ({ recipes, hasmore, handlePagination, loading }) => {
           )}
         </>
       ) : (
-        <div className="dark:text-white text-black mt-20 text-2xl md:text-4xl text-center w-full">
+        <div className="dark:text-white flex items-center justify-center text-black h-[50vh]  text-2xl md:text-4xl w-full">
           No Recipes, Try a different Filter or better still create one 😊
         </div>
       )}
