@@ -25,13 +25,14 @@ func HandleQueueActions(ctx context.Context, sqs events.SQSEvent) error {
 				continue
 			}
 
-			err := helpers.NewRecipeHelper(ctx).UpdateRecipeLikes(action.SenderId, action.RecipientId, 1)
+			err := helpers.NewRecipeHelper(ctx).RecipeLikesPlus1(action.SenderId, action.RecipientId)
 			if err != nil {
 				log.Printf("FAILED TO INCREASE RECIPE LIKES! ERROR: %v", err)
 				continue
 			}
 
 			log.Print("Updated recipe likes successfully!")
+			continue
 
 		case backend.QUEUE_ACTION_REMOVE_FAVORITE_RECIPE:
 			if action.RecipientId == "" || action.SenderId == "" {
@@ -39,13 +40,29 @@ func HandleQueueActions(ctx context.Context, sqs events.SQSEvent) error {
 				continue
 			}
 
-			err := helpers.NewRecipeHelper(ctx).UpdateRecipeLikes(action.SenderId, action.RecipientId, -1)
+			err := helpers.NewRecipeHelper(ctx).RecipeLikesMinus1(action.SenderId, action.RecipientId)
 			if err != nil {
 				log.Printf("FAILED TO DECREASE RECIPE LIKES! ERROR: %v", err)
 				continue
 			}
 
 			log.Print("Updated recipe likes successfully!")
+			continue
+
+		case backend.QUEUE_ACTION_RATE_RECIPE:
+			if action.RecipientId == "" {
+				log.Print("skipping invalid message")
+				continue
+			}
+
+			err := helpers.NewRecipeHelper(ctx).UpdateRecipeRating(action.RecipientId)
+			if err != nil {
+				log.Printf("FAILED TO UPDATE RECIPE RATINGS! ERROR: %v", err)
+				continue
+			}
+
+			log.Print("Updated recipe ratings successfully!")
+			continue
 		}
 	}
 

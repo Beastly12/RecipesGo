@@ -44,6 +44,7 @@ const AuthPage = () => {
       //TODO: add properregex
       return;
     }
+
     setIsLoading(true);
 
     try {
@@ -100,11 +101,11 @@ const AuthPage = () => {
             <div className="hidden md:flex bg-[#FF6B6B] text-white flex-col justify-center items-start md:w-1/2 w-full p-8 md:p-12">
               <CookingPot className="w-16 h-16 mb-4 text-white" />
 
-              <Title level={1} className="!text-white !text-4xl !font-extrabold mb-4">
+              <Title level={1} className="text-white! text-4xl! font-extrabold! mb-4">
                 Prepify
               </Title>
 
-              <Text className="!text-white !text-lg mb-8 opacity-90">
+              <Text className="text-white! text-lg! mb-8 opacity-90">
                 Join our community of food lovers and discover thousands of delicious recipes.
               </Text>
 
@@ -112,7 +113,7 @@ const AuthPage = () => {
                 {features.map((feature) => (
                   <li key={feature.text} className="flex items-center space-x-3">
                     <span className="text-2xl">{feature.icon}</span>
-                    <Text className="!text-white !text-base">{feature.text}</Text>
+                    <Text className="text-white! text-base!">{feature.text}</Text>
                   </li>
                 ))}
               </ul>
@@ -122,7 +123,7 @@ const AuthPage = () => {
             <div className="flex flex-col justify-center items-center w-full md:w-1/2 p-8 md:p-12 bg-white">
               <div className="flex flex-row justify-center items-center mb-8">
                 <CookingPot className="w-12 h-12 mr-3 text-[#FF6B6B]" />
-                <Title level={2} className="!text-gray-800 !font-bold !text-4xl !m-0">
+                <Title level={2} className="text-gray-800! font-bold! text-4xl! m-0!">
                   Prepify
                 </Title>
               </div>

@@ -20,16 +20,14 @@ type Authored struct {
 	RecipeId    string `dynamodbav:"sk" json:"recipeId"`
 	RecipeIdGsi string `dynamodbav:"gsi2" json:"-"`
 	DateCreated string `dynamodbav:"lsi" json:"dateCreated"`
-	RecipeDetails
 }
 
 func NewAuthoredRecipe(userId, recipeId string, recipeDetails RecipeDetails) *Authored {
 	return &Authored{
-		UserId:        userId,
-		RecipeId:      recipeId,
-		RecipeIdGsi:   utils.RemovePrefix(recipeId, "#"),
-		DateCreated:   utils.GetTimeNow(),
-		RecipeDetails: recipeDetails,
+		UserId:      userId,
+		RecipeId:    recipeId,
+		RecipeIdGsi: utils.RemovePrefix(recipeId, "#"),
+		DateCreated: utils.GetTimeNow(),
 	}
 }
 
@@ -44,9 +42,6 @@ func DbItemsToAuthoredStructs(items *[]map[string]types.AttributeValue, cloudfro
 		a.UserId = strings.TrimPrefix(a.UserId, AuthoredPkPrefix)
 		a.RecipeId = strings.TrimPrefix(a.RecipeId, AuthoredSkPrefix)
 		a.DateCreated = strings.TrimPrefix(a.DateCreated, AuthoredLsiPrefix)
-		if a.ImageUrl != "" {
-			a.ImageUrl = utils.GenerateViewURL(a.ImageUrl, cloudfrontDomainName)
-		}
 	})
 }
 

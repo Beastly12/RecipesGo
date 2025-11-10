@@ -18,18 +18,16 @@ type Favorite struct {
 	RecipeId    string `dynamodbav:"sk" json:"-"`
 	Category    string `dynamodbav:"gsi" json:"category"`
 	RecipeIdGsi string `dynamodbav:"gsi2" json:"-"`
-	RecipeDetails
-	DateAdded string `dynamodbav:"lsi" json:"dateAdded"`
+	DateAdded   string `dynamodbav:"lsi" json:"dateAdded"`
 }
 
 func NewFavorite(userid string, recipe *Recipe) *Favorite {
 	return &Favorite{
-		UserId:        userid,
-		RecipeId:      recipe.Id,
-		RecipeIdGsi:   utils.RemovePrefix(recipe.Id, "#"),
-		Category:      recipe.Category,
-		RecipeDetails: recipe.RecipeDetails,
-		DateAdded:     utils.GetTimeNow(),
+		UserId:      userid,
+		RecipeId:    recipe.Id,
+		RecipeIdGsi: utils.RemovePrefix(recipe.Id, "#"),
+		Category:    recipe.Category,
+		DateAdded:   utils.GetTimeNow(),
 	}
 }
 

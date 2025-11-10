@@ -148,8 +148,44 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 }
 
 // deletes recipe from db
-func (r *recipeHelper) Delete(recipeId string) error {
-	return newHelper(r.Ctx).deleteFromDb(models.RecipeKey(recipeId))
+func (r *recipeHelper) Delete(recipe models.Recipe) error {
+	// delete recipe and author items
+	deleteTransactions := []types.TransactWriteItem{
+		{
+			Delete: &types.Delete{
+				Key:       *models.RecipeKey(recipe.Id),
+				TableName: &utils.GetDependencies().MainTableName,
+			},
+		},
+		{
+			Delete: &types.Delete{
+				Key:       models.AuthoredKey(recipe.AuthorId, recipe.Id),
+				TableName: &utils.GetDependencies().MainTableName,
+			},
+		},
+	}
+
+	input := &dynamodb.TransactWriteItemsInput{
+		TransactItems: deleteTransactions,
+	}
+
+	_, err := utils.GetDependencies().DbClient.TransactWriteItems(r.Ctx, input)
+	if err != nil {
+		return err
+	}
+
+	// del search indexes
+	keysToDelete := models.GetSearchItemKeys(recipe.Name, recipe.Id, models.SEARCH_ITEM_TYPE_RECIPE)
+
+	helper := newHelper(r.Ctx)
+	for _, key := range *keysToDelete {
+		err := helper.deleteFromDb(&key)
+		if err != nil {
+			log.Printf("An error occurred while trying to delete recipe search index! ERROR: %v", err)
+		}
+	}
+
+	return nil
 }
 
 func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error {
@@ -222,23 +258,69 @@ func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error
 	return nil
 }
 
-func (r *recipeHelper) UpdateRecipeLikes(userId string, recipeId string, difference int) error {
+func (r *recipeHelper) RecipeLikesPlus1(userId, recipeId string) error {
 	input := &dynamodb.UpdateItemInput{
 		Key:              *models.RecipeKey(recipeId),
 		TableName:        &utils.GetDependencies().MainTableName,
 		UpdateExpression: aws.String("ADD likes :inc"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":inc":  &types.AttributeValueMemberS{Value: fmt.Sprintf("%d", difference)},
-			":zero": &types.AttributeValueMemberN{Value: "0"},
+			":inc": &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", 1)},
 		},
-		ConditionExpression: aws.String("attribute_not_exists(likes) OR (likes + :inc) >= :zero"),
 	}
 
 	_, err := utils.GetDependencies().DbClient.UpdateItem(r.Ctx, input)
 	if err != nil {
-		log.Printf("failed to update like count. Difference: %v, ERROR: %v", difference, err)
+		log.Printf("failed to increase like count!!!, ERROR: %v", err)
 		return err
 	}
 
 	return nil
+}
+
+func (r *recipeHelper) RecipeLikesMinus1(userId, recipeId string) error {
+	input := &dynamodb.UpdateItemInput{
+		Key:              *models.RecipeKey(recipeId),
+		TableName:        &utils.GetDependencies().MainTableName,
+		UpdateExpression: aws.String("SET likes = if_not_exists(likes, :zero) - :inc"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":inc":  &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", 1)},
+			":zero": &types.AttributeValueMemberN{Value: "0"},
+			":min":  &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", 0)},
+		},
+		ConditionExpression: aws.String("attribute_not_exists(likes) OR likes >= :min"),
+	}
+
+	_, err := utils.GetDependencies().DbClient.UpdateItem(r.Ctx, input)
+	if err != nil {
+		log.Printf("failed to decrease like count!!! ERROR: %v", err)
+		return err
+	}
+
+	return nil
+}
+
+func (r *recipeHelper) UpdateRecipeRating(recipeId string) error {
+	ave, err := NewRatingsHelper(r.Ctx).GetRecipeRatingAverage(recipeId)
+	if err != nil {
+		log.Printf("Failed to get recipe average rating! ERROR: %v", err)
+		return err
+	}
+
+	update := expression.Set(expression.Name("rating"), expression.Value(ave))
+
+	expr, err := expression.NewBuilder().WithUpdate(update).Build()
+	if err != nil {
+		return fmt.Errorf("failed to build expression: %w", err)
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		Key:                       *models.RecipeKey(recipeId),
+		TableName:                 &utils.GetDependencies().MainTableName,
+		UpdateExpression:          expr.Update(),
+		ExpressionAttributeValues: expr.Values(),
+		ExpressionAttributeNames:  expr.Names(),
+	}
+
+	_, err = utils.GetDependencies().DbClient.UpdateItem(r.Ctx, input)
+	return err
 }
