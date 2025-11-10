@@ -15,6 +15,7 @@ if (hour < 12) {
   greeting = "evening";
 }
 
+
 const DashBoard = () => {
   return (
     <section className="min-h-screen bg-[#fafafa] dark:bg-[#0a0e27] dark:text-[#e4e7eb]">
