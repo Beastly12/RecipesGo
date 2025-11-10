@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { Skull } from "lucide-react";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Skull } from 'lucide-react';
 
 export default function ProfileSettings() {
   const [profilePic, setProfilePic] = useState(null);
@@ -10,7 +10,7 @@ export default function ProfileSettings() {
     <div className="bg-[#fafafa] text-[#1a1a1a] min-h-screen font-sans dark:bg-[#0a0a0a] dark:text-[#e5e5e5]  ">
       <div className="lg:max-w-[900px] py-10 lg:mx-auto px-5 lg:px-10  ">
         <div className="mb-5">
-          <Link to={"/"} className="text-xl dark:text-[#e5e5e5]  ">
+          <Link to={'/'} className="text-xl dark:text-[#e5e5e5]  ">
             ← Back to Profile
           </Link>
         </div>
@@ -47,22 +47,28 @@ export default function ProfileSettings() {
           </div>
           <div className=" mb-6">
             <label className="dark:text-gray-200">Full Name</label>
-            <input type="text"  className="dark:bg-[#0a0a0a] dark:text-white dark:border-gray-600 dark:placeholder-gray-500" placeholder="Enter your name..." />
-          </div>
-
-          <div className=" mb-6">
-            <label className="dark:text-gray-200">Email</label>
-            <input type="text"  className="dark:bg-[#0a0a0a] dark:text-white dark:border-gray-600 dark:placeholder-gray-500" placeholder="Enter your Email..." />
+            <input
+              type="text"
+              className="dark:bg-[#0a0a0a] dark:text-white dark:border-gray-600 dark:placeholder-gray-500"
+              placeholder="Enter your name..."
+            />
           </div>
 
           <div className="mb-6">
             <label className="dark:text-gray-200"> Bio</label>
-            <textarea  className="dark:bg-[#0a0a0a] dark:text-white dark:border-gray-600 dark:placeholder-gray-500" placeholder="Tell us about you..."></textarea>
+            <textarea
+              className="dark:bg-[#0a0a0a] dark:text-white dark:border-gray-600 dark:placeholder-gray-500"
+              placeholder="Tell us about you..."
+            ></textarea>
           </div>
 
           <div className=" mb-6">
             <label className="dark:text-gray-200">Location</label>
-            <input   className="dark:bg-[#0a0a0a] dark:text-white dark:border-gray-800 dark:placeholder-gray-500" type="text" placeholder="Enter your Location..." />
+            <input
+              className="dark:bg-[#0a0a0a] dark:text-white dark:border-gray-800 dark:placeholder-gray-500"
+              type="text"
+              placeholder="Enter your Location..."
+            />
           </div>
 
           <div className=" flex gap-2 lg:gap-8 justify-end ">
@@ -91,12 +97,12 @@ export default function ProfileSettings() {
                 <button
                   onClick={() => setEnabled(!enabled)}
                   className={`relative inline-flex items-center h-8 w-14 rounded-full transition-colors duration-300 ${
-                    enabled ? "bg-[#ff6b6b] dark:bg-[#ff6b6b]/70" : "bg-gray-300 dark:bg-gray-600"
+                    enabled ? 'bg-[#ff6b6b] dark:bg-[#ff6b6b]/70' : 'bg-gray-300 dark:bg-gray-600'
                   }`}
                 >
                   <span
                     className={`inline-block w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
-                      enabled ? "translate-x-6" : "translate-x-0"
+                      enabled ? 'translate-x-6' : 'translate-x-0'
                     }`}
                   ></span>
                 </button>
@@ -115,12 +121,12 @@ export default function ProfileSettings() {
                 <button
                   onClick={() => setEnabled(!enabled)}
                   className={`relative inline-flex items-center h-8 w-14 rounded-full transition-colors duration-300 ${
-                    enabled ? "bg-[#ff6b6b] dark:bg-[#ff6b6b]/70" : "bg-gray-300 dark:bg-gray-600"
+                    enabled ? 'bg-[#ff6b6b] dark:bg-[#ff6b6b]/70' : 'bg-gray-300 dark:bg-gray-600'
                   }`}
                 >
                   <span
                     className={`inline-block w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
-                      enabled ? "translate-x-6" : "translate-x-0"
+                      enabled ? 'translate-x-6' : 'translate-x-0'
                     }`}
                   ></span>
                 </button>
@@ -131,7 +137,7 @@ export default function ProfileSettings() {
             <div>
               <div className="font-semibold dark:text-white">Show Activity</div>
               <div className="text-[14px] dark:text-slate-400">
-                    Let others see your likes and comments 
+                Let others see your likes and comments
               </div>
             </div>
             <div>
@@ -139,12 +145,12 @@ export default function ProfileSettings() {
                 <button
                   onClick={() => setEnabled(!enabled)}
                   className={`relative inline-flex items-center h-8 w-14 rounded-full transition-colors duration-300 ${
-                    enabled ? "bg-[#ff6b6b] dark:bg-[#ff6b6b]/70" : "bg-gray-300 dark:bg-gray-600"
+                    enabled ? 'bg-[#ff6b6b] dark:bg-[#ff6b6b]/70' : 'bg-gray-300 dark:bg-gray-600'
                   }`}
                 >
                   <span
                     className={`inline-block w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
-                      enabled ? "translate-x-6" : "translate-x-0"
+                      enabled ? 'translate-x-6' : 'translate-x-0'
                     }`}
                   ></span>
                 </button>
@@ -159,13 +165,12 @@ export default function ProfileSettings() {
                       transition-all  border-[#ff6b6b]  dark:border-[#ff5252] bg-[#fff5f5] dark:bg-[#2a0a0a] "
           >
             <div className=" text-xl font-semibold text-[#ff6b6b] flex  gap-2 dark:text-[#ff8080] ">
-              {" "}
+              {' '}
               <Skull />
               Danger Zone
             </div>
             <div className=" text-slate-500 dark:text-slate-400">
-              once you delete your account, there is no going back, please be
-              certain{" "}
+              once you delete your account, there is no going back, please be certain{' '}
             </div>
             <div>
               <button className="py-3 px-8 cursor-pointer dark:text-[#ff8080] dark:bg-[#ff6b6b]/30  text-[#ff6b6b] font-semibold bg-[#ff6b6b]/20 rounded-xl">

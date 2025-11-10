@@ -1,4 +1,4 @@
-import { signIn, signUp, fetchAuthSession } from "aws-amplify/auth";
+import { signIn, signUp, fetchAuthSession, signOut } from "aws-amplify/auth";
 
 
 export const SignUpService = async (email, password, username) => {
@@ -30,3 +30,6 @@ export const LoginService = async (email, password) => {
 };
 
 
+ export async function handleSignOut() {
+    await signOut({ global: true })
+  }
