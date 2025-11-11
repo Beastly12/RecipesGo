@@ -31,6 +31,7 @@ type UserStats struct {
 
 // Returns key to query given user from db
 func UserKey(userid string) *map[string]types.AttributeValue {
+	userid = utils.RemovePrefix(userid, "#")
 	return &map[string]types.AttributeValue{
 		"pk": &types.AttributeValueMemberS{Value: UserPkPrefix + userid},
 		"sk": &types.AttributeValueMemberS{Value: UserSkPrefix},

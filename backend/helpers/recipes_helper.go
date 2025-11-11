@@ -35,7 +35,7 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 	recipeSearchIndexTrans := newSearchHelper().getRecipeSearchIndexTransactions(recipe)
 
 	update := expression.UpdateBuilder{}
-	update = update.Set(expression.Name("recipeCount"), expression.Name("recipeCount").Plus(expression.Value(1)))
+	update = update.Add(expression.Name("recipeCount"), expression.Value(1))
 
 	expr, err := expression.NewBuilder().WithUpdate(update).Build()
 	if err != nil {

@@ -99,6 +99,7 @@ func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue, clou
 }
 
 func RecipeKey(recipeId string) *map[string]types.AttributeValue {
+	recipeId = utils.RemovePrefix(recipeId, "#")
 	return &map[string]types.AttributeValue{
 		"pk": &types.AttributeValueMemberS{Value: RecipesPkPrefix + utils.RemovePrefix(recipeId, "#")},
 		"sk": &types.AttributeValueMemberS{Value: RecipesSkPrefix},

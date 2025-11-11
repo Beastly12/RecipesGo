@@ -46,6 +46,8 @@ func DbItemsToAuthoredStructs(items *[]map[string]types.AttributeValue, cloudfro
 }
 
 func AuthoredKey(authorId, recipeId string) map[string]types.AttributeValue {
+	authorId = utils.RemovePrefix(authorId, "#")
+	recipeId = utils.RemovePrefix(recipeId, "#")
 	return map[string]types.AttributeValue{
 		"pk": &types.AttributeValueMemberS{Value: utils.AddPrefix(authorId, AuthoredPkPrefix)},
 		"sk": &types.AttributeValueMemberS{Value: utils.AddPrefix(recipeId, AuthoredSkPrefix)},
