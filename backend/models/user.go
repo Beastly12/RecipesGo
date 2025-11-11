@@ -20,6 +20,13 @@ type User struct {
 	DpUrl       string `dynamodbav:"dpUrl" json:"dpUrl"`
 	Bio         string `dynamodbav:"bio" json:"bio"`
 	Location    string `dynamodbav:"location" json:"location"`
+	UserStats
+}
+
+type UserStats struct {
+	RecipeCount int `dynamodbav:"recipeCount" json:"recipeCount,omitempty"`
+	ViewCount   int `dynamodbav:"viewCount" json:"viewCount,omitempty"`
+	LikeCount   int `dynamodbav:"likeCount" json:"likeCount,omitempty"`
 }
 
 // Returns key to query given user from db

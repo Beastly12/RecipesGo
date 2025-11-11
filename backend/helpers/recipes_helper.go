@@ -33,6 +33,16 @@ func NewRecipeHelper(ctx context.Context) *recipeHelper {
 func (this *recipeHelper) Add(recipe *models.Recipe) error {
 	authored := models.NewAuthoredRecipe(recipe.AuthorId, recipe.Id, recipe.RecipeDetails)
 	recipeSearchIndexTrans := newSearchHelper().getRecipeSearchIndexTransactions(recipe)
+
+	update := expression.UpdateBuilder{}
+	update = update.Set(expression.Name("recipeCount"), expression.Name("recipeCount").Plus(expression.Value(1)))
+
+	expr, err := expression.NewBuilder().WithUpdate(update).Build()
+	if err != nil {
+		log.Println("Failed to build update for recipe count increase!")
+		return err
+	}
+
 	transactions := []types.TransactWriteItem{
 		{
 			Put: &types.Put{
@@ -46,13 +56,22 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 				TableName: &utils.GetDependencies().MainTableName,
 			},
 		},
+		{
+			Update: &types.Update{
+				Key:                       *models.UserKey(authored.UserId),
+				TableName:                 &utils.GetDependencies().MainTableName,
+				UpdateExpression:          expr.Update(),
+				ExpressionAttributeNames:  expr.Names(),
+				ExpressionAttributeValues: expr.Values(),
+			},
+		},
 	}
 	transactions = append(transactions, recipeSearchIndexTrans...)
 	input := &dynamodb.TransactWriteItemsInput{
 		TransactItems: transactions,
 	}
 
-	_, err := utils.GetDependencies().DbClient.TransactWriteItems(this.Ctx, input)
+	_, err = utils.GetDependencies().DbClient.TransactWriteItems(this.Ctx, input)
 	if err != nil {
 		utils.PrintTransactWriteCancellationReason(err)
 		return err
@@ -144,6 +163,45 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 	recipes := models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, utils.GetDependencies().CloudFrontDomainName)
 
 	recipe := (*recipes)[0]
+
+	update := expression.UpdateBuilder{}
+	update.Set(expression.Name("viewCount"), expression.Name("viewCount").Plus(expression.Value(1)))
+
+	expr, err := expression.NewBuilder().WithUpdate(update).Build()
+	if err != nil {
+		log.Println("Failed to build update for recipe view count")
+		return nil, err
+	}
+
+	updateInput := &dynamodb.TransactWriteItemsInput{
+		TransactItems: []types.TransactWriteItem{
+			{
+				Update: &types.Update{
+					Key:                       *models.RecipeKey(recipeId),
+					TableName:                 &utils.GetDependencies().MainTableName,
+					UpdateExpression:          expr.Update(),
+					ExpressionAttributeNames:  expr.Names(),
+					ExpressionAttributeValues: expr.Values(),
+				},
+			},
+			{
+				Update: &types.Update{
+					Key:                       *models.UserKey(recipe.AuthorId),
+					TableName:                 &utils.GetDependencies().MainTableName,
+					UpdateExpression:          expr.Update(),
+					ExpressionAttributeNames:  expr.Names(),
+					ExpressionAttributeValues: expr.Values(),
+				},
+			},
+		},
+	}
+
+	_, err = utils.GetDependencies().DbClient.TransactWriteItems(this.Ctx, updateInput)
+	if err != nil {
+		log.Println("Failed to update recipe view count")
+		return nil, err
+	}
+
 	return &recipe, nil
 }
 

@@ -43,6 +43,7 @@ type RecipeDetails struct {
 	IsPublic        bool     `dynamodbav:"isPublic" json:"isPublic"`
 	Likes           int      `dynamodbav:"likes" json:"likes"`
 	Rating          float64  `dynamodbav:"rating" json:"rating"`
+	Views           int      `dynamodbav:"viewCount" json:"viewCount"`
 }
 
 // Returns a recipe struct with details provided
