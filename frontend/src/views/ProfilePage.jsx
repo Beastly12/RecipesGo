@@ -55,7 +55,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen  bg-[#fafafa] m-4 text-[#1a1a1a] dark:bg-[#1a1a1a] dark:text-[#fafafa] dark:m-0">
-      <Link to="/recipe-details">
+      <Link to={`/recipe/${recipe.id}`}>
         <div className="flex m-4 p-3 space-x-3 dark:m-0">
           <ArrowLeft className="cursor-pointer" />
           <button className=" text-xl font-medium cursor-pointer hover:underline md:font-light">

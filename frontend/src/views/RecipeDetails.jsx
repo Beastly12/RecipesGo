@@ -148,8 +148,8 @@ function RecipeDetailPage() {
   if (loading) return <p className="text-center mt-10">Loading recipe....</p>;
   if (!recipe) return <p className="text-center mt-10">Recipe not found.</p>;
 
-  const visibleComments = recipe.comments.slice(0, visibleComment);
-  const hasMore = visibleComment < recipe.comments.length;
+  // const visibleComments = recipe.comments.slice(0, visibleComment);
+  // const hasMore = visibleComment < recipe.comments.length;
 
   return (
     <div className="bg-[#fafafa] min-h-screen m-4 text-[#1a1a1a]  dark:bg-[#1a1a1a] dark:text-[#fafafa] dark:m-0">
@@ -181,7 +181,7 @@ function RecipeDetailPage() {
               <div className="grid grid-cols-1 gap-3 sm:grid-rows-1 ">
                 <Link to={'/profile'}>
                   <p className="font-bold text-xl text-gray-800 px-4 cursor-pointer   dark:text-gray-600 ">
-                    {recipe.Author}
+                    {recipe.name}
                   </p>
                 </Link>
 
@@ -243,12 +243,12 @@ function RecipeDetailPage() {
               <InstructionBox instructions={recipe.instructions} />
             </div>
 
-            <CommentBox
+            {/* <CommentBox
               totalComments={recipe.comments}
               visibleComments={visibleComment}
               hasMore={hasMore}
               handleViewMore={handleViewMore}
-            />
+            /> */}
           </div>
         </div>
       </div>
