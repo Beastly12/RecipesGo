@@ -1,4 +1,4 @@
-import axios from "./Axios.mjs";
+import axios from './Axios.mjs';
 
 export async function createRecipeService({
   name,
@@ -22,7 +22,7 @@ export async function createRecipeService({
     isPublic,
     difficulty,
   });
-  await axios.post("/recipes", {
+  const response = await axios.post('/recipes', {
     name,
     imageUrl,
     description,
@@ -33,6 +33,7 @@ export async function createRecipeService({
     isPublic,
     difficulty,
   });
+  return response.data;
 }
 
 export async function deleteRecipe(recipeId) {
@@ -45,14 +46,13 @@ export async function getAllRecipes({ category, last } = {}) {
   if (category) params.category = category;
   if (last) params.last = last;
 
-  return await axios.get("/recipes", { params });
+  return await axios.get('/recipes', { params });
 }
 
 export async function editRecipe(recipeId, data) {
   return await axios.put(`/recipes/${recipeId}`, data);
 }
 
-
-export async function getRecipebyId(recipeId){
-    return await axios.get(`/recipes/${recipeId}`); 
+export async function getRecipebyId(recipeId) {
+  return await axios.get(`/recipes/${recipeId}`);
 }
