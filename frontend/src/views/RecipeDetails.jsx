@@ -145,6 +145,7 @@ function RecipeDetailPage() {
     setVisibleComment((prev) => prev + 2);
   };
 
+  
   if (loading) return <p className="text-center mt-10">Loading recipe....</p>;
   if (!recipe) return <p className="text-center mt-10">Recipe not found.</p>;
 
