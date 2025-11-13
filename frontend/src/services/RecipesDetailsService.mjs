@@ -30,6 +30,10 @@ export async function deleteRatingRecipe(recipeId) {
   return await axios.delete(`/ratings/${recipeId}`);
 }
 
+export async function getRatingsbyId(recipeId){
+  return await axios.get(`/ratings/${recipeId}`); 
+}
+
 
 
 
