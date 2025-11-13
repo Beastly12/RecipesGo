@@ -8,11 +8,14 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-func getResource(req events.APIGatewayV2HTTPRequest) string {
-	url := req.RequestContext.HTTP.Path
-	parts := strings.Split(url, "/")
+func getResource(request events.APIGatewayV2HTTPRequest) string {
+	path := request.RequestContext.HTTP.Path
+
+	path = strings.TrimPrefix(path, "/")
+
+	parts := strings.Split(path, "/")
 	if len(parts) > 1 {
-		return parts[1]
+		return parts[1] // since [0] will be "/prod"
 	}
 
 	return ""
