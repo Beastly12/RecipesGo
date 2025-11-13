@@ -131,17 +131,17 @@ function RecipeDetails() {
     try {
       const { data } = await getAllRatings({ recipeId: id, last: lastKey });
   
-      const ratingsData = data.message.map((recipe) => ({
-        key: recipe.id,
-        stars: recipe.stars,
-        comments: recipe.comment
+      const ratingsData = data.message.map((rating) => ({
+        key: rating.id,
+        stars: rating.stars,
+        comments: rating.comment
       }));
   
       setRatings(ratingsData);
       setMore(Boolean(data.last));
       setLastkey(data.last);
     } catch (error) {
-      console.error('Failed to fetch ratings:', error);
+      console.error('Failed to fetch ratings for recipe:', error);
     } finally {
       setLoading(false);
     }
