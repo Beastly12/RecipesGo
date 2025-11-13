@@ -8,6 +8,15 @@ export async function rateRecipe(recipeId, stars, comment) {
   });
 }
 
+export async function favoriteRecipe(recipeId) {
+  return await axios.post("/favorites", {
+    recipeId: String(recipeId),
+  });
+}
+
+
+
+
 
 
 
