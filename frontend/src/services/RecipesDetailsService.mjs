@@ -14,8 +14,9 @@ export async function favoriteRecipe(recipeId) {
   });
 }
 
-
-
+export async function deleteFavoriteRecipe(recipeId) {
+  return await axios.delete(`/favorites/${recipeId}`);
+}
 
 
 
