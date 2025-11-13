@@ -13,8 +13,13 @@ import { Accordion } from "../components/Accordion";
 import InstructionBox from "../components/InstructionBox";
 import IngredientsBox from "../components/IngredientsBox";
 import CommentBox from "../components/ComponentBox";
+import { favoriteRecipe } from '../services/RecipesDetailsService.mjs';
+import { useParams } from "react-router-dom";
+import { getAllRatings } from '../services/RecipesDetailsService.mjs';
 
 function RecipeDetails() {
+  const { id } = useParams(); 
+  const [loading, setLoading] = useState(false);
   return {
     image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836",
     title: "Creamy Garlic Pasta",
@@ -117,6 +122,29 @@ function RecipeDetails() {
       },
     ],
   };
+
+  const handleRatings = async (id) => {
+      setLoading(true);
+  
+      try {
+        const { data } = await getAllRatings(id ? {} : { last });
+  
+        const recipesData = data.message.map((recipe) => ({
+          key: recipe.id,
+          title: recipe.name,
+          author: recipe.authorName,
+          likes: recipe.likes,
+        }));
+  
+        setRecipes(recipesData);
+        setMore(Boolean(data.last));
+        setLastkey(data.last);
+      } catch (error) {
+        console.error('Failed to fetch ratinfs:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 }
 
 function RecipeDetailPage() {
@@ -180,7 +208,17 @@ function RecipeDetailPage() {
                 </button>
 
                 {/* Favorite Button */}
-                <button className="cursor-pointer flex items-center justify-center gap-2 bg-yellow-100 text-yellow-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full ">
+                <button 
+                  onClick={async () => {
+                    try {
+                      await favoriteRecipe(id);
+                      alert("Added to favorites!");
+                    } catch (error) {
+                      console.error("Error adding to favorites:", error);
+                      alert("Failed to add to favorites.");
+                    }
+                  }}
+                className="cursor-pointer flex items-center justify-center gap-2 bg-yellow-100 text-yellow-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full">
                   <Star className="w-5 h-5" />
                   <span>Favorite</span>
                 </button>
