@@ -363,6 +363,14 @@ Resources:
             Path: /users
             Method: GET
             ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GetOtherUser:
+          Type: HttpApi
+          Properties:
+            Path: /users/{id}
+            Method: GET
+            ApiId: !Ref RecipeApi
 
   # to generate presigned url for image uploads
   GetUploadUrl:

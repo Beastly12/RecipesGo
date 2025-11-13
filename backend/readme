@@ -73,9 +73,11 @@ To get all ratings on a recipe:
 	To get next batch:
 		GET /ratings/{id of recipe}?last={last key returned}
 
-To get user details (not yet working):
+To get current user details (not yet working):
 	GET /users
-	GET /users?id={userid}
+
+To get any users details (not yet working):
+	GET /users/{id}
 
 To edit user details (NOT YET WORKING):
 	PUT /users
