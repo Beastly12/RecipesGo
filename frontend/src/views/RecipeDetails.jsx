@@ -20,6 +20,9 @@ import { getAllRatings } from '../services/RecipesDetailsService.mjs';
 function RecipeDetails() {
   const { id } = useParams(); 
   const [loading, setLoading] = useState(false);
+  const [ratings, setRatings] = useState([]);
+  const [hasMore, setMore] = useState(false);
+  const [lastKey, setLastkey] = useState('');
   return {
     image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836",
     title: "Creamy Garlic Pasta",
@@ -123,29 +126,29 @@ function RecipeDetails() {
     ],
   };
 
-  const handleRatings = async (id) => {
-      setLoading(true);
+  const handleRatings = async (id, lastKey) => {
+    setLoading(true);
+    try {
+      const { data } = await getAllRatings({ recipeId: id, last: lastKey });
   
-      try {
-        const { data } = await getAllRatings(id ? {} : { last });
+      const ratingsData = data.message.map((recipe) => ({
+        key: recipe.id,
+        stars: recipe.stars,
+        comments: recipe.comment
+      }));
   
-        const recipesData = data.message.map((recipe) => ({
-          key: recipe.id,
-          title: recipe.name,
-          author: recipe.authorName,
-          likes: recipe.likes,
-        }));
-  
-        setRecipes(recipesData);
-        setMore(Boolean(data.last));
-        setLastkey(data.last);
-      } catch (error) {
-        console.error('Failed to fetch ratinfs:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      setRatings(ratingsData);
+      setMore(Boolean(data.last));
+      setLastkey(data.last);
+    } catch (error) {
+      console.error('Failed to fetch ratings:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 }
+
+
 
 function RecipeDetailPage() {
   const recipe_details = RecipeDetails();
