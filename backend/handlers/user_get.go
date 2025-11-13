@@ -20,7 +20,7 @@ func handleGetUsers(ctx context.Context, req events.APIGatewayV2HTTPRequest) (ev
 	userHelper := helpers.NewUserHelper(ctx)
 
 	if currentUserId == requestedUserId || requestedUserId == "" {
-		user, err := userHelper.GetFullDetails(currentUserId)
+		user, err := userHelper.Get(currentUserId)
 		if err != nil {
 			return models.ServerSideErrorResponse("Failed to get uer details!", err), nil
 		}
