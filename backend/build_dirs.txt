@@ -1,7 +1,1 @@
-pre_signup
-post_signup
-recipes_actions
-favorites_actions
-ratings_actions
-get_upload_url
-queue_actions
+main_function

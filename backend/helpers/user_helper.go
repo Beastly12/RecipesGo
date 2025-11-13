@@ -6,6 +6,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
@@ -55,12 +56,51 @@ func (u *userHelper) AddUser(user *models.User) error {
 
 // gets user details from db
 func (this *userHelper) Get(userid string) (*models.User, error) {
+	projection := expression.NamesList(
+		expression.Name("userid"),
+		expression.Name("name"),
+		expression.Name("dpUrl"),
+		expression.Name("bio"),
+		expression.Name("location"),
+	)
+
+	expr, err := expression.NewBuilder().WithProjection(projection).Build()
+	if err != nil {
+		log.Println("failed to build projection!")
+		return nil, err
+	}
+
+	input := &dynamodb.GetItemInput{
+		Key:                      *models.UserKey(userid),
+		TableName:                &utils.GetDependencies().MainTableName,
+		ProjectionExpression:     expr.Projection(),
+		ExpressionAttributeNames: expr.Names(),
+	}
+
+	result, err := utils.GetDependencies().DbClient.GetItem(this.Ctx, input)
+
+	if err != nil {
+		log.Println("an error occurred while trying to get user from db")
+		return nil, err
+	}
+
+	users := models.DbItemsToUserStructs(&[]map[string]types.AttributeValue{result.Item})
+
+	if len(*users) < 1 {
+		return nil, nil
+	}
+
+	user := (*users)[0]
+	return &user, nil
+}
+
+func (u *userHelper) GetFullDetails(userid string) (*models.User, error) {
 	input := &dynamodb.GetItemInput{
 		Key:       *models.UserKey(userid),
 		TableName: &utils.GetDependencies().MainTableName,
 	}
 
-	result, err := utils.GetDependencies().DbClient.GetItem(this.Ctx, input)
+	result, err := utils.GetDependencies().DbClient.GetItem(u.Ctx, input)
 
 	if err != nil {
 		log.Println("an error occurred while trying to get user from db")
