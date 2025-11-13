@@ -26,6 +26,10 @@ export async function editRatingRecipe(recipeId, stars, comment) {
   });
 }
 
+export async function deleteRatingRecipe(recipeId) {
+  return await axios.delete(`/ratings/${recipeId}`);
+}
+
 
 
 
