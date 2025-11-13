@@ -24,12 +24,17 @@ export async function deleteFavoriteRecipe(recipeId) {
   return await axios.delete(`/favorites/${recipeId}`);
 }
 
-export async function editRatingRecipe(recipeId, stars, comment) {
-  return await axios.post("/ratings", {
+export async function editRatingRecipe(recipeId, stars, comment = null) {
+  const rating = {
     recipeId: String(recipeId),
     stars: parseInt(stars),
-    comment: comment  
-  });
+  };
+
+  if (comment) {
+    rating.comment = comment;
+  }
+
+  return await axios.post("/ratings", rating);
 }
 
 export async function deleteRatingRecipe(recipeId) {
