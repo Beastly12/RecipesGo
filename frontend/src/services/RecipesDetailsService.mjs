@@ -34,7 +34,14 @@ export async function getRatingsbyId(recipeId){
   return await axios.get(`/ratings/${recipeId}`); 
 }
 
+export async function getAllRatings({ recipeId, last } = {}) {
+  if (!recipeId) throw new Error("recipeId is required");
 
+  const params = {};
+  if (last) params.last = last;
+
+  return await axios.get(`/ratings/${recipeId}`, { params });
+}
 
 
 
