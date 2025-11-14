@@ -4,16 +4,7 @@ import LoginForm from '../components/LoginForm';
 import SignUpForm from '../components/SignUpForm';
 import { LoginService, SignUpService } from '../services/AuthService.mjs';
 import { useNavigate } from 'react-router-dom';
-import {
-  Form,
-  Input,
-  Button,
-  message,
-  Spin,
-  Card,
-  Flex,
-  Typography,
-} from "antd";
+import { Form, Input, Button, message, Spin, Card, Flex, Typography } from 'antd';
 
 const { Title, Text } = Typography;
 
@@ -31,7 +22,7 @@ const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  const  navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -77,7 +68,7 @@ const AuthPage = () => {
     try {
       const loggedIn = await LoginService(email, password);
       if (loggedIn) {
-        navigate('/'); 
+        navigate('/');
       } else {
         messageApi.error('Login failed. Please check your email and password.');
       }
@@ -88,17 +79,23 @@ const AuthPage = () => {
     }
   };
 
-   return (
+  return (
     <Spin spinning={isLoading} tip="Processing...">
       {contextHolder}
-      <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 md:bg-white justify-center items-center p-4">
+      <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 md:bg-white justify-center items-center p-4 dark:bg-[#0a0e27] transition-colors duration-300">
         <Card
-            className="w-full max-w-4xl shadow-2xl rounded-3xl overflow-hidden"
-            bodyStyle={{ padding: 0 }}
+          className="w-full max-w-4xl shadow-2xl rounded-3xl overflow-hidden bg-white dark:bg-gradient-to-br dark:from-[#1a2142] dark:to-[#151b35] 
+            border border-gray-200 dark:border-white/10
+            transition-all duration-300"
+          bodyStyle={{ padding: 0 }}
         >
           <div className="flex flex-col md:flex-row min-h-[600px]">
             {/* Left Side Panel */}
-            <div className="hidden md:flex bg-[#FF6B6B] text-white flex-col justify-center items-start md:w-1/2 w-full p-8 md:p-12">
+            <div
+              className="hidden md:flex flex-col justify-center items-start md:w-1/2 w-full p-8 md:p-12
+                bg-[#FF6B6B] dark:bg-gradient-to-br dark:from-[#ff6b6b] dark:to-[#ff8787] 
+                text-white dark:text-[#fafafa] transition-all duration-300"
+            >
               <CookingPot className="w-16 h-16 mb-4 text-white" />
 
               <Title level={1} className="text-white! text-4xl! font-extrabold! mb-4">
@@ -129,13 +126,18 @@ const AuthPage = () => {
               </div>
 
               {/* Toggle Buttons */}
-              <div className="flex items-center border border-gray-300 rounded-3xl p-1 w-full max-w-sm h-12 mb-10 bg-gray-100">
+              <div
+                className="flex items-center border border-gray-300 dark:border-white/10 
+                  rounded-3xl p-1 w-full max-w-sm h-12 mb-10 
+                  bg-gray-100 dark:bg-[rgba(255,255,255,0.05)]
+                  transition-all duration-300"
+              >
                 <button
                   onClick={() => setIsLogin(true)}
                   className={`w-1/2 h-full py-2 font-semibold transition-all duration-300 rounded-3xl ${
                     isLogin
-                      ? "text-[#FF6B6B] bg-white shadow-md"
-                      : "text-gray-500 hover:text-[#FF6B6B]"
+                      ? 'text-[#FF6B6B] bg-white shadow-md dark:bg-[#1a2142] dark:text-[#ff8787]'
+                      : 'text-gray-500 dark:text-gray-300 hover:text-[#FF6B6B]'
                   }`}
                 >
                   Login
@@ -145,8 +147,8 @@ const AuthPage = () => {
                   onClick={() => setIsLogin(false)}
                   className={`w-1/2 h-full py-2 font-semibold transition-all duration-300 rounded-3xl ${
                     !isLogin
-                      ? "text-[#FF6B6B] bg-white shadow-md"
-                      : "text-gray-500 hover:text-[#FF6B6B]"
+                      ? 'text-[#FF6B6B] bg-white dark:bg-[#1a2142] dark:text-[#ff8787] shadow-md'
+                      : 'text-gray-500 dark:text-gray-300 hover:text-[#FF6B6B]'
                   }`}
                 >
                   Sign Up
