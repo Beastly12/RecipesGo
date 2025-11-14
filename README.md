@@ -2,7 +2,8 @@
 
 RecipeGo is a full-stack, social recipe sharing platform built with a modern, serverless architecture. It demonstrates a DevOps pratice and production ready development workflow emphasizing scalability, testing, and automated deployment.
 
-(./assets/homepage figma.png)
+<img width="1435" height="940" alt="Screenshot 2025-11-14 at 09 53 53" src="https://github.com/user-attachments/assets/24fca441-c354-4c44-8880-2aedbb34a734" />
+
 
 # Prerequisites
 To develop or run RecipeShare locally, ensure you have:
@@ -73,7 +74,8 @@ Our development and deployment pipeline leverages a modern DevOps toolchain to e
 
 ## 📊 Repository Visualization
 
-![Repository Visualization](./assets/repo visualization.png)
+<img width="1389" height="940" alt="Screenshot 2025-11-14 at 09 55 18" src="https://github.com/user-attachments/assets/6f02aea1-dc58-472a-a99c-4b22ae6f2e6f" />
+
 
 
 
