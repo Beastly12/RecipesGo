@@ -23,7 +23,7 @@ export default function Header({ userId, colorTheme, setTheme }) {
   const handleLogout = async () => {
     await handleSignOut();
     localStorage.clear();
-    window.location.href="/"
+    window.location.href = '/';
   };
 
   // Desktop Dropdown Menu

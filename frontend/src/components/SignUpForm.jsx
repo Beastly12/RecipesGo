@@ -1,22 +1,20 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-const SignUpForm = ({onSignup}) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+const SignUpForm = ({ onSignup }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
 
-  const formhandler=(e)=>{
+  const formhandler = (e) => {
     e.preventDefault();
-    onSignup(email,password,name)
-  }
-  
+    onSignup(email, password, name);
+  };
+
   return (
     <>
       <form onSubmit={formhandler} className="space-y-7 w-full mt-4 p-3 ">
         <div>
-          <label className="block text-2xl font-medium text-gray-700 mb-1">
-            Full Name
-          </label>
+          <label className="block text-2xl font-medium text-gray-700 mb-1">Full Name</label>
           <input
             type="text"
             value={name}
@@ -27,9 +25,7 @@ const SignUpForm = ({onSignup}) => {
         </div>
 
         <div className="flex flex-col">
-          <label className="block text-2xl font-medium text-gray-700 mb-1">
-            Email
-          </label>
+          <label className="block text-2xl font-medium text-gray-700 mb-1">Email</label>
           <input
             type="email"
             value={email}
@@ -41,9 +37,7 @@ const SignUpForm = ({onSignup}) => {
         </div>
 
         <div>
-          <label className="block text-2xl font-medium text-gray-700 mb-1">
-            Password
-          </label>
+          <label className="block text-2xl font-medium text-gray-700 mb-1">Password</label>
           <input
             type="password"
             value={password}
@@ -54,7 +48,7 @@ const SignUpForm = ({onSignup}) => {
         </div>
 
         <button
-         type="submit"
+          type="submit"
           className="w-full items-center p-3 mt-7 font-medium rounded-3xl bg-[#FF686B] text-2xl text-white focus:ring-2 focus:ring-[#FF486B] md:font-medium"
         >
           Sign Up

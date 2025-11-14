@@ -15,9 +15,7 @@ import IngredientsBox from '../components/IngredientsBox';
 import CommentBox from '../components/ComponentBox';
 import { getRecipebyId } from '../services/RecipesService.mjs';
 
-
 function RecipeDetailPage() {
-
   const { id } = useParams();
   const [recipe, setRecipe] = useState('');
   const [visibleComment, setVisibleComment] = useState(2);
@@ -41,7 +39,6 @@ function RecipeDetailPage() {
     setVisibleComment((prev) => prev + 2);
   };
 
-  
   if (loading) return <p className="text-center mt-10">Loading recipe....</p>;
   if (!recipe) return <p className="text-center mt-10">Recipe not found.</p>;
 
@@ -49,12 +46,12 @@ function RecipeDetailPage() {
   // const hasMore = visibleComment < recipe.comments.length;
 
   return (
-    <div className="bg-[#fafafa] min-h-screen m-4 text-[#1a1a1a]  dark:bg-[#1a1a1a] dark:text-[#fafafa] dark:m-0">
+    <div className="bg-[#fafafa] min-h-screen m-4 text-[#1a1a1a]  dark:bg-[#0a0e27] dark:text-[#fafafa] dark:m-0">
       <div className=" flex flex-col justify-items-center">
         {/* Back Button */}
         <Link
           to={'/'}
-          className="flex items-center space-x-5 text-[#1a1a1a] p-2 hover:underline mb-4 dark:text-white ml-5"
+          className="flex items-center space-x-5 text-[#1a1a1a] p-2 hover:underline mb-4 dark:text-white ml-5 "
         >
           <ArrowLeft /> <span className="text-2xl p-3">Back</span>
         </Link>
@@ -72,22 +69,22 @@ function RecipeDetailPage() {
               />
             </div>
             {/* User Info Card */}
-            <h1 className="text-5xl font-semibold mb-5 mt-8 dark:text-white">{recipe.title}</h1>
+            <h1 className="text-5xl font-semibold mb-5 mt-8 dark:text-white ">{recipe.title}</h1>
 
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-1 md:grid-cols-2 text-sm text-gray-500 mb-4 mt-6 p-7 shadow-[0_12px_24px_rgba(0,0,0,0.12)] rounded-2xl  dark:bg-[#fafafa]">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-1 md:grid-cols-2 text-sm text-gray-500 mb-4 mt-6 p-7 shadow-[0_12px_24px_rgba(0,0,0,0.12)] rounded-2xl  dark:bg-[#fafafa] ">
               <div className="grid grid-cols-1 gap-3 sm:grid-rows-1 ">
                 <Link to={'/profile'}>
-                  <p className="font-bold text-xl text-gray-800 px-4 cursor-pointer   dark:text-gray-600 ">
+                  <p className="font-bold text-xl text-gray-800 px-4 cursor-pointer dark:text-gray-600">
                     {recipe.name}
                   </p>
                 </Link>
 
-                <p className="text-sm text-gray-500 mb-2 px-4   dark:text-gray-600">
+                <p className="text-sm text-gray-500 mb-2 px-4 dark:text-gray-400">
                   {recipe.Published}
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3  dark:text-[#fafafa]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3 dark:text-[#fafafa]">
                 {/* Likes Button */}
                 <button className="cursor-pointer flex items-center justify-center gap-2 bg-[#ff6b6b] text-white py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300 w-full  dark:text-[#fafafa]">
                   <Heart className="w-5 h-5" />
@@ -95,13 +92,20 @@ function RecipeDetailPage() {
                 </button>
 
                 {/* Favorite Button */}
-                <button className="cursor-pointer flex items-center justify-center gap-2 bg-yellow-100 text-yellow-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full ">
+                <button
+                  className="cursor-pointer flex items-center justify-center gap-2 bg-yellow-100 text-yellow-600 border py-2 px-4 sm:px-6
+                rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full 
+                dark:bg-yellow-800 dark:text-yellow-300"
+                >
                   <Star className="w-5 h-5" />
                   <span>Favorite</span>
                 </button>
 
                 {/* Share Button */}
-                <button className=" cursor-pointer flex items-center justify-center gap-2 bg-gray-100 text-gray-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full ">
+                <button
+                  className=" cursor-pointer flex items-center justify-center gap-2 bg-gray-100 text-gray-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm
+                 hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full dark:bg-[#2a2a2a] dark:text-gray-300 "
+                >
                   <ExternalLink className="w-5 h-5" />
                   <span>Share</span>
                 </button>
@@ -110,33 +114,29 @@ function RecipeDetailPage() {
 
             <Accordion sections={recipe.descriptionSections} />
 
-            <div className="grid grid- md:grid-cols-2 gap-10 mb-8 mt-15 dark  dark:bg-[#fafafa] dark:text-gray-600 dark:rounded-2x dark:bg-[#1a1a1a]">
+            <div className="grid md:grid-cols-2 gap-10 mt-10">
               <div>
-                <div className=" grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-6">
-                  {/* Time Card */}
-                  <div className="flex flex-col items-center justify-center bg-gray-50 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
-                    <div>
-                      <Clock className="bg-[#ff6b6b] text-white rounded-2xl" />
-                    </div>
-                    <p className="font-semibold mt-4">{recipe.Time}</p>
+                {/* Cards: Time / Category / Difficulty */}
+                <div className="grid sm:grid-cols-3 gap-6 mb-6">
+                  <div className="flex flex-col items-center bg-gray-50 dark:bg-[#1a1a1a] shadow-md rounded-2xl p-6">
+                    <Clock className="bg-[#ff6b6b] text-white rounded-2xl p-1" />
+                    <p className="font-semibold mt-2">{recipe.Time}</p>
                   </div>
-
-                  {/* Category Card */}
-                  <div className="flex flex-col items-center justify-center bg-gray-50 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
-                    <Utensils className="bg-[#ff6b6b] text-white rounded-2xl mx-4" />
-                    <p className="font-semibold mt-4">{recipe.Category}</p>
+                  <div className="flex flex-col items-center bg-gray-50 dark:bg-[#1a1a1a] shadow-md rounded-2xl p-6">
+                    <Utensils className="bg-[#ff6b6b] text-white rounded-2xl p-1" />
+                    <p className="font-semibold mt-2">{recipe.Category}</p>
                   </div>
-
-                  {/* Difficulty Card */}
-                  <div className="flex flex-col items-center justify-center bg-gray-50 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
-                    <ChartNoAxesColumn className="bg-[#ff6b6b] text-white rounded-2xl mx-4" />
-                    <p className="font-semibold mt-4">{recipe.Difficulty}</p>
+                  <div className="flex flex-col items-center bg-gray-50 dark:bg-[#1a1a1a] shadow-md rounded-2xl p-6">
+                    <ChartNoAxesColumn className="bg-[#ff6b6b] text-white rounded-2xl p-1" />
+                    <p className="font-semibold mt-2">{recipe.Difficulty}</p>
                   </div>
                 </div>
 
+                {/* Ingredients */}
                 <IngredientsBox ingredients={recipe.ingredients} />
               </div>
 
+              {/* Instructions */}
               <InstructionBox instructions={recipe.instructions} />
             </div>
 
