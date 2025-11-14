@@ -1,21 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import DashBoardCard from '../components/DashBoardCard';
 import { HeartIcon, NotebookPen, Eye, MessageCircleMore } from 'lucide-react';
 import DashBoardManagementTable from '../components/DashBoardManagementTable';
+import { getDashBoardData } from '../services/DashBoardService.mjs';
 
 var userName = 'Daniel';
 
 const hour = new Date().getHours();
-let greeting = '';
-if (hour < 12) {
-  greeting = 'morning';
-} else if (hour < 18) {
-  greeting = 'afternoon';
-} else {
-  greeting = 'evening';
-}
+const greeting = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
 
 const DashBoard = () => {
+  // const [stats, setStats] = useState(null);
+  // const [loading, setLoading] = useState(true);
+
+  // useEffect(() => {
+  //   async function fetchDashboard() {
+  //     try {
+  //       const data = await getDashBoardData();
+  //       setStats(data);
+  //     } catch (error) {
+  //       console.error('Error loading dashboard data:', err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+
+  //   fetchDashboard();
+  // }, []);
+
   return (
     <section className="min-h-screen bg-[#fafafa] dark:bg-[#0a0e27] dark:text-[#e4e7eb]">
       <div className="m-2 max-w-[900px] my-[40px] mx-[auto] px-[40px] dark:text-[#fafafa]">
