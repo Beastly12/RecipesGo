@@ -36,6 +36,10 @@ func DatabaseItemsToSearchStructs(items *[]map[string]types.AttributeValue) *[]S
 }
 
 func GenerateSearchIndexes(name, id, itemType string) *[]Search {
+	name = utils.RemovePrefix(name, "#")
+	id = utils.RemovePrefix(id, "#")
+	itemType = utils.RemovePrefix(itemType, "#")
+
 	if itemType != SEARCH_ITEM_TYPE_AUTHOR && itemType != SEARCH_ITEM_TYPE_RECIPE {
 		log.Fatalf("Invalid search item type provided! %v", itemType)
 	}

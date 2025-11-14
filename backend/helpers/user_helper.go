@@ -14,6 +14,13 @@ type userHelper struct {
 	Ctx context.Context
 }
 
+type authorStats struct {
+	RecipesCount  int `json:"recipes_count"`
+	ViewCount     int `json:"view_count"`
+	OverallRating int `json:"overall_rating"`
+	LikeCount     int `json:"like_count"`
+}
+
 func NewUserHelper(ctx context.Context) *userHelper {
 	return &userHelper{
 		Ctx: ctx,
