@@ -74,8 +74,7 @@ Our development and deployment pipeline leverages a modern DevOps toolchain to e
 
 ## 📊 Repository Visualization
 
-<img width="1389" height="940" alt="Screenshot 2025-11-14 at 09 55 18" src="https://github.com/user-attachments/assets/6f02aea1-dc58-472a-a99c-4b22ae6f2e6f" />
-
+<img width="800" alt="Screenshot 2025-11-14 at 09 55 18" src="https://github.com/user-attachments/assets/6f02aea1-dc58-472a-a99c-4b22ae6f2e6f" />
 
 
 
