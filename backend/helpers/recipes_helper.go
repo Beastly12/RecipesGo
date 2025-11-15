@@ -166,8 +166,45 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 	return &recipe, nil
 }
 
-func (r *recipeHelper) IncreaseViewCount(recipeId string) error {
-	return nil
+func (r *recipeHelper) IncreaseViewCount(recipe models.Recipe) error {
+	update := expression.UpdateBuilder{}
+	update.Set(
+		expression.Name("viewCount"),
+		expression.Plus(
+			expression.IfNotExists(expression.Name("viewCount"), expression.Value(0)),
+			expression.Value(1),
+		),
+	)
+	expr, err := expression.NewBuilder().WithUpdate(update).Build()
+	if err != nil {
+		println("Failed to build update for view count")
+		return err
+	}
+
+	input := &dynamodb.TransactWriteItemsInput{
+		TransactItems: []types.TransactWriteItem{
+			{
+				Update: &types.Update{
+					Key:                       *models.RecipeKey(recipe.Id),
+					TableName:                 &utils.GetDependencies().MainTableName,
+					UpdateExpression:          expr.Update(),
+					ExpressionAttributeNames:  expr.Names(),
+					ExpressionAttributeValues: expr.Values(),
+				},
+			},
+			{
+				Update: &types.Update{
+					Key:                       *models.UserKey(recipe.AuthorId),
+					TableName:                 &utils.GetDependencies().MainTableName,
+					UpdateExpression:          expr.Update(),
+					ExpressionAttributeNames:  expr.Names(),
+					ExpressionAttributeValues: expr.Values(),
+				},
+			},
+		},
+	}
+	_, err = utils.GetDependencies().DbClient.TransactWriteItems(r.Ctx, input)
+	return err
 }
 
 // deletes recipe from db
