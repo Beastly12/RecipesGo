@@ -32,8 +32,8 @@ func TestUserStructToDbItem(t *testing.T) {
 		"dpUrl":       &types.AttributeValueMemberS{Value: ""},
 		"bio":         &types.AttributeValueMemberS{Value: ""},
 		"location":    &types.AttributeValueMemberS{Value: ""},
-		"viewCount":   &types.AttributeValueMemberN{Value: "0"},
-		"likeCount":   &types.AttributeValueMemberN{Value: "0"},
+		"views":       &types.AttributeValueMemberN{Value: "0"},
+		"likes":       &types.AttributeValueMemberN{Value: "0"},
 		"recipeCount": &types.AttributeValueMemberN{Value: "0"},
 	}
 
