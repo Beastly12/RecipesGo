@@ -1,11 +1,6 @@
-import React from "react";
+import React from 'react';
 
-const CommentBox = ({
-  totalComments,
-  visibleComments,
-  hasMore,
-  handleViewMore,
-}) => {
+const CommentBox = ({ totalComments, visibleComments, hasMore, handleViewMore }) => {
   return (
     <div className="bg-white dark:bg-[#1e1e1e] mt-14 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_24px_rgba(255,255,255,0.05)] mb-8 transition-colors duration-500">
       <h2 className="font-bold text-3xl mb-10 text-gray-800 dark:text-gray-100">
@@ -23,15 +18,9 @@ const CommentBox = ({
             className="w-10 h-10 rounded-full"
           />
           <div>
-            <h4 className="font-medium text-gray-800 dark:text-gray-100">
-              {comment.user.name}
-            </h4>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {comment.posted}
-            </p>
-            <p className="mt-1 text-gray-800 dark:text-gray-200">
-              {comment.text}
-            </p>
+            <h4 className="font-medium text-gray-800 dark:text-gray-100">{comment.user.name}</h4>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{comment.posted}</p>
+            <p className="mt-1 text-gray-800 dark:text-gray-200">{comment.text}</p>
           </div>
         </div>
       ))}

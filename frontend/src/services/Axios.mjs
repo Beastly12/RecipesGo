@@ -1,7 +1,7 @@
-import axios from "axios";
-import { fetchAuthSession } from "aws-amplify/auth";
+import axios from 'axios';
+import { fetchAuthSession } from 'aws-amplify/auth';
 
-const BASE_URL = "https://zn23g4uvg2.execute-api.eu-west-2.amazonaws.com/prod";
+const BASE_URL = 'https://zn23g4uvg2.execute-api.eu-west-2.amazonaws.com/prod';
 
 const instance = axios.create({
   baseURL: BASE_URL,
@@ -10,7 +10,7 @@ const instance = axios.create({
 instance.interceptors.request.use(
   async (config) => {
     try {
-      const session = await fetchAuthSession()
+      const session = await fetchAuthSession();
 
       const accessToken = session.tokens?.idToken;
 
@@ -20,7 +20,7 @@ instance.interceptors.request.use(
         const timeUntilExpiry = expirationTime - currentTime;
 
         if (timeUntilExpiry < 5 * 60 * 1000) {
-          console.log("token expiring soon, refreshing");
+          console.log('token expiring soon, refreshing');
           const refreshedSession = await fetchAuthSession({
             forceRefresh: true,
           });
@@ -34,7 +34,7 @@ instance.interceptors.request.use(
         }
       }
     } catch (error) {
-      console.error("Failed to get auth session:", error);
+      console.error('Failed to get auth session:', error);
     }
     return config;
   },

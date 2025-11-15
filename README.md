@@ -1,102 +1,80 @@
-# RecipesGo – Web Project
+# RecipesGo
 
-RecipesGo is a collaborative DevOps project focused on building, testing, and deploying a full-stack web application using modern DevOps practices. 
+RecipeGo is a full-stack, social recipe sharing platform built with a modern, serverless architecture. It demonstrates a DevOps pratice and production ready development workflow emphasizing scalability, testing, and automated deployment.
 
-# RecipesGO web app link
+<img width="800" alt="Screenshot 2025-11-14 at 09 53 53" src="https://github.com/user-attachments/assets/24fca441-c354-4c44-8880-2aedbb34a734" />
+
+
+# Prerequisites
+To develop or run RecipeShare locally, ensure you have:
+Node.js ≥ 18, npm ≥ 8, Docker ≥ 20
+An AWS account with:
+A configured Cognito User Pool
+A DynamoDB table
+Amplify app configured (optional for local dev)
+
+# RecipesGO link
 - https://prepify-nu.vercel.app
----
 
-##  Team Members
-| Name | Role | GitHub Username |
-|------|------|----------------|
-| **Adam Ali** | DevOps Engineer| [2alia](https://github.com/2alia) |
-| **David A** | DevOps Engineer| [dayv-exe](https://github.com/dayv-exe) |
-| **Dafe** | DevOps Engineer| [Beastly12](https://github.com/Beastly12) |
-| **Daniel** |  DevOps Engineer| [danielsauuce](https://github.com/danielsauuce) |
-| **Zhihan** | DevOps Engineer| [2LIUZ98](https://github.com/2LIUZ98) |
+## 👥 Collaborators
 
----
-
-##  Project Overview
-The objective of this platfrom is to cater to an audience that loves cooking and recipe sharing. Moreover, users can give feedback by commenting recipes and liking them.
-
-
-## Design
-
-## **Figma**
-![Figma Design Preview](Figma.png)
----
-
-##  Tech Stack
-
-### **Frontend**
-- React (Vite)
-- Tailwind CSS
-- Node.js
-- Deployed on **AWS S3 + CloudFront**
-
-### **Backend**
-- Go (Golang)
-- AWS Lambda + API Gateway
-- Deployed using **AWS SAM**
-- RESTful API structure
-
-### **Database**
-- AWS DynamoDB
-
-### **DevOps & Tools**
-- **GitHub Actions** – CI/CD automation  
-- **Docker** – containerised builds  
-- **AWS SAM CLI** – serverless deployment  
-- **AWS CloudWatch** – logs and metrics  
-- **GitHub Projects** – Kanban & sprint management
-- **Cypress testing** - Frontend automated testing
+| Name | Username |
+|------|----------------|
+| **Adam Ali** | [2alia](https://github.com/2alia) |
+| **David A** | [dayv-exe](https://github.com/dayv-exe) |
+| **Dafe** | [Beastly12](https://github.com/Beastly12) |
+| **Daniel** | [danielsauuce](https://github.com/danielsauuce) |
+| **Zhihan** | [2LIUZ98](https://github.com/2LIUZ98) |
 
 ---
+## 🧱 Technology Stack
 
-##  CI/CD Workflow
+| Component      | Tech Stack        |
+|----------------|-------------------|
+| Frontend       | React             |
+| Styling        | Tailwind CSS      |
+| Authentication | AWS Cognito       |
+| Database       | AWS DynamoDB      |
+| Deployment     | Vercel            |
+| E2E Testing    | Cypress           |
 
-### **Trigger Conditions**
-- **Pull Requests:** Run unit tests for backend and frontend  
-- **Push to `develop`:** Deploys to the **test** environment  
-- **Push to `main`:** Deploys to the **production** environment  
+## 🔑 Authentication
 
-### **Pipeline Stages**
-1. **Build:**  
-   - Backend binaries compiled in Docker  
-   - Frontend built with Node (Vite)
-2. **Test:**  
-   - Unit tests run for Go backend modules  
-   - Linting and component checks for React frontend
-3. **Deploy:**  
-   - Backend deployed via AWS SAM  
-   - Frontend synced to S3 and distributed via CloudFront
+Authentication was handled using **AWS Cognito**, providing secure user sign-up, sign-in, and access control across the application.
 
----
+## 🛠️ Development Workflow
+Our team follows a standard **fork-and-pull-request** workflow to ensure clean collaboration and code quality:
 
-##  Example Workflow File
+1. **Fork** the repository to your personal GitHub account.  
+2. **Create a feature branch** in your fork and commit your changes.  
+3. **Push your branch** and open a Pull Request (PR) to the `main` branch of the upstream repository.  
+4. Ensure **all merge conflicts are resolved** before requesting a review.  
+5. A team member will review and approve the PR before it is merged into `main`.  
 
-```yaml
 
-name: ci Workflow
-run-name: ${{ github.actor }} is testing out GitHub Actions
-on: [push]
+# 🧹 Code Linting & Formatting
 
-jobs:
-  Explore-GitHub-Actions:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "GitHub!"
-      - run: echo "This job is now running on a ${{ runner.os }} server hosted by GitHub."
-      - run: echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v5
-      - run: echo "The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "This job's status is ${{ job.status }}."
+| Command | Purpose |
+|---------|----------|
+| `npm run lint` | Checks code and style quality. Runs during development but does not break on errors. |
+| `npm run format` | Automatically fixes common linting and formatting issues. |
+
+# 🌑 Dark Mode Support
+This project natively supports Dark Mode styling. By default, the application adheres to the user's color preference as set on their operating system or device.
+### **DevOps & Tooling**
+
+Our development and deployment pipeline leverages a modern DevOps toolchain to ensure reliability, consistency, and automation across the project:
+
+- **GitHub Actions** – Continuous integration and delivery workflows  
+- **Docker** – Containerised development and production environments  
+- **AWS SAM CLI** – Infrastructure-as-code and serverless application deployment  
+- **AWS CloudWatch** – Centralised logging, monitoring, and metrics  
+- **GitHub Projects** – Agile planning, Kanban tracking, and sprint coordination  
+- **Cypress** – Automated end-to-end testing for frontend quality assurance
+
+## 📊 Repository Visualization
+
+<img width="800" alt="Screenshot 2025-11-14 at 09 55 18" src="https://github.com/user-attachments/assets/6f02aea1-dc58-472a-a99c-4b22ae6f2e6f" />
+
 
 

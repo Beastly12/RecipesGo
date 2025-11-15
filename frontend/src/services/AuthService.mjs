@@ -1,20 +1,19 @@
-import { signIn, signUp, fetchAuthSession, signOut } from "aws-amplify/auth";
-
+import { signIn, signUp, fetchAuthSession, signOut } from 'aws-amplify/auth';
 
 export const SignUpService = async (email, password, username) => {
   let isSignedin = false;
   // console.log(email)
   try {
-     const { isSignUpComplete, userId, nextStep } = await signUp({
+    const { isSignUpComplete, userId, nextStep } = await signUp({
       username: email,
-       password,
+      password,
       options: {
         userAttributes: {
           name: `${username}`,
         },
       },
     });
-   isSignedin=isSignUpComplete;
+    isSignedin = isSignUpComplete;
     console.log(isSignedin);
   } catch (error) {
     console.log(error.message);
@@ -25,11 +24,10 @@ export const SignUpService = async (email, password, username) => {
 export const LoginService = async (email, password) => {
   const isSignedin = await signIn({ username: email, password: password });
   console.log(isSignedin);
-  
-  return isSignedin.isSignedIn
+
+  return isSignedin.isSignedIn;
 };
 
-
- export async function handleSignOut() {
-    await signOut({ global: true })
-  }
+export async function handleSignOut() {
+  await signOut({ global: true });
+}

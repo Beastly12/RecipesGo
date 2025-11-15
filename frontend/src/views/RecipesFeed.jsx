@@ -132,13 +132,13 @@ export default function RecipeFeed() {
   return (
     <div className="bg-[#fafafa] dark:bg-[#1a1a1a] text-[#1a1a1a] dark:text-[#fafafa] min-h-screen font-sans transition-colors duration-300">
       <Header userId={userId} colorTheme={colorTheme} setTheme={setTheme} />
-      
+
       <HeroSection />
-      
+
       <div className="sticky top-15 md:top-20 z-30 bg-[#fafafa] dark:bg-[#1a1a1a] transition-colors duration-300">
         <FilterTab filterData={fData} onTabClick={handleFilter} />
       </div>
-      
+
       <RecipesList
         recipes={recipes}
         hasmore={hasMore}

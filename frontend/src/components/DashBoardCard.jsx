@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const DashBoardCard = ({ icon, value, title }) => {
   return (
@@ -16,9 +16,7 @@ const DashBoardCard = ({ icon, value, title }) => {
 
         <div className="mt-5">
           <p className="font-bold text-4xl dark:text-white">{value}</p>
-          <p className="text-[14px] text-gray-500 dark:text-gray-500">
-            {title}
-          </p>
+          <p className="text-[14px] text-gray-500 dark:text-gray-500">{title}</p>
         </div>
       </div>
     </div>
