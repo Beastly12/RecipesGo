@@ -34,8 +34,7 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 	authored := models.NewAuthoredRecipe(recipe.AuthorId, recipe.Id, recipe.RecipeDetails)
 	recipeSearchIndexTrans := newSearchHelper().getRecipeSearchIndexTransactions(recipe)
 
-	update := expression.UpdateBuilder{}
-	update = update.Add(expression.Name("recipeCount"), expression.Value(1))
+	update := expression.Add(expression.Name("recipeCount"), expression.Value(1))
 
 	expr, err := expression.NewBuilder().WithUpdate(update).Build()
 	if err != nil {
@@ -167,8 +166,7 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 }
 
 func (r *recipeHelper) IncreaseViewCount(recipe models.Recipe) error {
-	update := expression.UpdateBuilder{}
-	update.Set(
+	update := expression.Set(
 		expression.Name("viewCount"),
 		expression.Plus(
 			expression.IfNotExists(expression.Name("viewCount"), expression.Value(0)),
