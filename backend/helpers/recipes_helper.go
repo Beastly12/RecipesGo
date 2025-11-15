@@ -163,46 +163,11 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 	recipes := models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, utils.GetDependencies().CloudFrontDomainName)
 
 	recipe := (*recipes)[0]
-
-	update := expression.UpdateBuilder{}
-	update.Set(expression.Name("viewCount"), expression.Name("viewCount").Plus(expression.Value(1)))
-
-	expr, err := expression.NewBuilder().WithUpdate(update).Build()
-	if err != nil {
-		log.Println("Failed to build update for recipe view count")
-		return nil, err
-	}
-
-	updateInput := &dynamodb.TransactWriteItemsInput{
-		TransactItems: []types.TransactWriteItem{
-			{
-				Update: &types.Update{
-					Key:                       *models.RecipeKey(recipeId),
-					TableName:                 &utils.GetDependencies().MainTableName,
-					UpdateExpression:          expr.Update(),
-					ExpressionAttributeNames:  expr.Names(),
-					ExpressionAttributeValues: expr.Values(),
-				},
-			},
-			{
-				Update: &types.Update{
-					Key:                       *models.UserKey(recipe.AuthorId),
-					TableName:                 &utils.GetDependencies().MainTableName,
-					UpdateExpression:          expr.Update(),
-					ExpressionAttributeNames:  expr.Names(),
-					ExpressionAttributeValues: expr.Values(),
-				},
-			},
-		},
-	}
-
-	_, err = utils.GetDependencies().DbClient.TransactWriteItems(this.Ctx, updateInput)
-	if err != nil {
-		log.Println("Failed to update recipe view count")
-		return nil, err
-	}
-
 	return &recipe, nil
+}
+
+func (r *recipeHelper) IncreaseViewCount(recipeId string) error {
+	return nil
 }
 
 // deletes recipe from db
