@@ -167,9 +167,9 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 
 func (r *recipeHelper) IncreaseViewCount(recipe models.Recipe) error {
 	update := expression.Set(
-		expression.Name("viewCount"),
+		expression.Name("views"),
 		expression.Plus(
-			expression.IfNotExists(expression.Name("viewCount"), expression.Value(0)),
+			expression.IfNotExists(expression.Name("views"), expression.Value(0)),
 			expression.Value(1),
 		),
 	)

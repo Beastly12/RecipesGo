@@ -187,9 +187,9 @@ func (this *favoritesHelper) Remove(recipe *models.Recipe, userId string) error 
 		),
 	)
 
-	condition := expression.GreaterThan(
-		expression.IfNotExists(expression.Name("likes"), expression.Value(0)),
-		expression.Value(0),
+	condition := expression.And(
+		expression.AttributeExists(expression.Name("likes")),
+		expression.GreaterThan(expression.Name("likes"), expression.Value(0)),
 	)
 
 	expr, err := expression.NewBuilder().WithUpdate(update).WithCondition(condition).Build()
