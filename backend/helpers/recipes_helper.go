@@ -207,8 +207,30 @@ func (r *recipeHelper) IncreaseViewCount(recipe models.Recipe) error {
 
 // deletes recipe from db
 func (r *recipeHelper) Delete(recipe models.Recipe) error {
-	// delete recipe and author items
-	deleteTransactions := []types.TransactWriteItem{
+	update := expression.Set(
+		expression.Name("recipeCount"),
+		expression.Minus(
+			expression.IfNotExists(expression.Name("recipeCount"), expression.Value(0)),
+			expression.Value(1),
+		),
+	)
+
+	condition := expression.GreaterThan(
+		expression.Name("recipeCount"),
+		expression.Value(0),
+	)
+
+	expr, err := expression.NewBuilder().
+		WithUpdate(update).
+		WithCondition(condition).
+		Build()
+
+	if err != nil {
+		println("Failed to build reduce author recipe count update!")
+		return err
+	}
+
+	transactions := []types.TransactWriteItem{
 		{
 			Delete: &types.Delete{
 				Key:       *models.RecipeKey(recipe.Id),
@@ -221,13 +243,23 @@ func (r *recipeHelper) Delete(recipe models.Recipe) error {
 				TableName: &utils.GetDependencies().MainTableName,
 			},
 		},
+		{
+			Update: &types.Update{
+				Key:                       *models.UserKey(recipe.AuthorId),
+				TableName:                 &utils.GetDependencies().MainTableName,
+				UpdateExpression:          expr.Update(),
+				ConditionExpression:       expr.Condition(),
+				ExpressionAttributeNames:  expr.Names(),
+				ExpressionAttributeValues: expr.Values(),
+			},
+		},
 	}
 
 	input := &dynamodb.TransactWriteItemsInput{
-		TransactItems: deleteTransactions,
+		TransactItems: transactions,
 	}
 
-	_, err := utils.GetDependencies().DbClient.TransactWriteItems(r.Ctx, input)
+	_, err = utils.GetDependencies().DbClient.TransactWriteItems(r.Ctx, input)
 	if err != nil {
 		return err
 	}
