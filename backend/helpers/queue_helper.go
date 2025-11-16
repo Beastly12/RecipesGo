@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"backend"
-	"backend/models"
 	"backend/utils"
 	"context"
 	"encoding/json"
@@ -45,15 +44,12 @@ func WithUnlikeAction(userId, recipeId string) QueueAction {
 	}
 }
 
-func WithRateAction(rating models.Rating) QueueAction {
+func WithRecalculateRatingsAction(recipeId string) QueueAction {
 	return QueueAction{
-		SenderId:    rating.Userid,
-		RecipientId: rating.RecipeId,
-		Action:      backend.QUEUE_ACTION_RATE_RECIPE,
-		Payload:     rating,
+		RecipientId: recipeId,
+		Action:      backend.QUEUE_ACTION_RECALCULATE_RATING,
 	}
 }
-
 func (q *queueHelper) PutInQueue(action QueueAction) error {
 	msg, err := json.Marshal(action)
 	if err != nil {

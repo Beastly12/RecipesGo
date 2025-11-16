@@ -388,29 +388,3 @@ func (r *recipeHelper) RecipeLikesMinus1(userId, recipeId string) error {
 
 	return nil
 }
-
-func (r *recipeHelper) UpdateRecipeRating(recipeId string) error {
-	ave, err := NewRatingsHelper(r.Ctx).GetRecipeRatingAverage(recipeId)
-	if err != nil {
-		log.Printf("Failed to get recipe average rating! ERROR: %v", err)
-		return err
-	}
-
-	update := expression.Set(expression.Name("rating"), expression.Value(ave))
-
-	expr, err := expression.NewBuilder().WithUpdate(update).Build()
-	if err != nil {
-		return fmt.Errorf("failed to build expression: %w", err)
-	}
-
-	input := &dynamodb.UpdateItemInput{
-		Key:                       *models.RecipeKey(recipeId),
-		TableName:                 &utils.GetDependencies().MainTableName,
-		UpdateExpression:          expr.Update(),
-		ExpressionAttributeValues: expr.Values(),
-		ExpressionAttributeNames:  expr.Names(),
-	}
-
-	_, err = utils.GetDependencies().DbClient.UpdateItem(r.Ctx, input)
-	return err
-}
