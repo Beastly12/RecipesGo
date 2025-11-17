@@ -4,6 +4,7 @@ import (
 	"backend/models"
 	"backend/utils"
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -115,4 +116,53 @@ func (u *userHelper) RecalculateRecipesOverallRatings(userId string) (float32, e
 	}
 
 	return ratings / float32(recipeCount), nil
+}
+
+func setUpdate(update expression.UpdateBuilder, name, value string) expression.UpdateBuilder {
+	return update.Set(
+		expression.Name(name),
+		expression.Value(value),
+	)
+}
+
+func (u *userHelper) UpdateUser(userId string, user *models.User) error {
+	update := expression.UpdateBuilder{}
+	hasUpdates := false
+
+	if user.Name != "" {
+		update = setUpdate(update, "name", user.Name)
+		hasUpdates = true
+	}
+
+	if user.DpUrl != "" {
+		update = setUpdate(update, "dpUrl", user.DpUrl)
+		hasUpdates = true
+	}
+
+	if user.Bio != "" {
+		update = setUpdate(update, "bio", user.Bio)
+		hasUpdates = true
+	}
+
+	if user.Location != "" {
+		update = setUpdate(update, "location", user.Location)
+		hasUpdates = true
+	}
+
+	if !hasUpdates {
+		return fmt.Errorf("Nothing to update!")
+	}
+
+	expr, err := expression.NewBuilder().WithUpdate(update).Build()
+
+	input := &dynamodb.UpdateItemInput{
+		Key:                       *models.UserKey(userId),
+		TableName:                 &utils.GetDependencies().MainTableName,
+		UpdateExpression:          expr.Update(),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+	}
+
+	_, err = utils.GetDependencies().DbClient.UpdateItem(u.Ctx, input)
+	return err
 }

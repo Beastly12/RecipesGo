@@ -14,6 +14,8 @@ func HandleUserActions(ctx context.Context, req events.APIGatewayV2HTTPRequest) 
 	switch reqMethod {
 	case "get":
 		return handleGetUsers(ctx, req)
+	case "put":
+		return handleEditUser(ctx, req)
 
 	default:
 		return models.InvalidRequestErrorResponse("Invalid HTTP method!"), nil

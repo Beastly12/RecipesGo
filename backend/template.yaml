@@ -381,6 +381,12 @@ Resources:
             Path: /users/{id}
             Method: GET
             ApiId: !Ref RecipeApi
+        EditUser:
+          Type: HttpApi
+          Properties:
+            Path: /users
+            Method: PUT
+            ApiId: !Ref RecipeApi
 
   # to generate presigned url for image uploads
   GetUploadUrl:
