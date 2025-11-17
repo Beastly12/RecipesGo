@@ -26,15 +26,16 @@ func TestNewUser(t *testing.T) {
 func TestUserStructToDbItem(t *testing.T) {
 	result := *utils.ToDatabaseFormat(NewUser("123", "test"))
 	expect := map[string]types.AttributeValue{
-		"pk":          &types.AttributeValueMemberS{Value: "USER#123"},
-		"sk":          &types.AttributeValueMemberS{Value: "PROFILE"},
-		"gsi":         &types.AttributeValueMemberS{Value: "USER_NAME#test"},
-		"dpUrl":       &types.AttributeValueMemberS{Value: ""},
-		"bio":         &types.AttributeValueMemberS{Value: ""},
-		"location":    &types.AttributeValueMemberS{Value: ""},
-		"views":       &types.AttributeValueMemberN{Value: "0"},
-		"likes":       &types.AttributeValueMemberN{Value: "0"},
-		"recipeCount": &types.AttributeValueMemberN{Value: "0"},
+		"pk":            &types.AttributeValueMemberS{Value: "USER#123"},
+		"sk":            &types.AttributeValueMemberS{Value: "PROFILE"},
+		"gsi":           &types.AttributeValueMemberS{Value: "USER_NAME#test"},
+		"dpUrl":         &types.AttributeValueMemberS{Value: ""},
+		"bio":           &types.AttributeValueMemberS{Value: ""},
+		"location":      &types.AttributeValueMemberS{Value: ""},
+		"views":         &types.AttributeValueMemberN{Value: "0"},
+		"likes":         &types.AttributeValueMemberN{Value: "0"},
+		"recipeCount":   &types.AttributeValueMemberN{Value: "0"},
+		"overallRating": &types.AttributeValueMemberN{Value: "0"},
 	}
 
 	if len(result) != len(expect) {

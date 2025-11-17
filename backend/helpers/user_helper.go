@@ -6,6 +6,8 @@ import (
 	"context"
 	"log"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
@@ -68,4 +70,43 @@ func (this *userHelper) Get(userid string) (*models.User, error) {
 
 	user := (*users)[0]
 	return &user, nil
+}
+
+func (u *userHelper) RecalculateRecipesOverallRatings(userId string) (float32, error) {
+	condition := expression.KeyEqual(
+		expression.Key("gsi3"),
+		expression.Value(utils.AddPrefix(userId, models.RecipesGsi3Prefix)),
+	)
+	expr, err := expression.NewBuilder().WithKeyCondition(condition).Build()
+
+	if err != nil {
+		return 0, err
+	}
+
+	input := &dynamodb.QueryInput{
+		TableName:                 &utils.GetDependencies().MainTableName,
+		IndexName:                 aws.String("gsiIndex3"),
+		KeyConditionExpression:    expr.KeyCondition(),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+	}
+
+	result, err := newHelper(u.Ctx).queryDb(input)
+	if err != nil {
+		return 0, err
+	}
+	if len(result) < 1 {
+		return 0, nil
+	}
+
+	// convert to recipe items
+	recipes := models.DatabaseItemsToRecipeStructs(&result, utils.GetDependencies().CloudFrontDomainName)
+
+	recipeCount := len(*recipes)
+	var ratings float32
+	for _, recipe := range *recipes {
+		ratings += float32(recipe.Rating)
+	}
+
+	return ratings / float32(recipeCount), nil
 }
