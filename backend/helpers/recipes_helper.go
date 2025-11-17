@@ -34,8 +34,7 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 	authored := models.NewAuthoredRecipe(recipe.AuthorId, recipe.Id, recipe.RecipeDetails)
 	recipeSearchIndexTrans := newSearchHelper().getRecipeSearchIndexTransactions(recipe)
 
-	update := expression.UpdateBuilder{}
-	update = update.Add(expression.Name("recipeCount"), expression.Value(1))
+	update := expression.Add(expression.Name("recipeCount"), expression.Value(1))
 
 	expr, err := expression.NewBuilder().WithUpdate(update).Build()
 	if err != nil {
@@ -163,21 +162,28 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 	recipes := models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, utils.GetDependencies().CloudFrontDomainName)
 
 	recipe := (*recipes)[0]
+	return &recipe, nil
+}
 
-	update := expression.UpdateBuilder{}
-	update.Set(expression.Name("viewCount"), expression.Name("viewCount").Plus(expression.Value(1)))
-
+func (r *recipeHelper) IncreaseViewCount(recipe models.Recipe) error {
+	update := expression.Set(
+		expression.Name("views"),
+		expression.Plus(
+			expression.IfNotExists(expression.Name("views"), expression.Value(0)),
+			expression.Value(1),
+		),
+	)
 	expr, err := expression.NewBuilder().WithUpdate(update).Build()
 	if err != nil {
-		log.Println("Failed to build update for recipe view count")
-		return nil, err
+		println("Failed to build update for view count")
+		return err
 	}
 
-	updateInput := &dynamodb.TransactWriteItemsInput{
+	input := &dynamodb.TransactWriteItemsInput{
 		TransactItems: []types.TransactWriteItem{
 			{
 				Update: &types.Update{
-					Key:                       *models.RecipeKey(recipeId),
+					Key:                       *models.RecipeKey(recipe.Id),
 					TableName:                 &utils.GetDependencies().MainTableName,
 					UpdateExpression:          expr.Update(),
 					ExpressionAttributeNames:  expr.Names(),
@@ -195,20 +201,36 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 			},
 		},
 	}
-
-	_, err = utils.GetDependencies().DbClient.TransactWriteItems(this.Ctx, updateInput)
-	if err != nil {
-		log.Println("Failed to update recipe view count")
-		return nil, err
-	}
-
-	return &recipe, nil
+	_, err = utils.GetDependencies().DbClient.TransactWriteItems(r.Ctx, input)
+	return err
 }
 
 // deletes recipe from db
 func (r *recipeHelper) Delete(recipe models.Recipe) error {
-	// delete recipe and author items
-	deleteTransactions := []types.TransactWriteItem{
+	update := expression.Set(
+		expression.Name("recipeCount"),
+		expression.Minus(
+			expression.IfNotExists(expression.Name("recipeCount"), expression.Value(0)),
+			expression.Value(1),
+		),
+	)
+
+	condition := expression.GreaterThan(
+		expression.Name("recipeCount"),
+		expression.Value(0),
+	)
+
+	expr, err := expression.NewBuilder().
+		WithUpdate(update).
+		WithCondition(condition).
+		Build()
+
+	if err != nil {
+		println("Failed to build reduce author recipe count update!")
+		return err
+	}
+
+	transactions := []types.TransactWriteItem{
 		{
 			Delete: &types.Delete{
 				Key:       *models.RecipeKey(recipe.Id),
@@ -221,13 +243,23 @@ func (r *recipeHelper) Delete(recipe models.Recipe) error {
 				TableName: &utils.GetDependencies().MainTableName,
 			},
 		},
+		{
+			Update: &types.Update{
+				Key:                       *models.UserKey(recipe.AuthorId),
+				TableName:                 &utils.GetDependencies().MainTableName,
+				UpdateExpression:          expr.Update(),
+				ConditionExpression:       expr.Condition(),
+				ExpressionAttributeNames:  expr.Names(),
+				ExpressionAttributeValues: expr.Values(),
+			},
+		},
 	}
 
 	input := &dynamodb.TransactWriteItemsInput{
-		TransactItems: deleteTransactions,
+		TransactItems: transactions,
 	}
 
-	_, err := utils.GetDependencies().DbClient.TransactWriteItems(r.Ctx, input)
+	_, err = utils.GetDependencies().DbClient.TransactWriteItems(r.Ctx, input)
 	if err != nil {
 		return err
 	}
@@ -355,30 +387,4 @@ func (r *recipeHelper) RecipeLikesMinus1(userId, recipeId string) error {
 	}
 
 	return nil
-}
-
-func (r *recipeHelper) UpdateRecipeRating(recipeId string) error {
-	ave, err := NewRatingsHelper(r.Ctx).GetRecipeRatingAverage(recipeId)
-	if err != nil {
-		log.Printf("Failed to get recipe average rating! ERROR: %v", err)
-		return err
-	}
-
-	update := expression.Set(expression.Name("rating"), expression.Value(ave))
-
-	expr, err := expression.NewBuilder().WithUpdate(update).Build()
-	if err != nil {
-		return fmt.Errorf("failed to build expression: %w", err)
-	}
-
-	input := &dynamodb.UpdateItemInput{
-		Key:                       *models.RecipeKey(recipeId),
-		TableName:                 &utils.GetDependencies().MainTableName,
-		UpdateExpression:          expr.Update(),
-		ExpressionAttributeValues: expr.Values(),
-		ExpressionAttributeNames:  expr.Names(),
-	}
-
-	_, err = utils.GetDependencies().DbClient.UpdateItem(r.Ctx, input)
-	return err
 }

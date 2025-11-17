@@ -7,4 +7,5 @@ const (
 	QUEUE_ACTION_RATE_RECIPE            = "add_recipe_rating"
 	QUEUE_ACTION_REMOVE_FAVORITE_RECIPE = "remove_recipe_fav"
 	QUEUE_ACTION_REMOVE_RATING_RECIPE   = "remove_recipe_rating"
+	QUEUE_ACTION_RECALCULATE_RATING     = "recalculate_rating"
 )

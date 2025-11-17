@@ -17,10 +17,17 @@ func handleGetRecipeDetails(ctx context.Context, req events.APIGatewayV2HTTPRequ
 		return models.InvalidRequestErrorResponse("No recipe id provided!"), nil
 	}
 
-	response, err := helpers.NewRecipeHelper(ctx).Get(recipeId)
+	recipeHelper := helpers.NewRecipeHelper(ctx)
+
+	response, err := recipeHelper.Get(recipeId)
 	if err != nil {
 		utils.BasicLog("Failed to get recipe details!", err)
 		return models.ServerSideErrorResponse("Failed to get recipe details, try again.", err), nil
+	}
+
+	err = recipeHelper.IncreaseViewCount(*response)
+	if err != nil {
+		return models.ServerSideErrorResponse("Failed to increase view count!", err), nil
 	}
 
 	utils.BasicLog("Recipe details gotten successfully! Ending function execution", response)
