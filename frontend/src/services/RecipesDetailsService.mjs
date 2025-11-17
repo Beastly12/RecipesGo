@@ -1,4 +1,4 @@
-import axios from "./Axios.mjs";
+import axios from './Axios.mjs';
 
 export async function rateRecipe(recipeId, stars, comment = null) {
   const rating = {
@@ -10,12 +10,11 @@ export async function rateRecipe(recipeId, stars, comment = null) {
     rating.comment = comment;
   }
 
-  return await axios.post("/ratings", rating);
+  return await axios.post('/ratings', rating);
 }
 
-
-export async function favoriteRecipe(recipeId) {
-  return await axios.post("/favorites", {
+export async function favoriteRecipe({ recipeId }) {
+  return await axios.post('/favorites', {
     recipeId: String(recipeId),
   });
 }
@@ -34,19 +33,19 @@ export async function editRatingRecipe(recipeId, stars, comment = null) {
     rating.comment = comment;
   }
 
-  return await axios.post("/ratings", rating);
+  return await axios.post('/ratings', rating);
 }
 
 export async function deleteRatingRecipe(recipeId) {
   return await axios.delete(`/ratings/${recipeId}`);
 }
 
-export async function getRatingsbyId(recipeId){
-  return await axios.get(`/ratings/${recipeId}`); 
+export async function getRatingsbyId(recipeId) {
+  return await axios.get(`/ratings/${recipeId}`);
 }
 
 export async function getAllRatings({ recipeId, last } = {}) {
-  if (!recipeId) throw new Error("recipeId is required");
+  if (!recipeId) throw new Error('recipeId is required');
 
   const params = {};
   if (last) params.last = last;
@@ -54,9 +53,10 @@ export async function getAllRatings({ recipeId, last } = {}) {
   return await axios.get(`/ratings/${recipeId}`, { params });
 }
 
-export async function getDetailsbyId(recipeId){
-  return await axios.get(`/recipes/${recipeId}`); 
+export async function getRecipebyId({ recipeId }) {
+  return await axios.get(`/recipes/${recipeId}`);
 }
 
-
-
+export async function getUserbyId({ userId }) {
+  return await axios.get(`/users/${userId}`);
+}
