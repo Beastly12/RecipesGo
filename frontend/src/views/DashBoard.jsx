@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import DashBoardCard from '../components/DashBoardCard';
 import { HeartIcon, NotebookPen, Eye, MessageCircleMore } from 'lucide-react';
 import DashBoardManagementTable from '../components/DashBoardManagementTable';
-import { getDashBoardData } from '../services/DashBoardService.mjs';
 
 var userName = 'Daniel';
 
