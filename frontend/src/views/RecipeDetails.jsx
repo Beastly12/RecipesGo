@@ -80,6 +80,8 @@ function RecipeDetailPage() {
         Time: detail.preparationTime,
         Published: detail.isPublic,
         Difficulty: detail.difficulty,
+        AuthorID: detail.authorId,
+        AuthorName: detail.authorName
       };
 
       setRecipe(recipeData);
@@ -126,9 +128,9 @@ function RecipeDetailPage() {
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-1 md:grid-cols-2 text-sm text-gray-500 mb-4 mt-6 p-7 shadow-[0_12px_24px_rgba(0,0,0,0.12)] rounded-2xl  dark:bg-[#fafafa] ">
               <div className="grid grid-cols-1 gap-3 sm:grid-rows-1 ">
-                <Link to={'/profile'}>
+                <Link to={`/profile/${recipe.AuthorID}`}>
                   <p className="font-bold text-xl text-gray-800 px-4 cursor-pointer dark:text-gray-600">
-                    {recipe.Name}
+                    {recipe.AuthorName}
                   </p>
                 </Link>
 
