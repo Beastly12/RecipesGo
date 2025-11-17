@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -14,6 +14,38 @@ import InstructionBox from '../components/InstructionBox';
 import IngredientsBox from '../components/IngredientsBox';
 import CommentBox from '../components/ComponentBox';
 import { getRecipebyId } from '../services/RecipesService.mjs';
+import { favoriteRecipe } from '../services/RecipesDetailsService.mjs';
+import { getAllRatings } from '../services/RecipesDetailsService.mjs';
+
+function RecipeDetails() {
+  const { id } = useParams(); 
+  const [loading, setLoading] = useState(false);
+  const [ratings, setRatings] = useState([]);
+  const [hasMore, setMore] = useState(false);
+  const [lastKey, setLastkey] = useState('');
+
+  const handleRatings = async (id, lastKey) => {
+    setLoading(true);
+    try {
+      const { data } = await getAllRatings({ recipeId: id, last: lastKey });
+  
+      const ratingsData = data.message.map((rating) => ({
+        key: rating.id,
+        stars: rating.stars,
+        comments: rating.comment
+      }));
+  
+      setRatings(ratingsData);
+      setMore(Boolean(data.last));
+      setLastkey(data.last);
+    } catch (error) {
+      console.error('Failed to fetch ratings for recipe:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+}
+
 
 function RecipeDetailPage() {
   const { id } = useParams();
@@ -93,6 +125,15 @@ function RecipeDetailPage() {
 
                 {/* Favorite Button */}
                 <button
+                onClick={async () => {
+                  try {
+                    await favoriteRecipe(id);
+                    alert("Added to favorites!");
+                  } catch (error) {
+                    console.error("Error adding to favorites:", error);
+                    alert("Failed to add to favorites.");
+                  }
+                }}
                   className="cursor-pointer flex items-center justify-center gap-2 bg-yellow-100 text-yellow-600 border py-2 px-4 sm:px-6
                 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full 
                 dark:bg-yellow-800 dark:text-yellow-300"

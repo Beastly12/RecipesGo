@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { ArrowLeft, Settings } from 'lucide-react';
-import RecipesList from '../components/RecipeList';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import { ArrowLeft, Settings } from "lucide-react";
+import RecipesList from "../components/RecipeList";
+import { Link } from "react-router-dom";
 
 var rData = [
   {

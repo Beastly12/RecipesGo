@@ -13,11 +13,10 @@ import {
 } from '@ant-design/icons';
 import { handleSignOut } from '../services/AuthService.mjs';
 
-export default function Header({ userId, colorTheme, setTheme }) {
+export default function Header({ userId, colorTheme, setTheme, userName }) {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   // Mock user data - you can replace with actual user data from props
-  const userName = 'User';
   const userEmail = userId ? `${userId.substring(0, 10)}...` : '';
 
   const handleLogout = async () => {
@@ -29,14 +28,14 @@ export default function Header({ userId, colorTheme, setTheme }) {
   // Desktop Dropdown Menu
   const dropdownMenu = (
     <Menu
-      className={colorTheme === 'light' ? 'light-menu' : 'dark-menu'}
+      className={colorTheme === 'dark' ? 'dark-menu':'light-menu' }
       style={{
         width: 280,
         borderRadius: '16px',
         padding: '8px',
         boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
-        background: colorTheme === 'light' ? 'white' : '#2a2a2a',
-        border: colorTheme === 'light' ? '1px solid #f0f0f0' : '1px solid #404040',
+        background: colorTheme === 'dark' ? 'white' : '#2a2a2a',
+        border: colorTheme === 'dark' ? '1px solid #f0f0f0' : '1px solid #404040',
       }}
     >
       {/* User Info Header */}
@@ -254,7 +253,7 @@ export default function Header({ userId, colorTheme, setTheme }) {
                     color: '#ff6b6b',
                     borderRadius: '20px',
                     fontWeight: 600,
-                    background: `${colorTheme === 'light' ? '#2a2a2a' : 'white'}`,
+                    background: `${colorTheme === 'dark' ? '#2a2a2a' : 'white'}`,
                   }}
                 >
                   Login
