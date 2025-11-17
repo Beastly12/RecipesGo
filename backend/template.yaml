@@ -36,6 +36,8 @@ Resources:
           AttributeType: S
         - AttributeName: gsi2
           AttributeType: S
+        - AttributeName: gsi3
+          AttributeType: S
         - AttributeName: lsi
           AttributeType: S
       KeySchema:
@@ -55,6 +57,14 @@ Resources:
         - IndexName: gsiIndex2
           KeySchema:
             - AttributeName: gsi2
+              KeyType: HASH
+            - AttributeName: lsi
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: gsiIndex3
+          KeySchema:
+            - AttributeName: gsi3
               KeyType: HASH
             - AttributeName: lsi
               KeyType: RANGE
@@ -254,19 +264,21 @@ Resources:
             Trigger: PostConfirmation
 
   # to handle favorites
-  FavoritesActions:
+  MainFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub ${AWS::StackName}-favorites-actions-${EnvironmentName}
-      CodeUri: bin/favorites_actions/favorites_actions.zip
+      FunctionName: !Sub ${AWS::StackName}-main-function-${EnvironmentName}
+      CodeUri: bin/main_function/main_function.zip
       Handler: bootstrap
-      Description: Lambda function that handles crud requests for favorite recipes
+      Description: Lambda function that will trigger the correct other function
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref MainTable
         - SQSSendMessagePolicy:
             QueueName: !GetAtt RecipesQueue.QueueName
       Events:
+
+        # favorites
         AddFavorites:
           Type: HttpApi
           Properties:
@@ -291,21 +303,8 @@ Resources:
             ApiId: !Ref RecipeApi
             Auth:
               Authorizer: CognitoAuthorizer
-
-  # to handle recipes
-  RecipesActions:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub ${AWS::StackName}-recipes-actions-${EnvironmentName}
-      CodeUri: bin/recipes_actions/recipes_actions.zip
-      Handler: bootstrap
-      Description: Lambda function that handles crud requests for recipes
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref MainTable
-        - SQSSendMessagePolicy:
-            QueueName: !GetAtt RecipesQueue.QueueName
-      Events:
+        
+        # RECIPES
         AddRecipes:
           Type: HttpApi
           Properties:
@@ -342,21 +341,8 @@ Resources:
             ApiId: !Ref RecipeApi
             Auth:
               Authorizer: CognitoAuthorizer
-
-  # to handle recipes
-  RatingsActions:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub ${AWS::StackName}-ratings-actions-${EnvironmentName}
-      CodeUri: bin/ratings_actions/ratings_actions.zip
-      Handler: bootstrap
-      Description: Lambda function that handles crud requests for rating recipes
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref MainTable
-        - SQSSendMessagePolicy:
-            QueueName: !GetAtt RecipesQueue.QueueName
-      Events:
+        
+        # RATINGS
         AddRating:
           Type: HttpApi
           Properties:
@@ -379,7 +365,31 @@ Resources:
             Path: /ratings/{id}
             Method: GET
             ApiId: !Ref RecipeApi
-  
+
+        #users
+        GetUser:
+          Type: HttpApi
+          Properties:
+            Path: /users
+            Method: GET
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GetOtherUser:
+          Type: HttpApi
+          Properties:
+            Path: /users/{id}
+            Method: GET
+            ApiId: !Ref RecipeApi
+        EditUser:
+          Type: HttpApi
+          Properties:
+            Path: /users
+            Method: PUT
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+
   # to generate presigned url for image uploads
   GetUploadUrl:
     Type: AWS::Serverless::Function

@@ -44,6 +44,7 @@ func TestNewRecipe(t *testing.T) {
 		SortKey:     "RECIPE",
 		Category:    "italian",
 		ItemType:    "RECIPE",
+		AuthorIdGsi: "123",
 	}
 
 	if !reflect.DeepEqual(result, expect) {

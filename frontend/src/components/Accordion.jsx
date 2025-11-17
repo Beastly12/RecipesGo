@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import React, { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 export const Accordion = ({ sections }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +18,7 @@ export const Accordion = ({ sections }) => {
         <h3 className="text-xl font-semibold text-gray-600">Description</h3>
         <ChevronDown
           className={`w-7 h-7 transform transition-transform text-gray-600 ${
-            isOpen ? "rotate-180" : ""
+            isOpen ? 'rotate-180' : ''
           }`}
         />
       </div>
