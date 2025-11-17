@@ -54,6 +54,9 @@ export async function getAllRatings({ recipeId, last } = {}) {
   return await axios.get(`/ratings/${recipeId}`, { params });
 }
 
+export async function getDetailsbyId(recipeId){
+  return await axios.get(`/recipes/${recipeId}`); 
+}
 
 
 
