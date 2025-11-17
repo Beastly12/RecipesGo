@@ -4,7 +4,7 @@ import RecipesList from '../components/RecipeList';
 import useDarkMode from '../hooks/useDarkMode';
 import HeroSection from '../components/HeroSection';
 import { getAllRecipes } from '../services/RecipesService.mjs';
-import Header from '../components/Header';
+import Header from '../components/Header';  
 import { useAuthContext } from '../context/AuthContext';
 import { getUserDetails } from '../services/UserService.mjs';
 
