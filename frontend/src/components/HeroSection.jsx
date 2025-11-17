@@ -1,6 +1,6 @@
-import React from "react";
-import heroImg from "../assets/heroimg.jpeg";
-import useScrollPosition from "../hooks/useScrollPosition";
+import React from 'react';
+import heroImg from '../assets/heroimg.jpeg';
+import useScrollPosition from '../hooks/useScrollPosition';
 
 export default function HeroSection() {
   const scrollY = useScrollPosition();
@@ -9,12 +9,12 @@ export default function HeroSection() {
 
   const style = {
     backgroundImage: `url(${heroImg})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
     transform: `translateY(${transformValue}px) translateZ(0)`,
-    willChange: "transform",
-    transition: "transform 0.1s ease-out",
+    willChange: 'transform',
+    transition: 'transform 0.1s ease-out',
   };
 
   return (
@@ -25,8 +25,8 @@ export default function HeroSection() {
         className="absolute inset-0 w-full h-full object-cover"
         style={{
           transform: `translateY(${transformValue}px) translateZ(0)`,
-          willChange: "transform",
-          transition: "transform 0.1s ease-out",
+          willChange: 'transform',
+          transition: 'transform 0.1s ease-out',
         }}
       />
       <div className="absolute inset-0 flex items-center justify-center bg-black/40">

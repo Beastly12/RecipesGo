@@ -21,8 +21,16 @@ func handleRemoveFavorite(ctx context.Context, req events.APIGatewayV2HTTPReques
 		return models.UnauthorizedErrorResponse("You have to be logged in to do this"), nil
 	}
 
+	recipe, err := helpers.NewRecipeHelper(ctx).Get(doomedRecipeId)
+	if err != nil {
+		return models.ServerSideErrorResponse("Failed to get recipe details!", err), nil
+	}
+	if recipe == nil {
+		return models.NotFoundResponse("No such recipe exists!"), nil
+	}
+
 	// remove favorite from db
-	err := helpers.NewFavoritesHelper(ctx).Remove(userid, doomedRecipeId)
+	err = helpers.NewFavoritesHelper(ctx).Remove(recipe, userid)
 	if err != nil {
 		return models.ServerSideErrorResponse("", err), nil
 	}
