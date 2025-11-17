@@ -76,6 +76,7 @@ const DashBoard = () => {
         </div>
 
         <DashBoardManagementTable />
+        
       </div>
     </section>
   );
