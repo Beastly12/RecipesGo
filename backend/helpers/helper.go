@@ -56,3 +56,42 @@ func (h *helper) deleteFromDb(itemKey *map[string]types.AttributeValue) error {
 	utils.BasicLog("item deleted successfully", nil)
 	return nil
 }
+
+func (h *helper) queryDb(input *dynamodb.QueryInput) ([]map[string]types.AttributeValue, error) {
+	utils.BasicLog("preparing to query db", input)
+
+	if input.TableName == nil {
+		input.TableName = &utils.GetDependencies().MainTableName
+	}
+
+	var allItems []map[string]types.AttributeValue
+	var lastEvaluatedKey map[string]types.AttributeValue
+
+	for {
+		if lastEvaluatedKey != nil {
+			input.ExclusiveStartKey = lastEvaluatedKey
+		}
+
+		utils.BasicLog("executing query", input)
+		result, err := utils.GetDependencies().DbClient.Query(h.Ctx, input)
+
+		if err != nil {
+			utils.BasicLog("failed to query db", err)
+			return nil, err
+		}
+
+		utils.BasicLog("query successful, items count", len(result.Items))
+
+		allItems = append(allItems, result.Items...)
+
+		if result.LastEvaluatedKey == nil {
+			break
+		}
+
+		lastEvaluatedKey = result.LastEvaluatedKey
+		utils.BasicLog("more items to fetch, continuing pagination", lastEvaluatedKey)
+	}
+
+	utils.BasicLog("query completed, total items", len(allItems))
+	return allItems, nil
+}

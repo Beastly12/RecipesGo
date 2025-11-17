@@ -32,6 +32,10 @@ func handleAddRecipe(ctx context.Context, req events.APIGatewayV2HTTPRequest) (e
 		return models.InvalidRequestErrorResponse("Recipe must have at least 1 ingredient"), nil
 	}
 
+	if recipe.PreparationTime < 0 {
+		return models.InvalidRequestErrorResponse("Invalid preparation time!"), nil
+	}
+
 	if len(recipe.Instructions) < 1 {
 		return models.InvalidRequestErrorResponse("Recipe must have at least one preparation instruction"), nil
 	}

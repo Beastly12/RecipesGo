@@ -13,6 +13,7 @@ const (
 	RecipesSkPrefix   = "RECIPE"
 	RecipesGsiPrefix  = "RECIPE_TYPE#"
 	RecipesGsi2Prefix = "RECIPE_CAT#"
+	RecipesGsi3Prefix = "RECIPE_AUTHOR#"
 	RecipesLsiPrefix  = "RECIPE_DATE#"
 	RecipeItemType    = "RECIPE"
 )
@@ -25,6 +26,7 @@ type Recipe struct {
 	SortKey     string `dynamodbav:"sk" json:"-"`
 	ItemType    string `dynamodbav:"gsi" json:"-"`
 	Category    string `dynamodbav:"gsi2" json:"category"`
+	AuthorIdGsi string `dynamodbav:"gsi3" json:"-"`
 	DateCreated string `json:"dateCreated" dynamodbav:"lsi"`
 	RecipeDetails
 }
@@ -43,7 +45,7 @@ type RecipeDetails struct {
 	IsPublic        bool     `dynamodbav:"isPublic" json:"isPublic"`
 	Likes           int      `dynamodbav:"likes" json:"likes"`
 	Rating          float64  `dynamodbav:"rating" json:"rating"`
-	Views           int      `dynamodbav:"viewCount" json:"viewCount"`
+	Views           int      `dynamodbav:"views" json:"views"`
 }
 
 // Returns a recipe struct with details provided
@@ -66,6 +68,7 @@ func NewRecipe(name, imageUrl, category, description string, preparationTimeMins
 		DateCreated: utils.GetTimeNow(),
 		ItemType:    RecipeItemType,            // query by item time, sort by date
 		Category:    strings.ToLower(category), // query by category, sort by date
+		AuthorIdGsi: authorId,
 	}
 }
 
@@ -82,6 +85,7 @@ func (r *Recipe) ApplyPrefixes() {
 	r.Id = utils.AddPrefix(r.Id, RecipesPkPrefix)
 	r.ItemType = utils.AddPrefix(r.ItemType, RecipesGsiPrefix)
 	r.Category = utils.AddPrefix(r.Category, RecipesGsi2Prefix)
+	r.AuthorIdGsi = utils.AddPrefix(r.AuthorIdGsi, RecipesGsi3Prefix)
 	r.DateCreated = utils.AddPrefix(r.DateCreated, RecipesLsiPrefix)
 }
 
@@ -92,6 +96,7 @@ func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue, clou
 		r.ItemType = strings.TrimPrefix(r.ItemType, RecipesGsiPrefix)
 		r.Category = strings.TrimPrefix(r.Category, RecipesGsi2Prefix)
 		r.DateCreated = strings.TrimPrefix(r.DateCreated, RecipesLsiPrefix)
+		r.AuthorIdGsi = utils.RemovePrefix(r.AuthorIdGsi, "#")
 		if r.ImageUrl != "" {
 			r.ImageUrl = utils.GenerateViewURL(r.ImageUrl, cloudfrontDomainName)
 		}
