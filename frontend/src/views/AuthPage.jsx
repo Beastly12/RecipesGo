@@ -68,7 +68,7 @@ const AuthPage = () => {
     try {
       const loggedIn = await LoginService(email, password);
       if (loggedIn) {
-        navigate('/');
+        window.location.reload();
       } else {
         messageApi.error('Login failed. Please check your email and password.');
       }

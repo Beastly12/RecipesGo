@@ -1,6 +1,11 @@
-import axios from "./Axios.mjs";
+import axios from './Axios.mjs';
 
-export async function getUploadUrl(ext) {
-  const res = await axios.get(`/upload-url?ext=${ext}`);
-  return res.data;
+export async function getUploadUrl(ext, id) {
+  try {
+    const res = await axios.get('/upload-url', { params: { ext, id } });
+    return res.data;
+  } catch (err) {
+    console.error('Failed to get upload URL:', err);
+    throw err;
+  }
 }
