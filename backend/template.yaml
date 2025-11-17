@@ -387,6 +387,8 @@ Resources:
             Path: /users
             Method: PUT
             ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
 
   # to generate presigned url for image uploads
   GetUploadUrl:
