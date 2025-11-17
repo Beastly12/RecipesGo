@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -15,7 +15,6 @@ import IngredientsBox from '../components/IngredientsBox';
 import CommentBox from '../components/ComponentBox';
 import { getRecipebyId } from '../services/RecipesService.mjs';
 import { favoriteRecipe } from '../services/RecipesDetailsService.mjs';
-import { useParams } from "react-router-dom";
 import { getAllRatings } from '../services/RecipesDetailsService.mjs';
 
 function RecipeDetails() {
