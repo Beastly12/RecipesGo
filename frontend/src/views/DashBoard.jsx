@@ -29,7 +29,7 @@ const DashBoard = () => {
 
   return (
     <section className="min-h-screen bg-[#fafafa] dark:bg-[#1a1a1a] dark:text-[#e4e7eb]">
-      <div className="m-2 max-w-[900px] my-[40px] mx-[auto] px-[40px] dark:text-[#fafafa]">
+      <div className="m-2 max-w-[900px] mx-[auto] px-[40px] dark:text-[#fafafa] p-8">
         <div
           className="border flex flex-col 
         bg-[#ff6b6b] text-white 
@@ -75,6 +75,7 @@ const DashBoard = () => {
         </div>
 
         <DashBoardManagementTable />
+        
       </div>
     </section>
   );

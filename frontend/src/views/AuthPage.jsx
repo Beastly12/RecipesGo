@@ -82,7 +82,7 @@ const AuthPage = () => {
   return (
     <Spin spinning={isLoading} tip="Processing...">
       {contextHolder}
-      <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 md:bg-white justify-center items-center p-4 dark:bg-[#0a0e27] transition-colors duration-300">
+      <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 md:bg-white justify-center items-center p-4 dark:bg-[#1a1a1a] transition-colors duration-300">
         <Card
           className="w-full max-w-4xl shadow-2xl rounded-3xl overflow-hidden bg-white dark:bg-gradient-to-br dark:from-[#1a2142] dark:to-[#151b35] 
             border border-gray-200 dark:border-white/10
@@ -127,8 +127,8 @@ const AuthPage = () => {
 
               {/* Toggle Buttons */}
               <div
-                className="flex items-center border border-gray-300 dark:border-white/10 
-                  rounded-3xl p-1 w-full max-w-sm h-12 mb-10 
+                className="flex items-center  border-gray-300 dark:border-white
+                  rounded-3xl  w-full max-w-sm h-12 mb-10 
                   bg-gray-100 dark:bg-[rgba(255,255,255,0.05)]
                   transition-all duration-300"
               >
@@ -136,7 +136,7 @@ const AuthPage = () => {
                   onClick={() => setIsLogin(true)}
                   className={`w-1/2 h-full py-2 font-semibold transition-all duration-300 rounded-3xl ${
                     isLogin
-                      ? 'text-[#FF6B6B] bg-white shadow-md dark:bg-[#1a2142] dark:text-[#ff8787]'
+                      ? 'text-[#FF6B6B] bg-white shadow-md dark:bg-[#1a1a1a] dark:text-[#ff8787]'
                       : 'text-gray-500 dark:text-gray-300 hover:text-[#FF6B6B]'
                   }`}
                 >
@@ -147,7 +147,7 @@ const AuthPage = () => {
                   onClick={() => setIsLogin(false)}
                   className={`w-1/2 h-full py-2 font-semibold transition-all duration-300 rounded-3xl ${
                     !isLogin
-                      ? 'text-[#FF6B6B] bg-white dark:bg-[#1a2142] dark:text-[#ff8787] shadow-md'
+                      ? 'text-[#FF6B6B] bg-white dark:bg-[#1a1a1a] dark:text-[#ff8787] shadow-md'
                       : 'text-gray-500 dark:text-gray-300 hover:text-[#FF6B6B]'
                   }`}
                 >
