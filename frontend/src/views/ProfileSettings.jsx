@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Skull, Loader2 } from 'lucide-react';
 import useDarkMode from '../hooks/useDarkMode';
 import { Modal } from 'antd';
-import { editUserDetails, handleDeleteUser, getUserDetails } from '../services/userService';
+import { editUserDetails, handleDeleteUser, getUserDetails } from '../services/UserService.mjs';
 import { getUploadUrl } from '../services/ImageUploadService.mjs';
 import axios from 'axios';
 
