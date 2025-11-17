@@ -73,6 +73,7 @@ func (this *userHelper) Get(userid string) (*models.User, error) {
 }
 
 func (u *userHelper) RecalculateRecipesOverallRatings(userId string) (float32, error) {
+	println("CALCULATING USERS OVERALL RECIPE RATING")
 	condition := expression.KeyEqual(
 		expression.Key("gsi3"),
 		expression.Value(utils.AddPrefix(userId, models.RecipesGsi3Prefix)),
@@ -93,11 +94,15 @@ func (u *userHelper) RecalculateRecipesOverallRatings(userId string) (float32, e
 
 	result, err := newHelper(u.Ctx).queryDb(input)
 	if err != nil {
+		println("FAILED TO GET USERS RECIPES")
 		return 0, err
 	}
 	if len(result) < 1 {
+		println("THIS USER HAS NO RECIPES")
 		return 0, nil
 	}
+
+	log.Printf("FOUND %v RECIPES CREATED BY THIS USER", len(result))
 
 	// convert to recipe items
 	recipes := models.DatabaseItemsToRecipeStructs(&result, utils.GetDependencies().CloudFrontDomainName)
@@ -105,6 +110,7 @@ func (u *userHelper) RecalculateRecipesOverallRatings(userId string) (float32, e
 	recipeCount := len(*recipes)
 	var ratings float32
 	for _, recipe := range *recipes {
+		log.Printf("RECIPE: %v, RATING: %v", recipe.Name, recipe.Rating)
 		ratings += float32(recipe.Rating)
 	}
 
