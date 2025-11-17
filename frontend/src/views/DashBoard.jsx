@@ -1,20 +1,19 @@
-import React from "react";
-import DashBoardCard from "../components/DashBoardCard";
-import { HeartIcon, NotebookPen, Eye, MessageCircleMore } from "lucide-react";
-import DashBoardManagementTable from "../components/DashBoardManagementTable";
+import React from 'react';
+import DashBoardCard from '../components/DashBoardCard';
+import { HeartIcon, NotebookPen, Eye, MessageCircleMore } from 'lucide-react';
+import DashBoardManagementTable from '../components/DashBoardManagementTable';
 
-var userName = "Daniel";
+var userName = 'Daniel';
 
 const hour = new Date().getHours();
-let greeting = "";
+let greeting = '';
 if (hour < 12) {
-  greeting = "morning";
+  greeting = 'morning';
 } else if (hour < 18) {
-  greeting = "afternoon";
+  greeting = 'afternoon';
 } else {
-  greeting = "evening";
+  greeting = 'evening';
 }
-
 
 const DashBoard = () => {
   return (
@@ -29,10 +28,8 @@ const DashBoard = () => {
         transition-all duration-300"
         >
           <p className="font-medium text-xl mt-2">Good {greeting}</p>
-          <h1 className="font-bold text-4xl mt-2">
-            Welcome back, {userName}! 👋
-          </h1>
-          
+          <h1 className="font-bold text-4xl mt-2">Welcome back, {userName}! 👋</h1>
+
           <button
             className="bg-white text-blue-600 
           dark:bg-[#ff6b6b] dark:text-white 
@@ -66,7 +63,7 @@ const DashBoard = () => {
           />
         </div>
 
-        <DashBoardManagementTable/>
+        <DashBoardManagementTable />
       </div>
     </section>
   );

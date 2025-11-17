@@ -8,6 +8,7 @@ import (
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
@@ -28,6 +29,30 @@ func NewFavoritesHelper(ctx context.Context) *favoritesHelper {
 	}
 }
 
+func (r *favoritesHelper) getFavorite(userId, recipeId string) (*models.Favorite, error) {
+	input := &dynamodb.GetItemInput{
+		Key:       *models.FavoriteKey(userId, recipeId),
+		TableName: &utils.GetDependencies().MainTableName,
+	}
+	result, err := utils.GetDependencies().DbClient.GetItem(r.Ctx, input)
+	if err != nil {
+		log.Printf("failed to check if user already has current recipe in favorites! ERROR: %v", err)
+		return nil, err
+	}
+
+	if len(result.Item) < 1 {
+		return nil, nil
+	}
+
+	favs := models.DbItemsToFavoriteStructs(
+		&[]map[string]types.AttributeValue{
+			result.Item,
+		},
+	)
+
+	return &(*favs)[0], nil
+}
+
 func (r *favoritesHelper) recipeInUserFavorites(userId, recipeId string) (bool, error) {
 	input := &dynamodb.GetItemInput{
 		Key:       *models.FavoriteKey(userId, recipeId),
@@ -42,7 +67,7 @@ func (r *favoritesHelper) recipeInUserFavorites(userId, recipeId string) (bool, 
 	return len(result.Item) > 0, nil
 }
 
-func (this *favoritesHelper) Add(favorite *models.Favorite) error {
+func (this *favoritesHelper) Add(favorite *models.Favorite, recipeAuthorId string) error {
 	recipeInFavorites, err := this.recipeInUserFavorites(favorite.UserId, favorite.RecipeId)
 	if err != nil {
 		return err
@@ -52,12 +77,57 @@ func (this *favoritesHelper) Add(favorite *models.Favorite) error {
 		return nil
 	}
 
-	err = newHelper(this.Ctx).putIntoDb(utils.ToDatabaseFormat(favorite))
+	update := expression.Set(
+		expression.Name("likes"),
+		expression.Plus(
+			expression.IfNotExists(expression.Name("likes"), expression.Value(0)),
+			expression.Value(1),
+		),
+	)
+	expr, err := expression.NewBuilder().WithUpdate(update).Build()
 	if err != nil {
+		println("failed to build like counter update!")
 		return err
 	}
 
-	NewQueueHelper(this.Ctx).PutInQueue(WithLikeAction(favorite.UserId, favorite.RecipeId))
+	transactions := []types.TransactWriteItem{
+		{
+			Put: &types.Put{
+				Item:      *utils.ToDatabaseFormat(favorite),
+				TableName: &utils.GetDependencies().MainTableName,
+			},
+		},
+		{
+			Update: &types.Update{
+				// update like counter on recipe
+				Key:                       *models.RecipeKey(favorite.RecipeId),
+				TableName:                 &utils.GetDependencies().MainTableName,
+				UpdateExpression:          expr.Update(),
+				ExpressionAttributeNames:  expr.Names(),
+				ExpressionAttributeValues: expr.Values(),
+			},
+		},
+		{
+			Update: &types.Update{
+				// update like counter on author
+				Key:                       *models.UserKey(recipeAuthorId),
+				TableName:                 &utils.GetDependencies().MainTableName,
+				UpdateExpression:          expr.Update(),
+				ExpressionAttributeNames:  expr.Names(),
+				ExpressionAttributeValues: expr.Values(),
+			},
+		},
+	}
+
+	input := &dynamodb.TransactWriteItemsInput{
+		TransactItems: transactions,
+	}
+
+	_, err = utils.GetDependencies().DbClient.TransactWriteItems(this.Ctx, input)
+	if err != nil {
+		utils.PrintTransactWriteCancellationReason(err)
+		return err
+	}
 
 	return nil
 }
@@ -99,21 +169,75 @@ func (this *favoritesHelper) GetAll(userId string, lastEvalKey map[string]types.
 	}, nil
 }
 
-func (this *favoritesHelper) Remove(userId, recipeId string) error {
-	recipeInFavorites, err := this.recipeInUserFavorites(userId, recipeId)
+func (this *favoritesHelper) Remove(recipe *models.Recipe, userId string) error {
+	favorite, err := this.getFavorite(userId, recipe.Id)
 	if err != nil {
 		return err
 	}
 
-	if !recipeInFavorites {
+	if favorite == nil {
 		return nil
 	}
 
-	err = newHelper(this.Ctx).deleteFromDb(models.FavoriteKey(userId, recipeId))
+	update := expression.Set(
+		expression.Name("likes"),
+		expression.Minus(
+			expression.IfNotExists(expression.Name("likes"), expression.Value(0)),
+			expression.Value(1),
+		),
+	)
+
+	condition := expression.And(
+		expression.AttributeExists(expression.Name("likes")),
+		expression.GreaterThan(expression.Name("likes"), expression.Value(0)),
+	)
+
+	expr, err := expression.NewBuilder().WithUpdate(update).WithCondition(condition).Build()
 	if err != nil {
+		println("failed to build like counter update!")
 		return err
 	}
 
-	NewQueueHelper(this.Ctx).PutInQueue(WithUnlikeAction(userId, recipeId))
+	transactions := []types.TransactWriteItem{
+		{
+			Delete: &types.Delete{
+				Key:       *models.FavoriteKey(favorite.UserId, favorite.RecipeId),
+				TableName: &utils.GetDependencies().MainTableName,
+			},
+		},
+		{
+			Update: &types.Update{
+				// update like counter on recipe
+				Key:                       *models.RecipeKey(favorite.RecipeId),
+				TableName:                 &utils.GetDependencies().MainTableName,
+				UpdateExpression:          expr.Update(),
+				ExpressionAttributeNames:  expr.Names(),
+				ExpressionAttributeValues: expr.Values(),
+				ConditionExpression:       expr.Condition(),
+			},
+		},
+		{
+			Update: &types.Update{
+				// update like counter on author
+				Key:                       *models.UserKey(recipe.AuthorId),
+				TableName:                 &utils.GetDependencies().MainTableName,
+				UpdateExpression:          expr.Update(),
+				ExpressionAttributeNames:  expr.Names(),
+				ExpressionAttributeValues: expr.Values(),
+				ConditionExpression:       expr.Condition(),
+			},
+		},
+	}
+
+	input := &dynamodb.TransactWriteItemsInput{
+		TransactItems: transactions,
+	}
+
+	_, err = utils.GetDependencies().DbClient.TransactWriteItems(this.Ctx, input)
+	if err != nil {
+		utils.PrintTransactWriteCancellationReason(err)
+		return err
+	}
+
 	return nil
 }

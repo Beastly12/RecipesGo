@@ -5,8 +5,11 @@ import (
 	"backend/models"
 	"backend/utils"
 	"context"
+	"fmt"
+	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
@@ -32,13 +35,47 @@ func (r *ratingsHelper) AddRating(rating *models.Rating) error {
 		return err
 	}
 
-	NewQueueHelper(r.Ctx).PutInQueue(WithRateAction(*rating))
+	NewQueueHelper(r.Ctx).PutInQueue(WithRecalculateRatingsAction(rating.RecipeId))
 
 	return nil
 }
 
 func (r *ratingsHelper) RemoveRating(recipeId, userId string) error {
-	return newHelper(r.Ctx).deleteFromDb(models.RatingKey(recipeId, userId))
+	err := newHelper(r.Ctx).deleteFromDb(models.RatingKey(recipeId, userId))
+	if err != nil {
+		return err
+	}
+
+	NewQueueHelper(r.Ctx).PutInQueue(WithRecalculateRatingsAction(recipeId))
+
+	return nil
+}
+
+func (r *ratingsHelper) UpdateRating(recipeId string) error {
+	// get all ratings on recipe, then get the average
+	ave, err := NewRatingsHelper(r.Ctx).GetRecipeRatingAverage(recipeId)
+	if err != nil {
+		log.Printf("Failed to get recipe average rating! ERROR: %v", err)
+		return err
+	}
+
+	update := expression.Set(expression.Name("rating"), expression.Value(ave))
+
+	expr, err := expression.NewBuilder().WithUpdate(update).Build()
+	if err != nil {
+		return fmt.Errorf("failed to build expression: %w", err)
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		Key:                       *models.RecipeKey(recipeId),
+		TableName:                 &utils.GetDependencies().MainTableName,
+		UpdateExpression:          expr.Update(),
+		ExpressionAttributeValues: expr.Values(),
+		ExpressionAttributeNames:  expr.Names(),
+	}
+
+	_, err = utils.GetDependencies().DbClient.UpdateItem(r.Ctx, input)
+	return err
 }
 
 func (r *ratingsHelper) GetRecipeRatings(recipeId string, lastKey map[string]types.AttributeValue) (*getRatingsOutput, error) {

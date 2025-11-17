@@ -11,7 +11,6 @@ import { Amplify } from 'aws-amplify';
 import useDarkMode from './hooks/useDarkMode';
 import '@ant-design/v5-patch-for-react-19';
 
-
 Amplify.configure({
   Auth: {
     Cognito: {
@@ -25,8 +24,8 @@ export default function App() {
   const [colorTheme, setTheme] = useDarkMode();
   return (
     <Routes>
-      <Route path="/recipe-details/:id" element={<RecipeDetailPage />} />
-      <Route path="/recipe-details" element={<RecipeDetailPage />} />
+      {/* <Route path="/recipe-details/:id" element={<RecipeDetailPage />} /> */}
+      <Route path="/recipe/:id" element={<RecipeDetailPage />} />
       <Route path="/Auth" element={<AuthPage />} />
       <Route path="/" element={<RecipeFeed />} />
       <Route path="/profile" element={<Profile />} />
