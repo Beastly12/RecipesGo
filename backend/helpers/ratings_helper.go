@@ -51,7 +51,7 @@ func (r *ratingsHelper) RemoveRating(recipeId, userId string) error {
 	return nil
 }
 
-func (r *ratingsHelper) UpdateRating(recipeId string) error {
+func (r *ratingsHelper) DeprecatedUpdateRating(recipeId string) error {
 	// get all ratings on recipe, then get the average
 	ave, err := NewRatingsHelper(r.Ctx).GetRecipeRatingAverage(recipeId)
 	if err != nil {
@@ -76,6 +76,70 @@ func (r *ratingsHelper) UpdateRating(recipeId string) error {
 
 	_, err = utils.GetDependencies().DbClient.UpdateItem(r.Ctx, input)
 	return err
+}
+
+func (r *ratingsHelper) UpdateRating(recipeId, authorId string) error {
+	// calc the new rating for given recipe
+	recipeRating, err := NewRatingsHelper(r.Ctx).GetRecipeRatingAverage(recipeId)
+	if err != nil {
+		log.Printf("Failed to get recipe average rating! ERROR: %v", err)
+		return err
+	}
+
+	// calc the new overall rating for author
+	authorRating, err := NewUserHelper(r.Ctx).RecalculateRecipesOverallRatings(authorId)
+	if err != nil {
+		log.Printf("Failed to get author average rating! ERROR: %v", err)
+		return err
+	}
+
+	// update the recipe rating
+	updateRecipeRating := expression.Set(expression.Name("rating"), expression.Value(recipeRating))
+	recipeExpr, err := expression.NewBuilder().WithUpdate(updateRecipeRating).Build()
+	if err != nil {
+		return fmt.Errorf("failed to build recipe expression: %w", err)
+	}
+
+	// update the author rating
+	updateAuthorRating := expression.Set(expression.Name("rating"), expression.Value(authorRating))
+	authorExpr, err := expression.NewBuilder().WithUpdate(updateAuthorRating).Build()
+	if err != nil {
+		return fmt.Errorf("failed to build author expression: %w", err)
+	}
+
+	// add transactions
+	transactions := []types.TransactWriteItem{
+		{
+			Update: &types.Update{
+				Key:                       *models.RecipeKey(recipeId),
+				TableName:                 &utils.GetDependencies().MainTableName,
+				UpdateExpression:          recipeExpr.Update(),
+				ExpressionAttributeNames:  recipeExpr.Names(),
+				ExpressionAttributeValues: recipeExpr.Values(),
+			},
+		},
+		{
+			Update: &types.Update{
+				Key:                       *models.UserKey(authorId),
+				TableName:                 &utils.GetDependencies().MainTableName,
+				UpdateExpression:          authorExpr.Update(),
+				ExpressionAttributeNames:  authorExpr.Names(),
+				ExpressionAttributeValues: authorExpr.Values(),
+			},
+		},
+	}
+
+	input := &dynamodb.TransactWriteItemsInput{
+		TransactItems: transactions,
+	}
+
+	_, err = utils.GetDependencies().DbClient.TransactWriteItems(r.Ctx, input)
+	if err != nil {
+		utils.PrintTransactWriteCancellationReason(err)
+		return err
+	}
+
+	return nil
 }
 
 func (r *ratingsHelper) GetRecipeRatings(recipeId string, lastKey map[string]types.AttributeValue) (*getRatingsOutput, error) {

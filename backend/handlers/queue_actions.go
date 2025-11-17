@@ -25,7 +25,13 @@ func HandleQueueActions(ctx context.Context, sqs events.SQSEvent) error {
 				continue
 			}
 
-			err := helpers.NewRatingsHelper(ctx).UpdateRating(action.RecipientId)
+			recipe, err := helpers.NewRecipeHelper(ctx).Get(action.RecipientId)
+			if err != nil {
+				log.Printf("FAILED TO GET RECIPE DETAILS! ERROR: %v", err)
+				continue
+			}
+
+			err = helpers.NewRatingsHelper(ctx).UpdateRating(action.RecipientId, recipe.AuthorId)
 			if err != nil {
 				log.Printf("FAILED TO UPDATE RECIPE RATINGS! ERROR: %v", err)
 				continue
