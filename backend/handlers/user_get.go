@@ -26,6 +26,6 @@ func handleGetUsers(ctx context.Context, req events.APIGatewayV2HTTPRequest) (ev
 		return models.SuccessfulGetRequestResponse(user, nil), nil
 	}
 
-	user.UserStats = models.UserStats{} // to hide stats of other users
+	//user.UserStats = models.UserStats{} // to hide stats of other users
 	return models.SuccessfulGetRequestResponse(user, nil), nil
 }
