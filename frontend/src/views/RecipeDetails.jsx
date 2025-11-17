@@ -149,7 +149,6 @@ function RecipeDetails() {
 }
 
 
-
 function RecipeDetailPage() {
   const recipe_details = RecipeDetails();
 
@@ -271,6 +270,7 @@ function RecipeDetailPage() {
             </div>
 
             <CommentBox
+            handleRatings
               totalComments={recipe_details.comments}
               visibleComments={visibleComment}
               hasMore={hasMore}
