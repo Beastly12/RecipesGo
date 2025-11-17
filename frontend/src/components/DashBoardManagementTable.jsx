@@ -74,6 +74,7 @@ const DashBoardManagementTable = () => {
       </span>
     );
   };
+  
 
   return (
     <section className=" bg-white rounded-3xl shadow mt-10">
