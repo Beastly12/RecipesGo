@@ -294,12 +294,10 @@ func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error
 		update = update.Set(expression.Name("description"), expression.Value(recipe.Description))
 		hasUpdates = true
 	}
-	if recipe.AuthorName != "" {
-		update = update.Set(expression.Name("authorName"), expression.Value(recipe.AuthorName))
-		hasUpdates = true
-	}
 	if recipe.Category != "" {
-		update = update.Set(expression.Name("gsi2"), expression.Value(recipe.Category))
+		update = update.Set(expression.Name("gsi2"), expression.Value(
+			utils.AddPrefix(recipe.Category, models.RecipesGsi2Prefix),
+		))
 		hasUpdates = true
 	}
 	if len(recipe.Ingredients) > 0 {

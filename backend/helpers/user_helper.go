@@ -158,7 +158,7 @@ func (u *userHelper) UpdateUser(userId string, user *models.User) error {
 	hasUpdates := false
 
 	if user.Name != "" {
-		update = setUpdate(update, "name", user.Name)
+		update = setUpdate(update, "gsi", utils.AddPrefix(user.Name, models.UserGsiPrefix))
 		hasUpdates = true
 	}
 
