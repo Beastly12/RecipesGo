@@ -3,8 +3,9 @@ import DashBoardCard from '../components/DashBoardCard';
 import { HeartIcon, NotebookPen, Eye, MessageCircleMore } from 'lucide-react';
 import DashBoardManagementTable from '../components/DashBoardManagementTable';
 import { getUserDetails } from '../services/UserService.mjs';
+import { Link } from 'react-router-dom';
 
-var userName = 'Daniel';
+// var userName = 'Daniel';
 
 const hour = new Date().getHours();
 const greeting = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
@@ -17,7 +18,7 @@ const DashBoard = () => {
     async function fetchDashboard() {
       try {
         const data = await getUserDetails();
-        console.log(data)
+        console.log(data);
         setStats(data);
       } catch (error) {
         console.error('Error loading dashboard data:', err);
@@ -41,16 +42,18 @@ const DashBoard = () => {
         transition-all duration-300"
         >
           <p className="font-medium text-xl mt-2">Good {greeting}</p>
-          <h1 className="font-bold text-4xl mt-2">Welcome back, {userName}! 👋</h1>
+          <h1 className="font-bold text-4xl mt-2">Welcome back, {stats?.name}! 👋</h1>
 
-          <button
-            className="bg-white text-blue-600 
+          <Link to={'/createRecipe'}>
+            <button
+              className="bg-white text-blue-600 
           dark:bg-[#ff6b6b] dark:text-white 
           font-medium rounded-2xl w-40 h-10 p-2 mt-9 
           hover:scale-[1.03] transition-transform duration-300 "
-          >
-            + Create Recipe
-          </button>
+            >
+              + Create Recipe
+            </button>
+          </Link>
         </div>
 
         {loading ? (
@@ -59,22 +62,22 @@ const DashBoard = () => {
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
             <DashBoardCard
               icon={<NotebookPen className="w-12 h-12 text-yellow-500" />}
-              value={stats?.totalRecipes ?? 0}
+              value={stats?.recipeCount ?? 0}
               title="Total Recipes"
             />
             <DashBoardCard
               icon={<Eye className="w-12 h-12 text-blue-500" />}
-              value={`${stats?.totalViews?.toLocaleString() ?? '0'}`}
+              value={`${stats?.views ?? '0'}`}
               title="Total Views"
             />
             <DashBoardCard
               icon={<HeartIcon className=" w-12 h-12 text-red-500" />}
-              value={stats?.totalComments ?? 0}
+              value={stats?.overallRating ?? '0'}
               title="Total Comments"
             />
             <DashBoardCard
               icon={<MessageCircleMore className="w-12 h-12 text-purple-500" />}
-              value="8,234"
+              value={stats?.likes ?? '0'}
               title="Total Likes"
             />
           </div>
