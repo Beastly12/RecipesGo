@@ -133,6 +133,84 @@ func (r *recipeHelper) GetAllRecipes(lastKey map[string]types.AttributeValue, ca
 
 	recipes := models.DatabaseItemsToRecipeStructs(&result.Items, utils.GetDependencies().CloudFrontDomainName)
 
+	for i, recipe := range *recipes {
+		user, err := NewUserHelper(r.Ctx).GetDisplayDetails(recipe.AuthorId)
+		if err != nil || user == nil {
+			(*recipes)[i].AuthorDpUrl = ""
+			(*recipes)[i].AuthorName = "[deleted]"
+			continue
+		}
+
+		(*recipes)[i].AuthorDpUrl = user.DpUrl
+		(*recipes)[i].AuthorName = user.Name
+	}
+
+	utils.BasicLog("db item to recipes successful", recipes)
+	utils.BasicLog("last eval key", result.LastEvaluatedKey)
+
+	return &getAllRecipesOutput{
+		Recipes: *recipes,
+		NextKey: result.LastEvaluatedKey,
+	}, nil
+}
+
+func (r *recipeHelper) GetAllRecipesByUser(lastKey map[string]types.AttributeValue, userId string) (*getAllRecipesOutput, error) {
+
+	user, err := NewUserHelper(r.Ctx).GetDisplayDetails(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	if user == nil {
+		return &getAllRecipesOutput{
+			Recipes: []models.Recipe{},
+			NextKey: map[string]types.AttributeValue{},
+		}, nil
+	}
+
+	condition := expression.KeyEqual(
+		expression.Key(
+			"gsi3",
+		),
+		expression.Value(
+			utils.AddPrefix(userId, models.RecipesGsi3Prefix),
+		),
+	)
+
+	expr, err := expression.NewBuilder().WithKeyCondition(condition).Build()
+
+	input := &dynamodb.QueryInput{
+		TableName:                 &utils.GetDependencies().MainTableName,
+		IndexName:                 aws.String("gsiIndex3"),
+		KeyConditionExpression:    expr.KeyCondition(),
+		ExpressionAttributeValues: expr.Values(),
+		ExpressionAttributeNames:  expr.Names(),
+		ExclusiveStartKey:         lastKey,
+		ScanIndexForward:          aws.Bool(false),
+		Limit:                     aws.Int32(10),
+	}
+
+	result, err := utils.GetDependencies().DbClient.Query(r.Ctx, input)
+	if err != nil {
+		utils.BasicLog("failed to query the db for recipes", err)
+		return nil, err
+	}
+
+	if result.Count < 1 {
+		utils.BasicLog("no recipes found in db", nil)
+		return &getAllRecipesOutput{
+			Recipes: []models.Recipe{},
+			NextKey: nil,
+		}, nil
+	}
+
+	recipes := models.DatabaseItemsToRecipeStructs(&result.Items, utils.GetDependencies().CloudFrontDomainName)
+
+	for i := range *recipes {
+		(*recipes)[i].AuthorDpUrl = user.DpUrl
+		(*recipes)[i].AuthorName = user.Name
+	}
+
 	utils.BasicLog("db item to recipes successful", recipes)
 	utils.BasicLog("last eval key", result.LastEvaluatedKey)
 
@@ -159,9 +237,19 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 		return nil, nil
 	}
 
-	recipes := models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, utils.GetDependencies().CloudFrontDomainName)
+	recipe := (*models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, utils.GetDependencies().CloudFrontDomainName))[0]
 
-	recipe := (*recipes)[0]
+	user, err := NewUserHelper(this.Ctx).GetDisplayDetails(recipe.AuthorId)
+	if err != nil || user == nil {
+		recipe.AuthorDpUrl = ""
+		recipe.AuthorName = "[Deleted]"
+
+		return &recipe, nil
+	}
+
+	recipe.AuthorDpUrl = user.DpUrl
+	recipe.AuthorName = user.Name
+
 	return &recipe, nil
 }
 
