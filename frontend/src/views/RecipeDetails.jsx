@@ -24,6 +24,11 @@ function RecipeDetailPage() {
   const [hasMore, setMore] = useState(false);
   const [lastKey, setLastkey] = useState('');
   const [isPopupOpen, setPopupOpen] = useState(false);
+  const [likes, setLikes] = useState([]);
+
+  const handleLike = () => {
+    setLikes(prev => prev + 1);
+  };
 
   useEffect(() => {
     async function fetchRecipe() {
@@ -90,12 +95,14 @@ function RecipeDetailPage() {
         Published: detail.isPublic,
         Difficulty: detail.difficulty,
         AuthorID: detail.authorId,
-        AuthorName: detail.authorName
+        AuthorName: detail.authorName,
+        Likes: detail.likes
       };
 
       setRecipe(recipeData);
       setMore(Boolean(data.last));
       setLastkey(data.last);
+      setLikes(recipeData.Likes)
     } catch (error) {
       console.error('Failed to fetch details for recipe:', error);
     } finally {
@@ -150,9 +157,11 @@ function RecipeDetailPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3 dark:text-[#fafafa]">
                 {/* Likes Button */}
-                <button className="cursor-pointer flex items-center justify-center gap-2 bg-[#ff6b6b] text-white py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300 w-full  dark:text-[#fafafa]">
+                <button className="cursor-pointer flex items-center justify-center gap-2 bg-[#ff6b6b] text-white py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300 w-full  dark:text-[#fafafa]"
+                   onClick={handleLike}
+                >
                   <Heart className="w-5 h-5" />
-                  <span>Likes ({recipe.Time})</span>
+                  <span>Likes ({likes})</span>
                 </button>
 
                 {/* Favorite Button */}

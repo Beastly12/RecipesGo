@@ -7,16 +7,17 @@ Modal.setAppElement("#root");
 const CommentBox = ({ totalComments, visibleComments, hasMore, handleViewMore, handlePopupOpen, handlePopupClosed, isPopupOpen }) => {
   return (
     <div className="bg-white dark:bg-[#1e1e1e] mt-14 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_24px_rgba(255,255,255,0.05)] mb-8 transition-colors duration-500">
-      <h2 className="font-bold text-3xl mb-10 text-gray-800 dark:text-gray-100">
-        Comments ({totalComments.length}) 
-      </h2>
-
-      <button
-        onClick={handlePopupOpen}
-        className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
-      >
+      <div className="flex justify-between items-center mb-10">
+        <h2 className="font-bold text-3xl text-gray-800 dark:text-gray-100">
+        Comments ({totalComments.length})
+        </h2>
+        <button
+          onClick={handlePopupOpen}
+          className="px-4 py-2 bg-[#ff6b6b] text-white rounded-xl hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]"
+        >
         DROP A COMMENT!
-      </button>
+        </button>
+      </div>
 
       <Modal
         isOpen={isPopupOpen}
@@ -25,18 +26,57 @@ const CommentBox = ({ totalComments, visibleComments, hasMore, handleViewMore, h
         overlayClassName="fixed inset-0 bg-black/50 flex justify-center items-start z-50"
       >
         <h2 className="text-xl font-bold dark:text-white">DROP A COMMENT</h2>
-        <p className="mt-2 dark:text-gray-200">
+        <div className="flex">
+          <button
+            onClick={handlePopupClosed}
+            className="px-4 py-2 rounded-lg hover:bg-[#ff6b6b]"
+          >
+            ⭐
+          </button>
+          <button
+            onClick={handlePopupClosed}
+            className="px-4 py-2 rounded-lg hover:bg-[#ff6b6b]"
+          >
+            ⭐
+          </button>
+          <button
+            onClick={handlePopupClosed}
+            className="px-4 py-2 rounded-lg hover:bg-[#ff6b6b]"
+          >
+            ⭐
+          </button>
+          <button
+            onClick={handlePopupClosed}
+            className="px-4 py-2 rounded-lg hover:bg-[#ff6b6b]"
+          >
+            ⭐
+          </button>
+          <button
+            onClick={handlePopupClosed}
+            className="px-4 py-2 rounded-lg hover:bg-[#ff6b6b]"
+          >
+            ⭐
+          </button>
+        </div>
         <label>
-          Write your post:
+          Write your comment:
          <textarea name="postContent" rows={4} cols={40} />
         </label>
-        </p>
-        <button
-          onClick={handlePopupClosed}
-          className="mt-6 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-        >
-          Close
-        </button>
+        
+        <div className="flex gap-4 mt-6">
+          <button
+            onClick={handlePopupClosed}
+            className="mt-6 px-4 py-2 bg-[#ff6b6b] text-white rounded-lg hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]"
+          >
+            Save
+          </button>
+          <button
+            onClick={handlePopupClosed}
+            className="mt-6 px-4 py-2 bg-[#ff6b6b] text-white rounded-lg hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]"
+          >
+            Cancel
+          </button>
+        </div>
       </Modal>
 
       {totalComments?.slice(0, visibleComments).map((comment) => (
