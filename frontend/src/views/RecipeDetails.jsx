@@ -26,6 +26,21 @@ function RecipeDetailPage() {
   const [lastKey, setLastkey] = useState('');
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [likes, setLikes] = useState(0);
+  const [newComment, setNewComment] = useState('');
+  const [starRating, setStarRating] = useState(0);
+
+  const handleCommentSubmit = async () => {
+    if (!newComment.trim()) return;
+
+    try {
+      await addCommentToRecipe(id, star, comment); 
+      alert('Comment added!');
+      setNewComment(''); 
+      handleRatings(id, lastKey); 
+    } catch (error) {
+      alert('Failed to add comment');
+    }
+  };
 
   const handleLike = async () => {
     try {

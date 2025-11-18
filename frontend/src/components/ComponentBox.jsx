@@ -26,37 +26,12 @@ const CommentBox = ({ totalComments, visibleComments, hasMore, handleViewMore, h
         overlayClassName="fixed inset-0 bg-black/50 flex justify-center items-start z-50"
       >
         <h2 className="text-xl font-bold dark:text-white">DROP A COMMENT</h2>
-        <div className="flex">
-          <button
-            onClick={handlePopupClosed}
-            className="px-4 py-2 rounded-lg hover:bg-[#ff6b6b]"
-          >
-            ⭐
-          </button>
-          <button
-            onClick={handlePopupClosed}
-            className="px-4 py-2 rounded-lg hover:bg-[#ff6b6b]"
-          >
-            ⭐
-          </button>
-          <button
-            onClick={handlePopupClosed}
-            className="px-4 py-2 rounded-lg hover:bg-[#ff6b6b]"
-          >
-            ⭐
-          </button>
-          <button
-            onClick={handlePopupClosed}
-            className="px-4 py-2 rounded-lg hover:bg-[#ff6b6b]"
-          >
-            ⭐
-          </button>
-          <button
-            onClick={handlePopupClosed}
-            className="px-4 py-2 rounded-lg hover:bg-[#ff6b6b]"
-          >
-            ⭐
-          </button>
+        <div className="flex gap-2 my-4">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button key={star} className="px-2 py-1 rounded-lg hover:bg-[#ff6b6b]">
+              ⭐
+            </button>
+          ))}
         </div>
         <label>
           Write your comment:
