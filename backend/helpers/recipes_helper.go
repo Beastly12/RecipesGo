@@ -133,6 +133,18 @@ func (r *recipeHelper) GetAllRecipes(lastKey map[string]types.AttributeValue, ca
 
 	recipes := models.DatabaseItemsToRecipeStructs(&result.Items, utils.GetDependencies().CloudFrontDomainName)
 
+	for i, recipe := range *recipes {
+		user, err := NewUserHelper(r.Ctx).GetDisplayDetails(recipe.AuthorId)
+		if err != nil || user == nil {
+			(*recipes)[i].AuthorDpUrl = ""
+			(*recipes)[i].AuthorName = "[deleted]"
+			continue
+		}
+
+		(*recipes)[i].AuthorDpUrl = user.DpUrl
+		(*recipes)[i].AuthorName = user.Name
+	}
+
 	utils.BasicLog("db item to recipes successful", recipes)
 	utils.BasicLog("last eval key", result.LastEvaluatedKey)
 

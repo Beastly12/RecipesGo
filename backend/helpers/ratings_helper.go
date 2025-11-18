@@ -142,6 +142,19 @@ func (r *ratingsHelper) GetRecipeRatings(recipeId string, lastKey map[string]typ
 
 	ratings := models.DbItemsToRatingsStructs(&result.Items)
 
+	for i, rating := range *ratings {
+		user, err := NewUserHelper(r.Ctx).GetDisplayDetails(rating.Userid)
+		if err != nil || user == nil {
+			(*ratings)[i].UserDpUrl = ""
+			(*ratings)[i].UserName = "Unknown user"
+
+			continue
+		}
+
+		(*ratings)[i].UserDpUrl = user.DpUrl
+		(*ratings)[i].UserName = user.Name
+	}
+
 	return &getRatingsOutput{
 		Ratings: ratings,
 		LastKey: result.LastEvaluatedKey,
