@@ -171,9 +171,19 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 		return nil, nil
 	}
 
-	recipes := models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, utils.GetDependencies().CloudFrontDomainName)
+	recipe := (*models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, utils.GetDependencies().CloudFrontDomainName))[0]
 
-	recipe := (*recipes)[0]
+	user, err := NewUserHelper(this.Ctx).GetDisplayDetails(recipe.AuthorId)
+	if err != nil || user == nil {
+		recipe.AuthorDpUrl = ""
+		recipe.AuthorName = "[Deleted]"
+
+		return &recipe, nil
+	}
+
+	recipe.AuthorDpUrl = user.DpUrl
+	recipe.AuthorName = user.Name
+
 	return &recipe, nil
 }
 
