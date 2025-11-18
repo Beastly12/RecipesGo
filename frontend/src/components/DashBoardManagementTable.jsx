@@ -76,7 +76,7 @@ const DashBoardManagementTable = () => {
   };
 
   return (
-    <section className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white rounded-3xl shadow-md dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)] mt-10 transition-all duration-300">
+    <section className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-500 rounded-3xl shadow-md dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)] mt-10 transition-all duration-300">
       <div className="flex flex-col sm:flex-row md:flex-col shadow-none dark:shadow-none">
         <div className="flex justify-between items-center p-8 sm:space-x-9">
           <h2 className="text-2xl font-bold mb-3 md:mb-0 text-gray-800 dark:text-white">
@@ -87,7 +87,7 @@ const DashBoardManagementTable = () => {
             <input
               type="text"
               placeholder="Search recipes..."
-              className="w-full text-sm rounded-full px-4 py-2 border border-gray-300 dark:border-white bg-white dark:bg-[#1a1a1a] text-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#ff6b6b] transition-all"
+              className="w-full text-sm rounded-full px-4 py-2 border-gray-600 border bg-white dark:bg-[#1a1a1a] text-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#ff6b6b] transition-all"
               value={searchRecipe}
               onChange={(e) => {
                 SetSearchRecipe(e.target.value);
@@ -96,14 +96,6 @@ const DashBoardManagementTable = () => {
           </div>
         </div>
       </div>
-
-      {/* <div className=" hidden md:grid grid-cols-5 gap-4 px-6 py-3 justify-between text-gray-700 bg-gray-200 font-semibold">
-        <h2>RECIPE</h2>
-        <h2>STATUS</h2>
-        <h2>ENGAGEMENT</h2>
-        <h2>DATE</h2>
-        <h2>ACTIONS</h2>
-      </div> */}
 
       <ul className="divide-y divide-gray-200 dark:divide-white">
         {filteredRecipes.map((recipe) => (
