@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import DashBoardCard from '../components/DashBoardCard';
 import { HeartIcon, NotebookPen, Eye, MessageCircleMore } from 'lucide-react';
 import DashBoardManagementTable from '../components/DashBoardManagementTable';
-import { getDashBoardData } from '../services/DashBoardService.mjs';
+import { getUserDetails } from '../services/UserService.mjs';
 
 var userName = 'Daniel';
 
@@ -10,23 +10,23 @@ const hour = new Date().getHours();
 const greeting = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
 
 const DashBoard = () => {
-  // const [stats, setStats] = useState(null);
-  // const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   async function fetchDashboard() {
-  //     try {
-  //       const data = await getDashBoardData();
-  //       setStats(data);
-  //     } catch (error) {
-  //       console.error('Error loading dashboard data:', err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }
+  useEffect(() => {
+    async function fetchDashboard() {
+      try {
+        const data = await getUserDetails();
+        setStats(data);
+      } catch (error) {
+        console.error('Error loading dashboard data:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-  //   fetchDashboard();
-  // }, []);
+    fetchDashboard();
+  }, []);
 
   return (
     <section className="min-h-screen bg-[#fafafa] dark:bg-[#1a1a1a] dark:text-[#e4e7eb]">
@@ -52,31 +52,34 @@ const DashBoard = () => {
           </button>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
-          <DashBoardCard
-            icon={<NotebookPen className="w-12 h-12 text-yellow-500" />}
-            value="47"
-            title="Total Recipes"
-          />
-          <DashBoardCard
-            icon={<Eye className="w-12 h-12 text-blue-500" />}
-            value="12.5K"
-            title="Total Views"
-          />
-          <DashBoardCard
-            icon={<HeartIcon className=" w-12 h-12 text-red-500" />}
-            value="346"
-            title="Total Comments"
-          />
-          <DashBoardCard
-            icon={<MessageCircleMore className="w-12 h-12 text-purple-500" />}
-            value="8,234"
-            title="Total Likes"
-          />
-        </div>
+        {loading ? (
+          <p className="text-center mt-6 text-3xl font-medium">Loading Dashboard.....</p>
+        ) : (
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
+            <DashBoardCard
+              icon={<NotebookPen className="w-12 h-12 text-yellow-500" />}
+              value="47"
+              title="Total Recipes"
+            />
+            <DashBoardCard
+              icon={<Eye className="w-12 h-12 text-blue-500" />}
+              value="12.5K"
+              title="Total Views"
+            />
+            <DashBoardCard
+              icon={<HeartIcon className=" w-12 h-12 text-red-500" />}
+              value="346"
+              title="Total Comments"
+            />
+            <DashBoardCard
+              icon={<MessageCircleMore className="w-12 h-12 text-purple-500" />}
+              value="8,234"
+              title="Total Likes"
+            />
+          </div>
+        )}
 
         <DashBoardManagementTable />
-        
       </div>
     </section>
   );
