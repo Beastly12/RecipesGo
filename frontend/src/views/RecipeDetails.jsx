@@ -18,7 +18,7 @@ import { favoriteRecipe } from '../services/RecipesDetailsService.mjs';
 import { getAllRatings } from '../services/RecipesDetailsService.mjs';
 
 function RecipeDetails() {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [ratings, setRatings] = useState([]);
   const [hasMore, setMore] = useState(false);
@@ -28,13 +28,13 @@ function RecipeDetails() {
     setLoading(true);
     try {
       const { data } = await getAllRatings({ recipeId: id, last: lastKey });
-  
+
       const ratingsData = data.message.map((rating) => ({
         key: rating.id,
         stars: rating.stars,
-        comments: rating.comment
+        comments: rating.comment,
       }));
-  
+
       setRatings(ratingsData);
       setMore(Boolean(data.last));
       setLastkey(data.last);
@@ -45,7 +45,6 @@ function RecipeDetails() {
     }
   };
 }
-
 
 function RecipeDetailPage() {
   const { id } = useParams();
@@ -125,15 +124,15 @@ function RecipeDetailPage() {
 
                 {/* Favorite Button */}
                 <button
-                onClick={async () => {
-                  try {
-                    await favoriteRecipe(id);
-                    alert("Added to favorites!");
-                  } catch (error) {
-                    console.error("Error adding to favorites:", error);
-                    alert("Failed to add to favorites.");
-                  }
-                }}
+                  onClick={async () => {
+                    try {
+                      await favoriteRecipe(id);
+                      alert('Added to favorites!');
+                    } catch (error) {
+                      console.error('Error adding to favorites:', error);
+                      alert('Failed to add to favorites.');
+                    }
+                  }}
                   className="cursor-pointer flex items-center justify-center gap-2 bg-yellow-100 text-yellow-600 border py-2 px-4 sm:px-6
                 rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full 
                 dark:bg-yellow-800 dark:text-yellow-300"
