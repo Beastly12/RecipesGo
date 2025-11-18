@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { ArrowLeft, Settings } from "lucide-react";
-import RecipesList from "../components/RecipeList";
-import { Link } from "react-router-dom";
+import { useState } from 'react';
+import { ArrowLeft, Settings } from 'lucide-react';
+import RecipesList from '../components/RecipeList';
+import { Link } from 'react-router-dom';
 
 var rData = [
   {
@@ -65,10 +65,10 @@ export default function Profile() {
       </Link>
 
       <div className="max-w-[900px] my-[40px] mx-[auto] px-[40px]">
-        <div className="w-full rounded-2xl mb-6 flex space-x-2">
+        <div className="w-full rounded-2xl mb-6 flex space-x-2 bg-white dark:bg-[#1a1a1a] shadow-md dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)] ">
           <div className="mt-8 mb-8 p-8 mr-5">
             <img
-              className=" rounded-full border-1 w-200 object-cover sm:rounded-full md:rounded-full"
+              className=" rounded-full w-200 object-cover sm:rounded-full md:rounded-full"
               src={profile.img}
               alt="Profile Image"
             />

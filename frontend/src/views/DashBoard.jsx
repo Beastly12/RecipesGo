@@ -52,6 +52,8 @@ const DashBoard = () => {
           </button>
         </div>
 
+        <h3> Manage and track all your recipes in one place </h3>
+
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
           <DashBoardCard
             icon={<NotebookPen className="w-12 h-12 text-yellow-500" />}
@@ -76,7 +78,6 @@ const DashBoard = () => {
         </div>
 
         <DashBoardManagementTable />
-        
       </div>
     </section>
   );
