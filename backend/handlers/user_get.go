@@ -17,12 +17,16 @@ func handleGetUsers(ctx context.Context, req events.APIGatewayV2HTTPRequest) (ev
 		return models.UnauthorizedErrorResponse("You need to be signed in to view your profile!"), nil
 	}
 
-	user, err := helpers.NewUserHelper(ctx).Get(currentUserId)
+	if requestedUserId == "" {
+		requestedUserId = currentUserId
+	}
+
+	user, err := helpers.NewUserHelper(ctx).Get(requestedUserId)
 	if err != nil {
 		return models.ServerSideErrorResponse("Failed to get uer details!", err), nil
 	}
 
-	if currentUserId == requestedUserId || requestedUserId == "" {
+	if currentUserId != "" {
 		return models.SuccessfulGetRequestResponse(user, nil), nil
 	}
 

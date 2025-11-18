@@ -92,6 +92,7 @@ func (r *ratingsHelper) UpdateRating(recipeId, authorId string) error {
 		log.Printf("Failed to get author average rating! ERROR: %v", err)
 		return err
 	}
+	log.Printf("AUTHORS OVERALL RATING: %v", authorRating)
 
 	// update the recipe rating
 	updateRecipeRating := expression.Set(expression.Name("rating"), expression.Value(recipeRating))
@@ -101,7 +102,7 @@ func (r *ratingsHelper) UpdateRating(recipeId, authorId string) error {
 	}
 
 	// update the author rating
-	updateAuthorRating := expression.Set(expression.Name("rating"), expression.Value(authorRating))
+	updateAuthorRating := expression.Set(expression.Name("overallRating"), expression.Value(authorRating))
 	authorExpr, err := expression.NewBuilder().WithUpdate(updateAuthorRating).Build()
 	if err != nil {
 		return fmt.Errorf("failed to build author expression: %w", err)

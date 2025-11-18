@@ -111,10 +111,11 @@ const CreateRecipePage = () => {
         imageUrl: uploadres.message.imageKey,
       };
 
+      
       const createdRecipe = await createRecipeService(recipeData);
       hideLoading();
       message.success('Recipe published successfully!');
-      navigate(`/recipe/${createdRecipe.id}`, { state: createdRecipe });
+      navigate(`/`);
     } catch (e) {
       hideLoading();
       message.error('Failed to publish recipe. Please try again.');

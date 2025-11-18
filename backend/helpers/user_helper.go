@@ -4,6 +4,7 @@ import (
 	"backend/models"
 	"backend/utils"
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -73,6 +74,7 @@ func (this *userHelper) Get(userid string) (*models.User, error) {
 }
 
 func (u *userHelper) RecalculateRecipesOverallRatings(userId string) (float32, error) {
+	println("CALCULATING USERS OVERALL RECIPE RATING")
 	condition := expression.KeyEqual(
 		expression.Key("gsi3"),
 		expression.Value(utils.AddPrefix(userId, models.RecipesGsi3Prefix)),
@@ -93,11 +95,15 @@ func (u *userHelper) RecalculateRecipesOverallRatings(userId string) (float32, e
 
 	result, err := newHelper(u.Ctx).queryDb(input)
 	if err != nil {
+		println("FAILED TO GET USERS RECIPES")
 		return 0, err
 	}
 	if len(result) < 1 {
+		println("THIS USER HAS NO RECIPES")
 		return 0, nil
 	}
+
+	log.Printf("FOUND %v RECIPES CREATED BY THIS USER", len(result))
 
 	// convert to recipe items
 	recipes := models.DatabaseItemsToRecipeStructs(&result, utils.GetDependencies().CloudFrontDomainName)
@@ -105,8 +111,58 @@ func (u *userHelper) RecalculateRecipesOverallRatings(userId string) (float32, e
 	recipeCount := len(*recipes)
 	var ratings float32
 	for _, recipe := range *recipes {
+		log.Printf("RECIPE: %v, RATING: %v", recipe.Name, recipe.Rating)
 		ratings += float32(recipe.Rating)
 	}
 
 	return ratings / float32(recipeCount), nil
+}
+
+func setUpdate(update expression.UpdateBuilder, name, value string) expression.UpdateBuilder {
+	return update.Set(
+		expression.Name(name),
+		expression.Value(value),
+	)
+}
+
+func (u *userHelper) UpdateUser(userId string, user *models.User) error {
+	update := expression.UpdateBuilder{}
+	hasUpdates := false
+
+	if user.Name != "" {
+		update = setUpdate(update, "name", user.Name)
+		hasUpdates = true
+	}
+
+	if user.DpUrl != "" {
+		update = setUpdate(update, "dpUrl", user.DpUrl)
+		hasUpdates = true
+	}
+
+	if user.Bio != "" {
+		update = setUpdate(update, "bio", user.Bio)
+		hasUpdates = true
+	}
+
+	if user.Location != "" {
+		update = setUpdate(update, "location", user.Location)
+		hasUpdates = true
+	}
+
+	if !hasUpdates {
+		return fmt.Errorf("Nothing to update!")
+	}
+
+	expr, err := expression.NewBuilder().WithUpdate(update).Build()
+
+	input := &dynamodb.UpdateItemInput{
+		Key:                       *models.UserKey(userId),
+		TableName:                 &utils.GetDependencies().MainTableName,
+		UpdateExpression:          expr.Update(),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+	}
+
+	_, err = utils.GetDependencies().DbClient.UpdateItem(u.Ctx, input)
+	return err
 }
