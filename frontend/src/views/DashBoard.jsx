@@ -17,6 +17,7 @@ const DashBoard = () => {
     async function fetchDashboard() {
       try {
         const data = await getUserDetails();
+        console.log(data)
         setStats(data);
       } catch (error) {
         console.error('Error loading dashboard data:', err);
@@ -58,17 +59,17 @@ const DashBoard = () => {
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
             <DashBoardCard
               icon={<NotebookPen className="w-12 h-12 text-yellow-500" />}
-              value="47"
+              value={stats?.totalRecipes ?? 0}
               title="Total Recipes"
             />
             <DashBoardCard
               icon={<Eye className="w-12 h-12 text-blue-500" />}
-              value="12.5K"
+              value={`${stats?.totalViews?.toLocaleString() ?? '0'}`}
               title="Total Views"
             />
             <DashBoardCard
               icon={<HeartIcon className=" w-12 h-12 text-red-500" />}
-              value="346"
+              value={stats?.totalComments ?? 0}
               title="Total Comments"
             />
             <DashBoardCard
