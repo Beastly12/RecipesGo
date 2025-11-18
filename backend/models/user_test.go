@@ -67,7 +67,7 @@ func TestDbItemsToUserStructs(t *testing.T) {
 			"pk":       &types.AttributeValueMemberS{Value: "USER#123"},
 			"sk":       &types.AttributeValueMemberS{Value: "PROFILE"},
 			"gsi":      &types.AttributeValueMemberS{Value: "test"},
-			"dpUrl":    &types.AttributeValueMemberS{Value: "cdn.pic.com"},
+			"dpUrl":    &types.AttributeValueMemberS{Value: ""},
 			"location": &types.AttributeValueMemberS{Value: "southampton"},
 			"bio":      &types.AttributeValueMemberS{Value: "i love food"},
 		},
@@ -77,7 +77,7 @@ func TestDbItemsToUserStructs(t *testing.T) {
 		Userid:      "123",
 		Description: "PROFILE",
 		Name:        "test",
-		DpUrl:       "cdn.pic.com",
+		DpUrl:       "",
 		Location:    "southampton",
 		Bio:         "i love food",
 	}

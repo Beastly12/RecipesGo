@@ -83,6 +83,7 @@ To edit user details (NOT YET WORKING):
 	PUT /users
 	JSON:
 		(only include properties to update not all of them)
+		dpUrl: string
 		name: string
 		bio: string 
 		location: string

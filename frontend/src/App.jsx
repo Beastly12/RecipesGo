@@ -17,6 +17,7 @@ import AuthProvider from './context/AuthContext';
 Amplify.configure({
   Auth: {
     Cognito: {
+      region: import.meta.env.VITE_AMPLIFY_REGION,
       userPoolId: import.meta.env.VITE_AMPLIFY_POOL_ID,
       userPoolClientId: import.meta.env.VITE_AMPLIFY_CLIENT_ID,
     },

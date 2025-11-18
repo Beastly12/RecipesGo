@@ -35,6 +35,10 @@ const AuthPage = () => {
       //TODO: add properregex
       return;
     }
+    if (password.length < 8) {
+      messageApi.error('Password must be at least 8 characters long.');
+      return;
+    }
 
     setIsLoading(true);
 
@@ -68,7 +72,7 @@ const AuthPage = () => {
     try {
       const loggedIn = await LoginService(email, password);
       if (loggedIn) {
-        window.location.reload();
+        window.location.href = '/';
       } else {
         messageApi.error('Login failed. Please check your email and password.');
       }
