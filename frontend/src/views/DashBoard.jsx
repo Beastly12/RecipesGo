@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import DashBoardCard from '../components/DashBoardCard';
-import { HeartIcon, NotebookPen, Eye, MessageCircleMore } from 'lucide-react';
+import { HeartIcon, NotebookPen, Eye, MessageCircleMore, ArrowLeft } from 'lucide-react';
 import DashBoardManagementTable from '../components/DashBoardManagementTable';
 import { getUserDetails } from '../services/UserService.mjs';
 import { Link } from 'react-router-dom';
@@ -32,6 +32,21 @@ const DashBoard = () => {
 
   return (
     <section className="min-h-screen bg-[#fafafa] dark:bg-[#1a1a1a] dark:text-[#e4e7eb]">
+      <header className="w-full sticky top-0 bg-white dark:bg-[#1a1a1a] shadow-sm z-50">
+        <div className="max-w-[900px] mx-auto flex items-center gap-4 py-3 px-4">
+          <Link
+            to={-1}
+            className="flex items-center gap-2 
+                   text-lg md:text-xl 
+                   font-medium 
+                   hover:opacity-80 transition"
+          >
+            <ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
+            <span className="hidden sm:block">Back</span>
+          </Link>
+        </div>
+      </header>
+
       <div className="m-2 max-w-[900px] mx-[auto] px-[40px] dark:text-[#fafafa] p-8">
         <div
           className="border flex flex-col 
