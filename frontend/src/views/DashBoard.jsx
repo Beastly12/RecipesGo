@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import DashBoardCard from '../components/DashBoardCard';
 import { HeartIcon, NotebookPen, Eye, MessageCircleMore } from 'lucide-react';
 import DashBoardManagementTable from '../components/DashBoardManagementTable';
@@ -6,23 +6,34 @@ import DashBoardManagementTable from '../components/DashBoardManagementTable';
 var userName = 'Daniel';
 
 const hour = new Date().getHours();
-let greeting = '';
-if (hour < 12) {
-  greeting = 'morning';
-} else if (hour < 18) {
-  greeting = 'afternoon';
-} else {
-  greeting = 'evening';
-}
+const greeting = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
 
 const DashBoard = () => {
+  // const [stats, setStats] = useState(null);
+  // const [loading, setLoading] = useState(true);
+
+  // useEffect(() => {
+  //   async function fetchDashboard() {
+  //     try {
+  //       const data = await getDashBoardData();
+  //       setStats(data);
+  //     } catch (error) {
+  //       console.error('Error loading dashboard data:', err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+
+  //   fetchDashboard();
+  // }, []);
+
   return (
-    <section className="min-h-screen bg-[#fafafa] dark:bg-[#0a0e27] dark:text-[#e4e7eb]">
-      <div className="m-2 max-w-[900px] my-[40px] mx-[auto] px-[40px] dark:text-[#fafafa]">
+    <section className="min-h-screen bg-[#fafafa] dark:bg-[#1a1a1a] dark:text-[#e4e7eb]">
+      <div className="m-2 max-w-[900px] mx-[auto] px-[40px] dark:text-[#fafafa] p-8">
         <div
           className="border flex flex-col 
         bg-[#ff6b6b] text-white 
-        dark:bg-gradient-to-br dark:from-[#1a2142] dark:to-[#151b35] dark:text-[#fafafa]
+        dark:bg-gradient-to-br dark:bg-[#1a1a1a] dark:text-[#fafafa]
         rounded-3xl mt-4 mb-2 p-7 space-y-3 
         shadow-[0_4px_12px_rgba(0,0,0,0.15)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)]
         transition-all duration-300"
@@ -64,6 +75,7 @@ const DashBoard = () => {
         </div>
 
         <DashBoardManagementTable />
+        
       </div>
     </section>
   );

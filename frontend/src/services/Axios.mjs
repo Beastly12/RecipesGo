@@ -13,6 +13,7 @@ instance.interceptors.request.use(
       const session = await fetchAuthSession();
 
       const accessToken = session.tokens?.idToken;
+      // console.log("accessToken:", session);
 
       if (accessToken) {
         const expirationTime = (accessToken.payload.exp ?? 0) * 1000;
@@ -32,6 +33,7 @@ instance.interceptors.request.use(
         } else {
           config.headers.Authorization = `Bearer ${accessToken.toString()}`;
         }
+        // console.log(`Bearer ${accessToken.toString()}`)
       }
     } catch (error) {
       console.error('Failed to get auth session:', error);
