@@ -23,6 +23,7 @@ function RecipeDetailPage() {
   const [ratings, setRatings] = useState([]);
   const [hasMore, setMore] = useState(false);
   const [lastKey, setLastkey] = useState('');
+  const [isPopupOpen, setPopupOpen] = useState(false);
 
   useEffect(() => {
     async function fetchRecipe() {
@@ -41,6 +42,14 @@ function RecipeDetailPage() {
   const handleViewMore = () => {
     setVisibleComment((prev) => prev + 2);
   };
+
+  const handlePopupOpen = () => {
+    setPopupOpen(true);
+  }
+
+  const handlePopupClosed = () => {
+    setPopupOpen(false);
+  }
 
   const handleRatings = async (id, lastKey) => {
     setLoading(true);
@@ -176,7 +185,7 @@ function RecipeDetailPage() {
               </div>
             </div>
 
-            <Accordion sections={recipe.Description} />
+            <Accordion sections={[{ id: 1, text: recipe.Description }]} />
 
             <div className="grid md:grid-cols-2 gap-10 mt-10">
               <div>
@@ -205,11 +214,15 @@ function RecipeDetailPage() {
             </div>
 
             {<CommentBox
-              totalComments={ratings.map(r => r.comments)}
+              totalComments={ratings}
               visibleComments={visibleComment}
               hasMore={hasMore}
               handleViewMore={handleViewMore}
+              handlePopupOpen = {handlePopupOpen}
+              handlePopupClosed = {handlePopupClosed}
+              isPopupOpen={isPopupOpen}
             /> }
+             
           </div>
         </div>
       </div>
@@ -218,3 +231,5 @@ function RecipeDetailPage() {
 }
 
 export default RecipeDetailPage;
+
+                        

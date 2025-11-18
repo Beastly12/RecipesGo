@@ -1,11 +1,43 @@
 import React from 'react';
+import Modal from "react-modal";
 
-const CommentBox = ({ totalComments, visibleComments, hasMore, handleViewMore }) => {
+Modal.setAppElement("#root");
+
+
+const CommentBox = ({ totalComments, visibleComments, hasMore, handleViewMore, handlePopupOpen, handlePopupClosed, isPopupOpen }) => {
   return (
     <div className="bg-white dark:bg-[#1e1e1e] mt-14 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_24px_rgba(255,255,255,0.05)] mb-8 transition-colors duration-500">
       <h2 className="font-bold text-3xl mb-10 text-gray-800 dark:text-gray-100">
-        Comments ({totalComments.length})
+        Comments ({totalComments.length}) 
       </h2>
+
+      <button
+        onClick={handlePopupOpen}
+        className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+      >
+        DROP A COMMENT!
+      </button>
+
+      <Modal
+        isOpen={isPopupOpen}
+        onRequestClose={handlePopupClosed}
+        className="bg-white dark:bg-[#1e1e1e] p-6 rounded-xl shadow-xl max-w-md mx-auto mt-24 outline-none"
+        overlayClassName="fixed inset-0 bg-black/50 flex justify-center items-start z-50"
+      >
+        <h2 className="text-xl font-bold dark:text-white">DROP A COMMENT</h2>
+        <p className="mt-2 dark:text-gray-200">
+        <label>
+          Write your post:
+         <textarea name="postContent" rows={4} cols={40} />
+        </label>
+        </p>
+        <button
+          onClick={handlePopupClosed}
+          className="mt-6 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+        >
+          Close
+        </button>
+      </Modal>
 
       {totalComments?.slice(0, visibleComments).map((comment) => (
         <div
