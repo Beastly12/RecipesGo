@@ -181,7 +181,7 @@ func (r *recipeHelper) GetAllRecipesByUser(lastKey map[string]types.AttributeVal
 
 	input := &dynamodb.QueryInput{
 		TableName:                 &utils.GetDependencies().MainTableName,
-		IndexName:                 aws.String("gsi3Index"),
+		IndexName:                 aws.String("gsiIndex3"),
 		KeyConditionExpression:    expr.KeyCondition(),
 		ExpressionAttributeValues: expr.Values(),
 		ExpressionAttributeNames:  expr.Names(),
