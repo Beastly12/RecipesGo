@@ -13,7 +13,7 @@ import { Accordion } from '../components/Accordion';
 import InstructionBox from '../components/InstructionBox';
 import IngredientsBox from '../components/IngredientsBox';
 import CommentBox from '../components/ComponentBox';
-import { favoriteRecipe, getAllRatings, getRecipebyId, getUserbyId} from '../services/RecipesDetailsService.mjs';
+import { favoriteRecipe, getAllRatings, getRecipebyId, getUserbyId, rateRecipe} from '../services/RecipesDetailsService.mjs';
 import { editRecipe } from '../services/RecipesService.mjs';
 
 function RecipeDetailPage() {
@@ -28,36 +28,7 @@ function RecipeDetailPage() {
   const [likes, setLikes] = useState(0);
   const [newComment, setNewComment] = useState('');
   const [starRating, setStarRating] = useState(0);
-
-  const handleCommentSubmit = async () => {
-    if (!newComment.trim()) return;
-
-    try {
-      await addCommentToRecipe(id, star, comment); 
-      alert('Comment added!');
-      setNewComment(''); 
-      handleRatings(id, lastKey); 
-    } catch (error) {
-      alert('Failed to add comment');
-    }
-  };
-
-  const handleLike = async () => {
-    try {
-      const likeData = {
-        likes: likes + 1, 
-      };
- 
-      await editRecipe(id, likeData);
-
-      setLikes(prev => prev + 1);
-      alert('LIKED SUCCESFULLY');
-    } catch (error) {
-      alert('FAILED TO LIKE');
-    }
-  };
   
-
   useEffect(() => {
     async function fetchRecipe() {
       try {
@@ -135,6 +106,41 @@ function RecipeDetailPage() {
       console.error('Failed to fetch details for recipe:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleComment = async () => {
+    if (!starRating === 0) {
+      alert('Please enter a comment and select a star rating.');
+      return;
+    }
+  
+    try {
+      await rateRecipe(id, { stars: starRating, comment: newComment });
+  
+      alert('Comment added successfully!');
+      handleRatings(id, lastKey); 
+  
+      setNewComment('');
+      setStarRating(0);
+      setPopupOpen(false);
+    } catch (error) {
+      console.error('Failed to add comment:', error);
+      alert('Failed to add comment');
+    }
+  };
+
+  const handleLike = async () => {
+    try {
+      const likeData = {
+        likes: likes + 1, 
+      };
+ 
+      await editRecipe(id, likeData);
+      setLikes(prev => prev + 1);
+      alert('LIKED SUCCESFULLY');
+    } catch (error) {
+      alert('FAILED TO LIKE');
     }
   };
 
@@ -258,6 +264,11 @@ function RecipeDetailPage() {
               handlePopupOpen = {handlePopupOpen}
               handlePopupClosed = {handlePopupClosed}
               isPopupOpen={isPopupOpen}
+              comment={newComment}
+              setComment={setNewComment}
+              starRating={starRating}
+              setStarRating={setStarRating}
+              handleComment={handleComment} 
             /> }
              
           </div>
