@@ -14,7 +14,7 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
       setLoading(false);
       return;
     }
-  
+
     async function fetchRecipes() {
       setLoading(true);
       try {
@@ -22,18 +22,17 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
         console.log('Recipes API response:', res);
         const list = res.data?.message || [];
         setRecipes(list);
-  
-        if (onRecipeCountChange) onRecipeCountChange(list.length);
+
+        onRecipeCountChange?.(list.length);
       } catch (error) {
         console.error('Error fetching recipes', error);
       } finally {
         setLoading(false);
       }
     }
-  
+
     fetchRecipes();
   }, [userId]);
-  
 
   const handleDelete = async (recipeId) => {
     try {
@@ -41,9 +40,7 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
       const updated = recipe.filter((r) => r.id !== recipeId);
       setRecipes(updated);
 
-      if (onRecipeCountChange) {
-        onRecipeCountChange(updated.length);
-      }
+      onRecipeCountChange(updated.length);
     } catch (error) {
       console.error('Failed to delete recipe:', error);
     }
@@ -55,13 +52,41 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
 
   const statusTheme = (isPublic) => {
     return (
-      <span className={`inline-flex ... ${isPublic ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'}`}>
+      <span
+        className={`inline-flex ... ${isPublic ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'}`}
+      >
         {isPublic ? <Globe size={16} /> : <Lock size={16} />}
         {isPublic ? 'Public' : 'Private'}
       </span>
     );
   };
-  
+
+  const timeAgo = (dateString) => {
+    if (!dateString) return '';
+
+    // Fix backend format: "2025-11-19 16:19:23"
+    const date = new Date(dateString.replace(' ', 'T'));
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
+
+    const intervals = {
+      year: 31536000,
+      month: 2592000,
+      week: 604800,
+      day: 86400,
+      hour: 3600,
+      minute: 60,
+    };
+
+    for (let unit in intervals) {
+      const amount = Math.floor(seconds / intervals[unit]);
+      if (amount >= 1) {
+        return amount + ' ' + unit + (amount > 1 ? 's' : '') + ' ago';
+      }
+    }
+
+    return 'Just now';
+  };
 
   return (
     <section className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-500 rounded-3xl shadow-md dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)] mt-10 transition-all duration-300">
@@ -111,7 +136,7 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
               <div className="flex sm:flex-col md:flex-row gap-4 text-sm dark:text-gray-200 text-gray-700">
                 <span>❤️{recipe.likes}</span> <span>💬 {recipe.rating}</span>
                 <span className="text-gray-500 dark:text-gray-300">
-                  {new Date(recipe.dateCreated).toLocaleDateString()}
+                  {timeAgo(recipe.dateCreated)}
                 </span>
               </div>
             </div>
@@ -131,7 +156,7 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
         ))}
       </ul>
 
-      {filteredRecipes.length === 0 && (
+    {filteredRecipes.length === 0 && !loading && (
         <p className="text-center text-gray-500 py-6 text-2xl dark:text-white">No Recipe Found</p>
       )}
     </section>
