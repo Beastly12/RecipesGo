@@ -17,6 +17,9 @@ func HandleRecipesActions(ctx context.Context, req events.APIGatewayV2HTTPReques
 		if recipeId != "" {
 			return handleGetRecipeDetails(ctx, req)
 		}
+		if userId := req.QueryStringParameters["by"]; userId != "" {
+			return handleGetRecipesByUser(ctx, req)
+		}
 		return handleGetRecipes(ctx, req)
 
 	case "DELETE":

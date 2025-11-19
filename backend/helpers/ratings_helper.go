@@ -51,33 +51,6 @@ func (r *ratingsHelper) RemoveRating(recipeId, userId string) error {
 	return nil
 }
 
-func (r *ratingsHelper) DeprecatedUpdateRating(recipeId string) error {
-	// get all ratings on recipe, then get the average
-	ave, err := NewRatingsHelper(r.Ctx).GetRecipeRatingAverage(recipeId)
-	if err != nil {
-		log.Printf("Failed to get recipe average rating! ERROR: %v", err)
-		return err
-	}
-
-	update := expression.Set(expression.Name("rating"), expression.Value(ave))
-
-	expr, err := expression.NewBuilder().WithUpdate(update).Build()
-	if err != nil {
-		return fmt.Errorf("failed to build expression: %w", err)
-	}
-
-	input := &dynamodb.UpdateItemInput{
-		Key:                       *models.RecipeKey(recipeId),
-		TableName:                 &utils.GetDependencies().MainTableName,
-		UpdateExpression:          expr.Update(),
-		ExpressionAttributeValues: expr.Values(),
-		ExpressionAttributeNames:  expr.Names(),
-	}
-
-	_, err = utils.GetDependencies().DbClient.UpdateItem(r.Ctx, input)
-	return err
-}
-
 func (r *ratingsHelper) UpdateRating(recipeId, authorId string) error {
 	// calc the new rating for given recipe
 	recipeRating, err := NewRatingsHelper(r.Ctx).GetRecipeRatingAverage(recipeId)
@@ -168,6 +141,19 @@ func (r *ratingsHelper) GetRecipeRatings(recipeId string, lastKey map[string]typ
 	}
 
 	ratings := models.DbItemsToRatingsStructs(&result.Items)
+
+	for i, rating := range *ratings {
+		user, err := NewUserHelper(r.Ctx).GetDisplayDetails(rating.Userid)
+		if err != nil || user == nil {
+			(*ratings)[i].UserDpUrl = ""
+			(*ratings)[i].UserName = "Unknown user"
+
+			continue
+		}
+
+		(*ratings)[i].UserDpUrl = user.DpUrl
+		(*ratings)[i].UserName = user.Name
+	}
 
 	return &getRatingsOutput{
 		Ratings: ratings,
