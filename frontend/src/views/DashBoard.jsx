@@ -19,7 +19,7 @@ import { handleSignOut } from '../services/AuthService.mjs';
 const hour = new Date().getHours();
 const greeting = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
 
-const DashBoard = ({ userId, colorTheme, setTheme, userName }) => {
+const DashBoard = ({ userId, colorTheme, userName }) => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -201,7 +201,10 @@ const DashBoard = ({ userId, colorTheme, setTheme, userName }) => {
           </div>
         )}
 
-        <DashBoardManagementTable />
+        <DashBoardManagementTable
+          userId={userId}
+          onRecipeCountChange={(count) => setStats((prev) => ({ ...prev, recipeCount: count }))}
+        />
       </div>
     </section>
   );

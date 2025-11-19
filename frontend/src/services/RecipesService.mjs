@@ -57,14 +57,10 @@ export async function getRecipebyId(recipeId) {
   return await axios.get(`/recipes/${recipeId}`);
 }
 
-export async function getRecipesByUser(userId) {
-  return await axios.get('/recipes', {
-    params: { userId },
-  });
-}
+export async function getRecipesByUser(userId, last) {
+  const params = { by: userId };
 
-export async function getUserRecipeById(recipeId, userId) {
-  return await axios.get(`/recipes/${recipeId}`, {
-    params: { userId },
-  });
+  if (last) params.last = last;
+
+  return await axios.get('/recipes', { params });
 }

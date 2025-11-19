@@ -1,61 +1,55 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Globe, Lock, PenLine, Trash2 } from 'lucide-react';
+import { getRecipesByUser, deleteRecipe, editRecipe } from '../services/RecipesService.mjs';
 
-const recipesData = [
-  {
-    id: 1,
-    name: 'Creamy Mushroom Pasta',
-    category: 'Italian',
-    meal: 'Dinner',
-    time: '30 mins',
-    status: 'Public',
-    date: '2 days ago',
-    likes: 234,
-    comments: 45,
-    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836',
-  },
-  {
-    id: 2,
-    name: 'Chocolate Chip Cookies',
-    category: 'Dessert',
-    meal: 'Baking',
-    time: '45 mins',
-    status: 'Public',
-    date: '5 days ago',
-    likes: 567,
-    comments: 89,
-    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836',
-  },
-  {
-    id: 3,
-    name: 'Homemade Pizza Dough',
-    category: 'Italian',
-    meal: 'Dinner',
-    time: '2 hours',
-    status: 'Private',
-    date: '1 week ago',
-    likes: 89,
-    comments: 12,
-    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836',
-  },
-  {
-    id: 4,
-    name: 'Avocado Toast Variations',
-    category: 'Breakfast',
-    meal: 'Quick',
-    time: '10 mins',
-    status: 'Public',
-    date: '2 weeks ago',
-    likes: 312,
-    comments: 56,
-    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836',
-  },
-];
 
-const DashBoardManagementTable = () => {
+
+const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
   const [searchRecipe, SetSearchRecipe] = useState('');
-  const [recipe, setRecipe] = useState(recipesData);
+  const [recipe, setRecipes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+
+  (useEffect(() => {
+    async function fetchRecipes() {
+      if (!userId) return;
+
+      try {
+        setLoading(true);
+
+        const res = await getRecipesByUser(userId);
+        console.log(res);
+        const list = res.data?.recipes || [];
+        console.log(list);
+
+        setRecipes(list);
+
+        if (onRecipeCountChange) {
+          onRecipeCountChange(list.length);
+        }
+      } catch (error) {
+        console.error('Error fetching recipes', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchRecipes();
+  }),
+    [userId]);
+
+  const handleDelete = async (recipeId) => {
+    try {
+      await deleteRecipe(recipeId);
+      const updated = recipe.filter((r) => r.id !== recipeId);
+      setRecipes(updated);
+
+      if (onRecipeCountChange) {
+        onRecipeCountChange(updated.length);
+      }
+    } catch (error) {
+      console.error('Failed to delete recipe:', err);
+    }
+  };
 
   const filteredRecipes = recipe.filter((r) =>
     r.name.toLowerCase().includes(searchRecipe.toLowerCase())
@@ -130,7 +124,7 @@ const DashBoardManagementTable = () => {
               <button className="cursor-pointer hover:scale-110 transition-transform">
                 <PenLine size={23} className="bg-[#ff6b6b] rounded-md text-white p-1" />
               </button>
-              <button className="cursor-pointer hover:scale-110 transition-transform">
+              <button className="cursor-pointer hover:scale-110 transition-transform" onClick={() => handleDelete(recipe.id)}>
                 <Trash2 size={23} className="bg-[#ff6b6b] rounded-md text-white p-1" />
               </button>
             </div>
