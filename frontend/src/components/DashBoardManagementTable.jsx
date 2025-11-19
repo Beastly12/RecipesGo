@@ -2,40 +2,38 @@ import React, { useEffect, useState } from 'react';
 import { Globe, Lock, PenLine, Trash2 } from 'lucide-react';
 import { getRecipesByUser, deleteRecipe, editRecipe } from '../services/RecipesService.mjs';
 
-
-
 const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
   const [searchRecipe, SetSearchRecipe] = useState('');
   const [recipe, setRecipes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
 
-  (useEffect(() => {
+  useEffect(() => {
+    if (!userId) {
+      console.warn('No userId provided to DashBoardManagementTable');
+      setLoading(false);
+      return;
+    }
+  
     async function fetchRecipes() {
-      if (!userId) return;
-
+      setLoading(true);
       try {
-        setLoading(true);
-
         const res = await getRecipesByUser(userId);
-        console.log(res);
-        const list = res.data?.recipes || [];
-        console.log(list);
-
+        console.log('Recipes API response:', res);
+        const list = res.data?.message || [];
         setRecipes(list);
-
-        if (onRecipeCountChange) {
-          onRecipeCountChange(list.length);
-        }
+  
+        if (onRecipeCountChange) onRecipeCountChange(list.length);
       } catch (error) {
         console.error('Error fetching recipes', error);
       } finally {
         setLoading(false);
       }
     }
+  
     fetchRecipes();
-  }),
-    [userId]);
+  }, [userId]);
+  
 
   const handleDelete = async (recipeId) => {
     try {
@@ -47,7 +45,7 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
         onRecipeCountChange(updated.length);
       }
     } catch (error) {
-      console.error('Failed to delete recipe:', err);
+      console.error('Failed to delete recipe:', error);
     }
   };
 
@@ -55,19 +53,15 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
     r.name.toLowerCase().includes(searchRecipe.toLowerCase())
   );
 
-  const statusTheme = (status) => {
-    const isPublished = status === 'Public';
+  const statusTheme = (isPublic) => {
     return (
-      <span
-        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-          isPublished ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'
-        }`}
-      >
-        {isPublished ? <Globe size={16} className="p-1" /> : <Lock size={16} className="p-1" />}
-        {isPublished ? 'Public' : 'Private'}
+      <span className={`inline-flex ... ${isPublic ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'}`}>
+        {isPublic ? <Globe size={16} /> : <Lock size={16} />}
+        {isPublic ? 'Public' : 'Private'}
       </span>
     );
   };
+  
 
   return (
     <section className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-500 rounded-3xl shadow-md dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)] mt-10 transition-all duration-300">
@@ -99,24 +93,26 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
           >
             <div className="flex space-x-3 items-center">
               <img
-                src={recipe.image}
+                src={recipe.imageUrl}
                 alt="Recipe Image"
                 className="w-28 h-28 object-cover rounded-xl shadow"
               />
               <div className="sm:flex-row justify-between items-center">
                 <h2 className="font-semibold text-gray-500 dark:text-white">{recipe.name}</h2>
                 <p className="text-sm text-gray-500 dark:text-gray-300">
-                  {recipe.category}•{recipe.meal}•{recipe.time}
+                  {recipe.category}•{recipe.difficulty}•{recipe.preparationTime}
                 </p>
               </div>
             </div>
 
             <div className="flex items-center sm:flex-row md:flex-row mr-2 sm:ml-8 gap-4">
-              <span> {statusTheme(recipe.status)}</span>
+              <span> {statusTheme(recipe.isPublic)}</span>
 
               <div className="flex sm:flex-col md:flex-row gap-4 text-sm dark:text-gray-200 text-gray-700">
-                <span>❤️{recipe.likes}</span> <span>💬 {recipe.comments}</span>
-                <span className="text-gray-500 dark:text-gray-300">{recipe.date}</span>
+                <span>❤️{recipe.likes}</span> <span>💬 {recipe.rating}</span>
+                <span className="text-gray-500 dark:text-gray-300">
+                  {new Date(recipe.dateCreated).toLocaleDateString()}
+                </span>
               </div>
             </div>
 
@@ -124,7 +120,10 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
               <button className="cursor-pointer hover:scale-110 transition-transform">
                 <PenLine size={23} className="bg-[#ff6b6b] rounded-md text-white p-1" />
               </button>
-              <button className="cursor-pointer hover:scale-110 transition-transform" onClick={() => handleDelete(recipe.id)}>
+              <button
+                className="cursor-pointer hover:scale-110 transition-transform"
+                onClick={() => handleDelete(recipe.id)}
+              >
                 <Trash2 size={23} className="bg-[#ff6b6b] rounded-md text-white p-1" />
               </button>
             </div>

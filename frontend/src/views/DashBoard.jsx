@@ -14,6 +14,7 @@ import {
 import { Menu, Avatar, Drawer } from 'antd';
 import { handleSignOut } from '../services/AuthService.mjs';
 
+
 // var userName = 'Daniel';
 
 const hour = new Date().getHours();
@@ -23,25 +24,32 @@ const DashBoard = ({ userId, colorTheme, userName }) => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  
 
   // Mock user data - you can replace with actual user data from props
   const userEmail = userId ? `${userId.substring(0, 10)}...` : '';
 
   useEffect(() => {
+    if (!userId) {
+      console.error('No userId provided to Dashboard!');
+      setLoading(false);
+      return;
+    }
+  
     async function fetchDashboard() {
       try {
-        const data = await getUserDetails();
-        console.log(data);
+        const data = await getUserDetails(userId);
         setStats(data);
       } catch (error) {
-        console.error('Error loading dashboard data:', err);
+        console.error('Error loading dashboard data:', error);
       } finally {
         setLoading(false);
       }
     }
-
+  
     fetchDashboard();
-  }, []);
+  }, [userId]);
+  
 
   const handleLogout = async () => {
     await handleSignOut();

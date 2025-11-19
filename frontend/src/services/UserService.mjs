@@ -32,7 +32,7 @@ export async function editUserDetails({ name, bio, location, dpUrl }) {
   return res.data;
 }
 
-export async function getUserDetails() {
-  const res = await axios.get(`/users`);
+export async function getUserDetails(userId) {
+  const res = await axios.get(`/users/${userId}`);
   return res.data.message;
 }
