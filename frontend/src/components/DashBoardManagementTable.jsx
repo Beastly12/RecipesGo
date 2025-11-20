@@ -88,6 +88,15 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
     return 'Just now';
   };
 
+  const handleedit = async function (recipeId) {
+    try {
+      await editRecipe(recipeId);
+    } catch (error) {
+      console.error('Failed to edit recipe:', error);
+    }
+    }
+  };
+
   return (
     <section className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-500 rounded-3xl shadow-md dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)] mt-10 transition-all duration-300">
       <div className="flex flex-col sm:flex-row md:flex-col shadow-none dark:shadow-none">
