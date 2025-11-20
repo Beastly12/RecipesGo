@@ -28,15 +28,11 @@ const DashBoard = () => {
   // }, []);
 
   return (
-    <section className="min-h-screen bg-[#fafafa] dark:bg-[#1a1a1a] dark:text-[#e4e7eb]">
+    <section className="min-h-screen bg-[#fafafa] dark:bg-[#0a0a0a] dark:text-[#e4e7eb]">
       <div className="m-2 max-w-[900px] mx-[auto] px-[40px] dark:text-[#fafafa] p-8">
         <div
-          className="border flex flex-col 
-        bg-[#ff6b6b] text-white 
-        dark:bg-gradient-to-br dark:bg-[#1a1a1a] dark:text-[#fafafa]
-        rounded-3xl mt-4 mb-2 p-7 space-y-3 
-        shadow-[0_4px_12px_rgba(0,0,0,0.15)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)]
-        transition-all duration-300"
+          className="flex flex-col bg-[#ff6b6b] text-white dark:bg-gradient-to-br dark:bg-[#1a1a1a] dark:text-[#fafafa] rounded-3xl mt-4 mb-2 p-7 space-y-3 shadow-[0_4px_12px_rgba(0,0,0,0.15)] dark:shadow-[0_4px_22px_rgba(0,0,0,0.5)]
+         transition-all duration-300 dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.6)]"
         >
           <p className="font-medium text-xl mt-2">Good {greeting}</p>
           <h1 className="font-bold text-4xl mt-2">Welcome back, {userName}! 👋</h1>
@@ -45,11 +41,15 @@ const DashBoard = () => {
             className="bg-white text-blue-600 
           dark:bg-[#ff6b6b] dark:text-white 
           font-medium rounded-2xl w-40 h-10 p-2 mt-9 
-          hover:scale-[1.03] transition-transform duration-300 "
+          hover:scale-[1.03] hover:brightness-110 active:scale-95 transition-all duration-300 "
           >
             + Create Recipe
           </button>
         </div>
+
+        <h3 className="mt-10 mb-4 text-2xl md:text-3xl font-semibold text-[#1a1a1a] dark:text-[#fafafa] tracking-wide">
+          Manage and track all your recipes in one place{' '}
+        </h3>
 
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
           <DashBoardCard
@@ -75,7 +75,6 @@ const DashBoard = () => {
         </div>
 
         <DashBoardManagementTable />
-        
       </div>
     </section>
   );

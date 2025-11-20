@@ -20,7 +20,7 @@ export default function ProfileSettings() {
   const [location, setLocation] = useState('');
   const [userId, setUserId] = useState(null);
   const [dpUrl, setDpUrl] = useState('');
-  
+
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -70,7 +70,7 @@ export default function ProfileSettings() {
       }
 
       setProfilePic(file);
-      
+
       Modal.success({
         title: 'Success',
         content: 'Profile picture uploaded successfully!',
@@ -195,7 +195,7 @@ export default function ProfileSettings() {
           </div>
           <div className="h-10 w-64 bg-gray-200 dark:bg-gray-700 rounded mb-2 animate-pulse"></div>
           <div className="h-6 w-96 bg-gray-200 dark:bg-gray-700 rounded mb-6 animate-pulse"></div>
-          
+
           <div className="bg-white rounded-2xl dark:bg-[#1a1a1a] p-8 mb-6 shadow dark:shadow-lg dark:shadow-black/50">
             <div className="flex flex-col items-center lg:flex-row p-2 gap-5">
               <div className="w-20 h-20 lg:w-40 lg:h-40 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
