@@ -45,7 +45,6 @@ function RecipeDetails() {
     }
   };
 }
-
 function RecipeDetailPage() {
   const { id } = useParams();
   const [recipe, setRecipe] = useState('');
