@@ -130,15 +130,18 @@ function RecipeDetailPage() {
     }
   };
 
-  const handleFav = async () => {
+  const handleLike = async () => {
     try {
       await favoriteRecipe(id);
-      alert('Added to favorites!');
+      setLikes(prev => prev + 1);
+      alert('LIKED SUCCESFULLY');
     } catch (error) {
-      console.error('Error adding to favorites:', error);
-      alert('Failed to add to favorites.');
+      onsole.error('Error LIKING RECIPE:', error);
+      alert('FAILED TO LIKE');
     }
-  }
+  };
+
+
 
   if (loading) return <p className="text-center mt-10">Loading recipe....</p>;
   if (!recipe) return <p className="text-center mt-10">Recipe not found.</p>;
@@ -186,15 +189,12 @@ function RecipeDetailPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3 dark:text-[#fafafa]">
-                {/* Favorite Button */}
-                <button
-                  onClick={handleFav}
-                  className="cursor-pointer flex items-center justify-center gap-2 bg-yellow-100 text-yellow-600 border py-2 px-4 sm:px-6
-                rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full 
-                dark:bg-yellow-800 dark:text-yellow-300"
+                {/* Likes Button */}
+                <button className="cursor-pointer flex items-center justify-center gap-2 bg-[#ff6b6b] text-white py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300 w-full  dark:text-[#fafafa]"
+                   onClick={handleLike}
                 >
-                  <Star className="w-5 h-5" />
-                  <span>Favorite</span>
+                  <Heart className="w-5 h-5" />
+                  <span>Likes ({likes})</span>
                 </button>
 
                 {/* Share Button */}
