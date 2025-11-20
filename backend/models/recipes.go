@@ -9,13 +9,14 @@ import (
 )
 
 const (
-	RecipesPkPrefix   = "RECIPE#"
-	RecipesSkPrefix   = "RECIPE"
-	RecipesGsiPrefix  = "RECIPE_TYPE#"
-	RecipesGsi2Prefix = "RECIPE_CAT#"
-	RecipesGsi3Prefix = "RECIPE_AUTHOR#"
-	RecipesLsiPrefix  = "RECIPE_DATE#"
-	RecipeItemType    = "RECIPE"
+	RecipesPkPrefix         = "RECIPE#"
+	RecipesSkPrefix         = "RECIPE"
+	RecipesGsiPrefix        = "RECIPE_TYPE#"
+	RecipesGsi2Prefix       = "RECIPE_CAT#"
+	RecipesGsi3Prefix       = "RECIPE_AUTHOR#"
+	RecipesLsiPrefix        = "RECIPE_DATE#"
+	RecipesPrivateLsiPrefix = "PRIVATE#RECIPE_DATE#"
+	RecipeItemType          = "RECIPE"
 )
 
 // pk: id, sk: category, gsi: type
