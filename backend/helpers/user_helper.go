@@ -213,3 +213,26 @@ func (u *userHelper) UpdateUser(userId string, user *models.User) error {
 	_, err = utils.GetDependencies().DbClient.UpdateItem(u.Ctx, input)
 	return err
 }
+
+func (u *userHelper) RemoveUserPicture(userId string) error {
+	update := expression.Set(
+		expression.Name("dpUrl"),
+		expression.Value(""),
+	)
+	expr, err := expression.NewBuilder().WithUpdate(update).Build()
+	if err != nil {
+		println("Failed to build profile picture update")
+		return err
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		Key:                       *models.UserKey(userId),
+		TableName:                 &utils.GetDependencies().MainTableName,
+		UpdateExpression:          expr.Update(),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+	}
+
+	_, err = utils.GetDependencies().DbClient.UpdateItem(u.Ctx, input)
+	return err
+}

@@ -3,6 +3,7 @@ import DashBoardCard from '../components/DashBoardCard';
 import { HeartIcon, NotebookPen, Eye, MessageCircleMore } from 'lucide-react';
 import DashBoardManagementTable from '../components/DashBoardManagementTable';
 import { getUserDetails } from '../services/UserService.mjs';
+import { getRecipesByUser } from '../services/RecipesService.mjs';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import useDarkMode from '../hooks/useDarkMode';
@@ -22,6 +23,7 @@ const greeting = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
 const DashBoard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [initialRecipes, setInitialRecipes] = useState([]);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [colorTheme] = useDarkMode();
   const { user, userName } = useAuthContext();
@@ -29,24 +31,34 @@ const DashBoard = () => {
   const userEmail = user?.userId ? `${user.userId.substring(0, 10)}...` : '';
 
   useEffect(() => {
-    if (!user?.userId) {
-      console.error('No userId provided to Dashboard!');
-      setLoading(false);
-      return;
-    }
+    if (!user?.userId) return;
 
-    async function fetchDashboard() {
+    async function fetchDashboardData() {
+      setLoading(true);
       try {
-        const data = await getUserDetails(user.userId);
-        setStats(data);
-      } catch (error) {
-        console.error('Error loading dashboard data:', error);
+        const [userStatsRes, userRecipesRes] = await Promise.all([
+          getUserDetails(user.userId),
+          getRecipesByUser(user.userId),
+        ]);
+
+        const userRecipes = userRecipesRes.data?.message || [];
+        setInitialRecipes(userRecipes);
+
+        setStats({
+          ...userStatsRes,
+          recipeCount: userRecipes.length,
+          likes: userStatsRes.likes ?? 0,
+          overallRating: userStatsRes.overallRating ?? 0,
+          views: userStatsRes.views ?? 0,
+        });
+      } catch (err) {
+        console.error('Error loading dashboard data:', err);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchDashboard();
+    fetchDashboardData();
   }, [user]);
 
   const handleLogout = async () => {
@@ -55,7 +67,7 @@ const DashBoard = () => {
     window.location.href = '/';
   };
 
-  // Skeleton Component
+  // Skeleton card
   const SkeletonCard = () => (
     <div className="animate-pulse relative overflow-hidden p-6 rounded-2xl border border-gray-200 dark:border-gray-500 bg-white dark:bg-[#1a1a1a]">
       <div className="h-12 w-12 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
@@ -66,6 +78,7 @@ const DashBoard = () => {
 
   return (
     <section className="min-h-screen bg-[#fafafa] dark:bg-[#1a1a1a] dark:text-[#e4e7eb]">
+      {/* Desktop Header */}
       <header className="hidden md:flex bg-white dark:bg-[#1a1a1a] px-10 py-4 shadow-sm sticky top-0 z-50 items-center gap-4">
         <button
           onClick={() => window.history.back()}
@@ -76,6 +89,7 @@ const DashBoard = () => {
         <h1 className="text-xl font-semibold text-gray-800 dark:text-[#fafafa]">Dashboard</h1>
       </header>
 
+      {/* Mobile Header */}
       <header className="md:hidden bg-white dark:bg-[#1a1a1a] px-4 py-3 shadow-sm sticky top-0 z-50">
         <div className="flex items-center justify-between gap-3">
           <Link
@@ -151,6 +165,7 @@ const DashBoard = () => {
       </Drawer>
 
       <div className="m-2 max-w-[900px] mx-auto px-[40px] dark:text-[#fafafa] p-8">
+        {/* Greeting & Create */}
         <div
           className="flex flex-col bg-[#ff6b6b] text-white dark:bg-gradient-to-br dark:bg-[#1a1a1a] dark:text-[#fafafa]
           rounded-3xl mt-4 mb-2 p-7 space-y-3 shadow-[0_4px_12px_rgba(0,0,0,0.15)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)]
@@ -178,6 +193,7 @@ const DashBoard = () => {
           )}
         </div>
 
+        {/* Dashboard Cards */}
         {loading ? (
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
             <SkeletonCard />
@@ -210,9 +226,14 @@ const DashBoard = () => {
           </div>
         )}
 
+        {/* Management Table */}
         <DashBoardManagementTable
           userId={user?.userId}
-          onRecipeCountChange={(count) => setStats((prev) => ({ ...prev, recipeCount: count }))}
+          initialRecipes={initialRecipes}
+          loading={loading}
+          onRecipeCountChange={(count) =>
+            setStats((prev) => ({ ...prev, recipeCount: count }))
+          }
         />
       </div>
     </section>
