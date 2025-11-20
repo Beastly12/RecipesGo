@@ -17,7 +17,17 @@ func handleEditUser(ctx context.Context, req events.APIGatewayV2HTTPRequest) (ev
 		return models.InvalidRequestErrorResponse("Invalid request body!"), nil
 	}
 
-	err := helpers.NewUserHelper(ctx).UpdateUser(userId, &user)
+	userHelper := helpers.NewUserHelper(ctx)
+
+	dbUser, err := userHelper.GetDisplayDetails(userId)
+	if err != nil {
+		return models.ServerSideErrorResponse("Failed to get user details from db!", err), nil
+	}
+	if dbUser == nil {
+		return models.NotFoundResponse("No such user exists!"), nil
+	}
+
+	err = userHelper.UpdateUser(userId, &user)
 	if err != nil {
 		return models.ServerSideErrorResponse("Failed to update user details", err), nil
 	}

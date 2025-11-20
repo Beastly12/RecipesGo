@@ -17,6 +17,9 @@ func handleDeleteRating(ctx context.Context, req events.APIGatewayV2HTTPRequest)
 	}
 
 	userId := utils.GetAuthUserId(req)
+	if userId == "" {
+		return models.UnauthorizedErrorResponse("You need to be logged in to do this!"), nil
+	}
 
 	err := helpers.NewRatingsHelper(ctx).RemoveRating(doomedRatingRecipeId, userId)
 	if err != nil {

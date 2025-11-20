@@ -16,8 +16,8 @@ const (
 type Rating struct {
 	RecipeId  string `dynamodbav:"pk" json:"RecipeId"`
 	Userid    string `dynamodbav:"sk" json:"userId"`
-	UserDpUrl string `dynamodbav:"dpUrl" json:"dpUrl"`
-	UserName  string `dynamodbav:"gsi" json:"name"`
+	UserDpUrl string `dynamodbav:"-" json:"dpUrl"`
+	UserName  string `dynamodbav:"-" json:"name"`
 	Stars     int    `dynamodbav:"stars" json:"stars"`
 	Comment   string `dynamodbav:"comment" json:"comment"`
 	DateAdded string `dynamodbav:"lsi" json:"dateAdded"`

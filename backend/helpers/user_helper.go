@@ -73,6 +73,25 @@ func (this *userHelper) Get(userid string) (*models.User, error) {
 	return &user, nil
 }
 
+func (u *userHelper) GetDisplayDetails(userId string) (*models.User, error) {
+	attr := expression.NamesList(expression.Name("dpUrl"), expression.Name("gsi"))
+	expr, err := expression.NewBuilder().WithProjection(attr).Build()
+	if err != nil {
+		log.Printf("Failed to get user display details! ERROR: %v", err)
+		return nil, err
+	}
+
+	input := &dynamodb.GetItemInput{
+		Key:                      *models.UserKey(userId),
+		TableName:                &utils.GetDependencies().MainTableName,
+		ProjectionExpression:     expr.Projection(),
+		ExpressionAttributeNames: expr.Names(),
+	}
+
+	result, err := utils.GetDependencies().DbClient.GetItem(u.Ctx, input)
+	return &(*models.DbItemsToUserStructs(&[]map[string]types.AttributeValue{result.Item}))[0], nil
+}
+
 func (u *userHelper) UpdateOverallRecipesRating(userId string) error {
 	// calc the new overall rating for author
 	authorRating, err := NewUserHelper(u.Ctx).RecalculateRecipesOverallRatings(userId)
@@ -158,7 +177,7 @@ func (u *userHelper) UpdateUser(userId string, user *models.User) error {
 	hasUpdates := false
 
 	if user.Name != "" {
-		update = setUpdate(update, "name", user.Name)
+		update = setUpdate(update, "gsi", utils.AddPrefix(user.Name, models.UserGsiPrefix))
 		hasUpdates = true
 	}
 

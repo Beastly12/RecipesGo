@@ -11,13 +11,9 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-type jsonBody struct {
-	models.Recipe
-}
-
 // adds new recipe to db
 func handleAddRecipe(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
-	var recipe jsonBody
+	var recipe models.Recipe
 	if err := json.Unmarshal([]byte(req.Body), &recipe); err != nil {
 		// if we fail to convert json to recipe struct
 		log.Println("failed to unmarshal request body into json body")
