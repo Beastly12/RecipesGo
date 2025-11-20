@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
 import { Globe, Lock, PenLine, Trash2 } from 'lucide-react';
-import { getRecipesByUser, deleteRecipe } from '../services/RecipesService.mjs';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { deleteRecipe, getRecipesByUser } from '../services/RecipesService.mjs';
 
 const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashboardLoading }) => {
   const [searchRecipe, SetSearchRecipe] = useState('');
@@ -11,6 +11,7 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
   const [editLoadingId, setEditLoadingId] = useState(null);
   const [visible, setVisible] = useState(5);
   const navigate = useNavigate();
+  
 
   useEffect(() => {
     if (!userId) {
@@ -84,10 +85,18 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
     return 'Just now';
   };
 
-  const handleEdit = (recipeId) => {
-    setEditLoadingId(recipeId);
-    setTimeout(() => {
-      navigate(`/createRecipe${recipeId}`); 
+  // const handleEdit = (recipeId) => {
+  //   setEditLoadingId(recipeId);
+  //   setTimeout(() => {
+  //     navigate(`/createRecipe${recipeId}`);
+  //   });
+  // };
+
+  const handleEdit = (recipe) => {
+    setEditLoadingId(recipe.id);
+
+    navigate(`/createRecipe/${recipe.id}`, {
+      state: { recipe },
     });
   };
 
@@ -176,14 +185,16 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
               <span> {statusTheme(recipe.isPublic)}</span>
               <div className="flex sm:flex-col md:flex-row gap-4 text-sm dark:text-gray-200 text-gray-700">
                 <span>❤️{recipe.likes}</span> <span>💬 {recipe.rating}</span>
-                <span className="text-gray-500 dark:text-gray-300">{timeAgo(recipe.dateCreated)}</span>
+                <span className="text-gray-500 dark:text-gray-300">
+                  {timeAgo(recipe.dateCreated)}
+                </span>
               </div>
             </div>
 
             <div className="flex items-center space-x-4">
               <button
                 className="cursor-pointer hover:scale-110 transition-transform"
-                onClick={() => handleEdit(recipe.id)}
+                onClick={() => handleEdit(recipe)}
               >
                 <PenLine size={23} className="bg-[#ff6b6b] rounded-md text-white p-1" />
               </button>
