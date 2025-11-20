@@ -26,6 +26,10 @@ func handleGetUsers(ctx context.Context, req events.APIGatewayV2HTTPRequest) (ev
 		return models.ServerSideErrorResponse("Failed to get uer details!", err), nil
 	}
 
+	if user == nil {
+		return models.NotFoundResponse("No such user exists!"), nil
+	}
+
 	if currentUserId != "" {
 		return models.SuccessfulGetRequestResponse(user, nil), nil
 	}
