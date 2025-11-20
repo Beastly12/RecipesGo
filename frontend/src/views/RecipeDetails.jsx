@@ -13,8 +13,7 @@ import { Accordion } from '../components/Accordion';
 import InstructionBox from '../components/InstructionBox';
 import IngredientsBox from '../components/IngredientsBox';
 import CommentBox from '../components/ComponentBox';
-import { favoriteRecipe, getAllRatings, getRecipebyId, getUserbyId, rateRecipe} from '../services/RecipesDetailsService.mjs';
-import { editRecipe } from '../services/RecipesService.mjs';
+import { favoriteRecipe, getAllRatings, getRecipebyId, getUserbyId, rateRecipe, deleteFavoriteRecipe} from '../services/RecipesDetailsService.mjs';
 
 function RecipeDetailPage() {
   const { id } = useParams();
@@ -134,11 +133,19 @@ function RecipeDetailPage() {
   const handleLike = async () => {
     try {
       await favoriteRecipe(id);
-      setLiked(prev => !prev);
-      setLikes(prev => (liked ? prev - 1 : prev + 1));
-      alert(liked ? "UNLIKED SUCCESSFULLY" : "LIKED SUCCESSFULLY");
+      if (!liked) {
+        await favoriteRecipe(id);
+        setLikes(prev => prev + 1);
+        setLiked(true);
+        alert('LIKED SUCCESSFULLY');
+      } else {
+        await deleteFavoriteRecipe(id);
+        setLikes(prev => prev - 1);
+        setLiked(false);
+        alert('UNLIKED SUCCESSFULLY');
+      }
     } catch (error) {
-      onsole.error('Error LIKING RECIPE:', error);
+      console.error('Error LIKING RECIPE:', error);
       alert('FAILED TO LIKE');
     }
   };
