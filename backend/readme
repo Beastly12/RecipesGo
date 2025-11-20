@@ -23,6 +23,8 @@ To get all recipes:
 
 To get all recipes by a user:
 	GET /recipes?by={userid}
+	to get next batch
+	GET /recipes?by={userid}&last={last key}
 
 To edit a recipe:
 	PUT /recipes/{recipe_id}

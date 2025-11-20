@@ -1,20 +1,33 @@
 import React from 'react';
-import Modal from "react-modal";
+import Modal from 'react-modal';
 
-Modal.setAppElement("#root");
+Modal.setAppElement('#root');
 
-const CommentBox = ({ totalComments, visibleComments, hasMore, handleViewMore, handlePopupOpen, handlePopupClosed, isPopupOpen, comment,setComment, starRating, setStarRating, handleComment }) => {
+const CommentBox = ({
+  totalComments,
+  visibleComments,
+  hasMore,
+  handleViewMore,
+  handlePopupOpen,
+  handlePopupClosed,
+  isPopupOpen,
+  comment,
+  setComment,
+  starRating,
+  setStarRating,
+  handleComment,
+}) => {
   return (
     <div className="bg-white dark:bg-[#1e1e1e] mt-14 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_24px_rgba(255,255,255,0.05)] mb-8 transition-colors duration-500">
       <div className="flex justify-between items-center mb-10">
         <h2 className="font-bold text-3xl text-gray-800 dark:text-gray-100">
-        Comments ({totalComments.length})
+          Comments ({totalComments.length})
         </h2>
         <button
           onClick={handlePopupOpen}
           className="px-4 py-2 bg-[#ff6b6b] text-white rounded-xl hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]"
         >
-        DROP A COMMENT!
+          DROP A COMMENT!
         </button>
       </div>
 
@@ -31,40 +44,39 @@ const CommentBox = ({ totalComments, visibleComments, hasMore, handleViewMore, h
               key={star}
               onClick={() => setStarRating(star)}
               className={`px-4 py-2 rounded-lg hover:bg-[#ff6b6b] ${
-              star <= starRating ? "bg-[#ff6b6b] text-white" : "bg-white"
+                star <= starRating ? 'bg-[#ff6b6b] text-white' : 'bg-white'
               }`}
             >
-            ⭐
+              ⭐
             </button>
-            ))}
+          ))}
         </div>
 
-      <label className="block">
-       Write your comment:
-      <textarea
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
-        className="w-full mt-2 p-2 border rounded-lg dark:bg-[#2a2a2a] dark:text-white"
-        rows={4}
-        cols={40}
-      />
-      </label>
+        <label className="block">
+          Write your comment:
+          <textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            className="w-full mt-2 p-2 border rounded-lg dark:bg-[#2a2a2a] dark:text-white"
+            rows={4}
+            cols={40}
+          />
+        </label>
 
-      <div className="flex gap-4 mt-6">
-        <button
-          onClick={handleComment}
-          className="mt-6 px-4 py-2 bg-[#ff6b6b] text-white rounded-lg hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]"
-        >
-        Save
-        </button>
-        <button
-          onClick={handlePopupClosed}
-          className="mt-6 px-4 py-2 bg-[#ff6b6b] text-white rounded-lg hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]"
-        >
-        Cancel
-        </button>
-      </div>
-
+        <div className="flex gap-4 mt-6">
+          <button
+            onClick={handleComment}
+            className="mt-6 px-4 py-2 bg-[#ff6b6b] text-white rounded-lg hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]"
+          >
+            Save
+          </button>
+          <button
+            onClick={handlePopupClosed}
+            className="mt-6 px-4 py-2 bg-[#ff6b6b] text-white rounded-lg hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]"
+          >
+            Cancel
+          </button>
+        </div>
       </Modal>
 
       {totalComments?.slice(0, visibleComments).map((comment) => (
