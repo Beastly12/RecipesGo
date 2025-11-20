@@ -116,8 +116,8 @@ function RecipeDetailPage() {
     }
   
     try {
-      await rateRecipe(id, { stars: starRating, comment: newComment });
-  
+      await rateRecipe(id, starRating, newComment);
+
       alert('Comment added successfully!');
       handleRatings(id, lastKey); 
   

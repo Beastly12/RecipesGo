@@ -1,6 +1,12 @@
 import axios from './Axios.mjs';
+import { fetchAuthSession } from 'aws-amplify/auth';
+
+
 
 export async function rateRecipe(recipeId, stars, comment = null) {
+  const session = await fetchAuthSession();
+  const token = session.tokens?.accessToken?.toString();
+  
   const rating = {
     recipeId: String(recipeId),
     stars: parseInt(stars),
@@ -10,13 +16,26 @@ export async function rateRecipe(recipeId, stars, comment = null) {
     rating.comment = comment;
   }
 
-  return await axios.post('/ratings', rating);
+  return await axios.post('/ratings', rating,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 }
 
-export async function favoriteRecipe({ recipeId }) {
-  return await axios.post('/favorites', {
-    recipeId: String(recipeId),
-  });
+export async function favoriteRecipe(recipeId) {
+  const session = await fetchAuthSession();
+  const token = session.tokens?.accessToken?.toString();
+  return await axios.post( "/favorites",
+    { recipeId: String(recipeId) },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 }
 
 export async function deleteFavoriteRecipe(recipeId) {
@@ -24,6 +43,8 @@ export async function deleteFavoriteRecipe(recipeId) {
 }
 
 export async function editRatingRecipe(recipeId, stars, comment = null) {
+  const session = await fetchAuthSession();
+  const token = session.tokens?.accessToken?.toString();
   const rating = {
     recipeId: String(recipeId),
     stars: parseInt(stars),
@@ -33,7 +54,13 @@ export async function editRatingRecipe(recipeId, stars, comment = null) {
     rating.comment = comment;
   }
 
-  return await axios.post('/ratings', rating);
+  return await axios.post('/ratings', rating,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 }
 
 export async function deleteRatingRecipe(recipeId) {
