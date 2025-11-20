@@ -16,7 +16,6 @@ import {
 import { Menu, Avatar, Drawer } from 'antd';
 import { handleSignOut } from '../services/AuthService.mjs';
 
-
 // var userName = 'Daniel';
 
 const hour = new Date().getHours();
@@ -26,9 +25,8 @@ const DashBoard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
-  const[colorTheme,setTheme] = useDarkMode();
-  const { user,userName, loading: authLoading } = useAuthContext();
-  
+  const [colorTheme, setTheme] = useDarkMode();
+  const { user, userName, loading: authLoading } = useAuthContext();
 
   // Mock user data - you can replace with actual user data from props
   const userEmail = user.userId ? `${user.userId.substring(0, 10)}...` : '';
@@ -39,7 +37,7 @@ const DashBoard = () => {
       setLoading(false);
       return;
     }
-  
+
     async function fetchDashboard() {
       try {
         const data = await getUserDetails(user.userId);
@@ -50,10 +48,9 @@ const DashBoard = () => {
         setLoading(false);
       }
     }
-  
+
     fetchDashboard();
   }, []);
-  
 
   const handleLogout = async () => {
     await handleSignOut();

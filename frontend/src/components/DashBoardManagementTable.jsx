@@ -156,7 +156,7 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
         ))}
       </ul>
 
-    {filteredRecipes.length === 0 && !loading && (
+      {filteredRecipes.length === 0 && !loading && (
         <p className="text-center text-gray-500 py-6 text-2xl dark:text-white">No Recipe Found</p>
       )}
     </section>
