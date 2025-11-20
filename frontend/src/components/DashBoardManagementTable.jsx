@@ -53,9 +53,9 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
   const statusTheme = (isPublic) => {
     return (
       <span
-        className={`inline-flex ... ${isPublic ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'}`}
+        className={`p-1 inline-flex ... rounded ${isPublic ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'}`}
       >
-        {isPublic ? <Globe size={16} /> : <Lock size={16} />}
+        {isPublic ? <Globe size={14} /> : <Lock size={14} />}
         {isPublic ? 'Public' : 'Private'}
       </span>
     );
@@ -125,7 +125,7 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
               <div className="sm:flex-row justify-between items-center">
                 <h2 className="font-semibold text-gray-500 dark:text-white">{recipe.name}</h2>
                 <p className="text-sm text-gray-500 dark:text-gray-300">
-                  {recipe.category}•{recipe.difficulty}•{recipe.preparationTime}
+                  {recipe.category}•{recipe.difficulty}•{recipe.preparationTime}mins
                 </p>
               </div>
             </div>

@@ -4,6 +4,8 @@ import { HeartIcon, NotebookPen, Eye, MessageCircleMore } from 'lucide-react';
 import DashBoardManagementTable from '../components/DashBoardManagementTable';
 import { getUserDetails } from '../services/UserService.mjs';
 import { Link } from 'react-router-dom';
+import { useAuthContext } from '../context/AuthContext';
+import useDarkMode from '../hooks/useDarkMode';
 import {
   UserOutlined,
   SettingOutlined,
@@ -20,17 +22,19 @@ import { handleSignOut } from '../services/AuthService.mjs';
 const hour = new Date().getHours();
 const greeting = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
 
-const DashBoard = ({ userId, colorTheme, userName }) => {
+const DashBoard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const[colorTheme,setTheme] = useDarkMode();
+  const { user,userName, loading: authLoading } = useAuthContext();
   
 
   // Mock user data - you can replace with actual user data from props
-  const userEmail = userId ? `${userId.substring(0, 10)}...` : '';
+  const userEmail = user.userId ? `${user.userId.substring(0, 10)}...` : '';
 
   useEffect(() => {
-    if (!userId) {
+    if (!user.userId) {
       console.error('No userId provided to Dashboard!');
       setLoading(false);
       return;
@@ -38,7 +42,7 @@ const DashBoard = ({ userId, colorTheme, userName }) => {
   
     async function fetchDashboard() {
       try {
-        const data = await getUserDetails(userId);
+        const data = await getUserDetails(user.userId);
         setStats(data);
       } catch (error) {
         console.error('Error loading dashboard data:', error);
@@ -48,7 +52,7 @@ const DashBoard = ({ userId, colorTheme, userName }) => {
     }
   
     fetchDashboard();
-  }, [userId]);
+  }, []);
   
 
   const handleLogout = async () => {
@@ -210,7 +214,7 @@ const DashBoard = ({ userId, colorTheme, userName }) => {
         )}
 
         <DashBoardManagementTable
-          userId={userId}
+          userId={user.userId}
           onRecipeCountChange={(count) => setStats((prev) => ({ ...prev, recipeCount: count }))}
         />
       </div>
