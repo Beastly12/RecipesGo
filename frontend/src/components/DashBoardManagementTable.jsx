@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Globe, Lock, PenLine, Trash2 } from 'lucide-react';
 import { getRecipesByUser, deleteRecipe, editRecipe } from '../services/RecipesService.mjs';
+import { useNavigate } from 'react-router-dom';
 
 const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
   const [searchRecipe, SetSearchRecipe] = useState('');
   const [recipe, setRecipes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [deleteLoadingId, setDeleteLoadingId] = useState(null);
+  const [editLoadingId, setEditLoadingId] = useState(null);
+  const [visible, setVisible] = useState(5);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!userId) {
@@ -19,13 +24,13 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
       setLoading(true);
       try {
         const res = await getRecipesByUser(userId);
-        console.log('Recipes API response:', res);
+        // console.log('Recipes API response:', res);
         const list = res.data?.message || [];
         setRecipes(list);
 
         onRecipeCountChange?.(list.length);
       } catch (error) {
-        console.error('Error fetching recipes', error);
+        // console.error('Error fetching recipes', error);
       } finally {
         setLoading(false);
       }
@@ -35,6 +40,7 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
   }, [userId]);
 
   const handleDelete = async (recipeId) => {
+    setDeleteLoadingId(recipeId);
     try {
       await deleteRecipe(recipeId);
       const updated = recipe.filter((r) => r.id !== recipeId);
@@ -42,7 +48,9 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
 
       onRecipeCountChange(updated.length);
     } catch (error) {
-      console.error('Failed to delete recipe:', error);
+      // console.error('Failed to delete recipe:', error);
+    } finally {
+      setDeleteLoadingId(recipeId);
     }
   };
 
@@ -88,13 +96,12 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
     return 'Just now';
   };
 
-  const handleedit = async function (recipeId) {
-    try {
-      await editRecipe(recipeId);
-    } catch (error) {
-      console.error('Failed to edit recipe:', error);
-    }
-    }
+  const handleEdit = (recipeId) => {
+    setEditLoadingId(recipeId);
+
+    setTimeout(() => {
+      navigate(`/`); //to be edited to navigate to the receipedetails page by ID
+    });
   };
 
   return (
@@ -120,7 +127,7 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
       </div>
 
       <ul className="divide-y divide-gray-200 dark:divide-white">
-        {filteredRecipes.map((recipe) => (
+        {filteredRecipes.slice(0, visible).map((recipe) => (
           <li
             key={recipe.id}
             className="flex items-center justify-between p-5 hover:bg-gray-50 transition shadow dark:hover:bg-slate-500/35"
@@ -151,7 +158,10 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
             </div>
 
             <div className="flex items-center space-x-4">
-              <button className="cursor-pointer hover:scale-110 transition-transform">
+              <button
+                className="cursor-pointer hover:scale-110 transition-transform"
+                onClick={() => handleEdit(recipe.recipeId) }
+              >
                 <PenLine size={23} className="bg-[#ff6b6b] rounded-md text-white p-1" />
               </button>
               <button
@@ -164,6 +174,17 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange }) => {
           </li>
         ))}
       </ul>
+
+      {visible < filteredRecipes.length && (
+        <div className="text-center py-6">
+          <button
+            onClick={() => setVisible((v) => v + 2)}
+            className="px-6 py-2 bg-[#ff6b6b] text-white rounded-full hover:opacity-90 transition"
+          >
+            Load More
+          </button>
+        </div>
+      )}
 
       {filteredRecipes.length === 0 && !loading && (
         <p className="text-center text-gray-500 py-6 text-2xl dark:text-white">No Recipe Found</p>

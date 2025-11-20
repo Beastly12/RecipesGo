@@ -194,7 +194,7 @@ const DashBoard = () => {
             />
             <DashBoardCard
               icon={<Eye className="w-12 h-12 text-blue-500" />}
-              value={`${stats?.views ?? '0'}`}
+              value={stats.views?? 0}
               title="Total Views"
             />
             <DashBoardCard
