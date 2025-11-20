@@ -28,6 +28,7 @@ function RecipeDetailPage() {
   const [likes, setLikes] = useState(0);
   const [newComment, setNewComment] = useState('');
   const [starRating, setStarRating] = useState(0);
+  const [liked, setLiked] = useState(false);
   
   useEffect(() => {
     async function fetchRecipe() {
@@ -133,13 +134,15 @@ function RecipeDetailPage() {
   const handleLike = async () => {
     try {
       await favoriteRecipe(id);
-      setLikes(prev => prev + 1);
-      alert('LIKED SUCCESFULLY');
+      setLiked(prev => !prev);
+      setLikes(prev => (liked ? prev - 1 : prev + 1));
+      alert(liked ? "UNLIKED SUCCESSFULLY" : "LIKED SUCCESSFULLY");
     } catch (error) {
       onsole.error('Error LIKING RECIPE:', error);
       alert('FAILED TO LIKE');
     }
   };
+  
   const handleShare = () => {
     const url = window.location.href;
     navigator.clipboard.writeText(url);
@@ -195,12 +198,14 @@ function RecipeDetailPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3 dark:text-[#fafafa]">
                 {/* Likes Button */}
-                <button className="cursor-pointer flex items-center justify-center gap-2 bg-[#ff6b6b] text-white py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300 w-full  dark:text-[#fafafa]"
-                   onClick={handleLike}
+                <button className={`cursor-pointer flex items-center justify-center gap-2 py-2 px-4 sm:px-6 rounded-3xl text-sm transition-all duration-300 w-full dark:text-[#fafafa]
+                                   ${liked ? "bg-[#ff6b6b] text-white hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]" : "bg-white text-[#ff6b6b] border border-[#ff6b6b] hover:shadow-md"}`}
+                         onClick={handleLike}
                 >
                   <Heart className="w-5 h-5" />
                   <span>Likes ({likes})</span>
                 </button>
+                
 
                 {/* Share Button */}
                 <button
