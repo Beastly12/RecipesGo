@@ -39,6 +39,7 @@ const DashBoard = () => {
         const [userStatsRes, userRecipesRes] = await Promise.all([
           getUserDetails(user.userId),
           getRecipesByUser(user.userId),
+          console.log(user.userId)
         ]);
 
         const userRecipes = userRecipesRes.data?.message || [];
