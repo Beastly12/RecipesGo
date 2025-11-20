@@ -33,7 +33,6 @@ function RecipeDetailPage() {
     async function fetchRecipe() {
       try {
         await handleDetails(id);
-        await handleRatings(id, lastKey);
       } catch (error) {
         console.log('failed to fetch recipe', error);
       } finally {
@@ -41,7 +40,7 @@ function RecipeDetailPage() {
       }
     }
     fetchRecipe();
-  }, [id]);
+  }, []);
 
   const handleViewMore = () => {
     setVisibleComment((prev) => prev + 2);
@@ -55,16 +54,21 @@ function RecipeDetailPage() {
     setPopupOpen(false);
   }
 
-  const handleRatings = async (id, lastKey) => {
+  const handleRatings = async (id) => {
     setLoading(true);
     try {
-      const { data } = await getAllRatings({ recipeId: id, last: lastKey });
+      const { data } = await getAllRatings({ recipeId: id});
 
       const ratingsData = data.message.map((rating) => ({
-        key: rating.id,
+        key: rating.RecipeId,
         stars: rating.stars,
-        comments: rating.comment,
+        text: rating.comment,
+        profilePic:rating.dpUrl,
+        name:rating.name,
+        posted:rating.dateAdded
+
       }));
+      console.log(ratingsData)
 
       setRatings(ratingsData);
       setMore(Boolean(data.last));
@@ -75,6 +79,11 @@ function RecipeDetailPage() {
       setLoading(false);
     }
   };
+
+  useEffect(()=>{
+    handleRatings(id)
+
+  },[]);
 
   const handleDetails = async (id) => {
     setLoading(true);
@@ -254,20 +263,23 @@ function RecipeDetailPage() {
               <InstructionBox instructions={recipe.Instructions} />
             </div>
 
-            {<CommentBox
+            <CommentBox
               totalComments={ratings}
               visibleComments={visibleComment}
               hasMore={hasMore}
               handleViewMore={handleViewMore}
-              handlePopupOpen = {handlePopupOpen}
+              handlePopupOpen = {handlePopupOpen}// po upo
               handlePopupClosed = {handlePopupClosed}
               isPopupOpen={isPopupOpen}
               comment={newComment}
-              setComment={setNewComment}
-              starRating={starRating}
-              setStarRating={setStarRating}
-              handleComment={handleComment} 
-            /> }
+              setComment={setNewComment}// pop up
+              starRating={starRating}//pop up
+              setStarRating={setStarRating}// pop up
+              handleComment={handleComment}// pop up 
+              handleRatings = {handleRatings}
+              recipeId={id}
+              lastKey={lastKey}
+            /> 
              
           </div>
         </div>
