@@ -140,8 +140,13 @@ function RecipeDetailPage() {
       alert('FAILED TO LIKE');
     }
   };
-
-
+  const handleShare = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    console.log("Current URL:", url);
+    alert('Link copied to clipboard!');
+  };
+  
 
   if (loading) return <p className="text-center mt-10">Loading recipe....</p>;
   if (!recipe) return <p className="text-center mt-10">Recipe not found.</p>;
@@ -201,6 +206,7 @@ function RecipeDetailPage() {
                 <button
                   className=" cursor-pointer flex items-center justify-center gap-2 bg-gray-100 text-gray-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm
                  hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full dark:bg-[#2a2a2a] dark:text-gray-300 "
+                 onClick={handleShare}
                 >
                   <ExternalLink className="w-5 h-5" />
                   <span>Share</span>
