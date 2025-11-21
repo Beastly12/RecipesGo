@@ -1,14 +1,15 @@
-// Rebuilt About page from scratch using only Lucide-react
-
 import React from 'react';
 import { ChefHat, Users, Heart, Star, Globe, Award } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const About = () => {
   return (
     <div className="min-h-screen bg-white text-gray-800">
       {/* Header */}
       <header className="w-full shadow-sm bg-white py-5 px-6 flex justify-between items-center">
-        <h1 className="text-xl font-bold text-gray-900">Prepify</h1>
+        <Link to={'/'}>
+          <h1 className="text-xl font-bold text-gray-900">Prepify</h1>
+        </Link>
         <nav className="space-x-6 text-sm font-medium">
           <a href="/" className="hover:text-[#ff6b6b] transition">
             Home
