@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
@@ -18,7 +17,7 @@ type recipeHelper struct {
 	Ctx context.Context
 }
 
-type getAllRecipesOutput struct {
+type getRecipesOutput struct {
 	Recipes []models.Recipe
 	NextKey map[string]types.AttributeValue
 }
@@ -79,53 +78,30 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 	return nil
 }
 
-func (r *recipeHelper) GetAllRecipes(lastKey map[string]types.AttributeValue, category string) (*getAllRecipesOutput, error) {
-	utils.BasicLog("starting get all recipes helper function...", nil)
-	var indexName *string
-	var keyConditionExpression *string
-	var expressionAttributeValues map[string]types.AttributeValue
-
-	if category == "" || strings.ToLower(category) == "all" {
-		// return all recipes
-		utils.BasicLog("no category provided will return all recipes", nil)
-		indexName = aws.String("gsiIndex")
-		keyConditionExpression = aws.String("gsi = :v")
-		expressionAttributeValues = map[string]types.AttributeValue{
-			":v": &types.AttributeValueMemberS{Value: utils.AddPrefix(models.RecipeItemType, models.RecipesGsiPrefix)}} // gsi: RECIPE_TYPE#RECIPE
-		utils.BasicLog("expression attribute values", utils.AddPrefix(models.RecipeItemType, models.RecipesGsiPrefix))
-	} else {
-		// return all recipes in a category
-		utils.BasicLog("category provided will return recipes in that category", category)
-		indexName = aws.String("gsiIndex2")
-		keyConditionExpression = aws.String("gsi2 = :v")
-		expressionAttributeValues = map[string]types.AttributeValue{
-			":v": &types.AttributeValueMemberS{Value: utils.AddPrefix(strings.ToLower(category), models.RecipesGsi2Prefix)}} // gsi2: RECIPE_CAT#{category}
-		utils.BasicLog("expression attr val ", utils.AddPrefix(strings.ToLower(category), models.RecipesGsi2Prefix))
+func (r *recipeHelper) getRecipes(lastKey map[string]types.AttributeValue, keyCondition expression.KeyConditionBuilder, indexName string, postProcess func(*[]models.Recipe)) (*getRecipesOutput, error) {
+	expr, err := expression.NewBuilder().WithKeyCondition(keyCondition).Build()
+	if err != nil {
+		println("Failed to build key condition expression")
+		return nil, err
 	}
 
 	input := &dynamodb.QueryInput{
 		TableName:                 &utils.GetDependencies().MainTableName,
-		IndexName:                 indexName,
-		KeyConditionExpression:    keyConditionExpression,
-		ExpressionAttributeValues: expressionAttributeValues,
 		ExclusiveStartKey:         lastKey,
+		IndexName:                 &indexName,
+		KeyConditionExpression:    expr.KeyCondition(),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
 		ScanIndexForward:          aws.Bool(false),
-		Limit:                     aws.Int32(10),
 	}
-
-	utils.BasicLog("gotten db input", input)
 
 	result, err := utils.GetDependencies().DbClient.Query(r.Ctx, input)
 	if err != nil {
-		utils.BasicLog("failed to query the db for recipes", err)
 		return nil, err
 	}
 
-	utils.BasicLog("db query successful", result)
-
-	if result.Count < 1 {
-		utils.BasicLog("no recipes found in db", nil)
-		return &getAllRecipesOutput{
+	if len(result.Items) < 1 {
+		return &getRecipesOutput{
 			Recipes: []models.Recipe{},
 			NextKey: nil,
 		}, nil
@@ -133,42 +109,79 @@ func (r *recipeHelper) GetAllRecipes(lastKey map[string]types.AttributeValue, ca
 
 	recipes := models.DatabaseItemsToRecipeStructs(&result.Items, utils.GetDependencies().CloudFrontDomainName)
 
-	for i, recipe := range *recipes {
-		user, err := NewUserHelper(r.Ctx).GetDisplayDetails(recipe.AuthorId)
-		if err != nil || user == nil {
-			(*recipes)[i].AuthorDpUrl = ""
-			(*recipes)[i].AuthorName = "[deleted]"
-			continue
-		}
+	postProcess(recipes)
 
-		(*recipes)[i].AuthorDpUrl = user.DpUrl
-		(*recipes)[i].AuthorName = user.Name
-	}
-
-	utils.BasicLog("db item to recipes successful", recipes)
-	utils.BasicLog("last eval key", result.LastEvaluatedKey)
-
-	return &getAllRecipesOutput{
+	return &getRecipesOutput{
 		Recipes: *recipes,
 		NextKey: result.LastEvaluatedKey,
 	}, nil
 }
 
-func (r *recipeHelper) GetAllRecipesByUser(lastKey map[string]types.AttributeValue, userId string) (*getAllRecipesOutput, error) {
+func (r *recipeHelper) GetRecipes(lastKey map[string]types.AttributeValue, category string) (*getRecipesOutput, error) {
+	index := "gsiIndex"
+	keyCondition := expression.KeyEqual(expression.Key("gsi"), expression.Value(models.RecipeItemType)).And(
+		expression.KeyBeginsWith(expression.Key("lsi"), models.RecipesLsiPrefix),
+	)
 
-	user, err := NewUserHelper(r.Ctx).GetDisplayDetails(userId)
-	if err != nil {
-		return nil, err
+	if category != "" {
+		index = "gsiIndex2"
+		keyCondition = expression.KeyEqual(expression.Key("gsi2"), expression.Value(category)).And(
+			expression.KeyBeginsWith(expression.Key("lsi"), models.RecipesLsiPrefix),
+		)
 	}
 
-	if user == nil {
-		return &getAllRecipesOutput{
+	return r.getRecipes(lastKey, keyCondition, index, func(rcp *[]models.Recipe) {
+		for i, recipe := range *rcp {
+			user, err := NewUserHelper(r.Ctx).GetDisplayDetails(recipe.AuthorId)
+			if err != nil || user == nil {
+				(*rcp)[i].AuthorDpUrl = ""
+				(*rcp)[i].AuthorName = "[deleted]"
+				continue
+			}
+
+			(*rcp)[i].AuthorDpUrl = user.DpUrl
+			(*rcp)[i].AuthorName = user.Name
+		}
+	})
+}
+
+func (r *recipeHelper) GetPrivateRecipes(lastKey map[string]types.AttributeValue, category, userId string) (*getRecipesOutput, error) {
+	if userId == "" {
+		return &getRecipesOutput{
 			Recipes: []models.Recipe{},
-			NextKey: map[string]types.AttributeValue{},
+			NextKey: nil,
 		}, nil
 	}
+	index := "gsiIndex"
+	keyCondition := expression.KeyEqual(expression.Key("gsi"), expression.Value(models.RecipeItemType)).And(
+		expression.KeyBeginsWith(expression.Key("lsi"), models.PrivateRecipeLsiBeginsWith(userId)),
+	)
 
-	condition := expression.KeyEqual(
+	if category != "" {
+		index = "gsiIndex2"
+		keyCondition = expression.KeyEqual(expression.Key("gsi2"), expression.Value(category)).And(
+			expression.KeyBeginsWith(expression.Key("lsi"), models.PrivateRecipeLsiBeginsWith(userId)),
+		)
+	}
+
+	return r.getRecipes(lastKey, keyCondition, index, func(rcp *[]models.Recipe) {
+		user, err := NewUserHelper(r.Ctx).GetDisplayDetails(userId)
+		for i := range *rcp {
+			if err != nil || user == nil {
+				(*rcp)[i].AuthorDpUrl = ""
+				(*rcp)[i].AuthorName = "[deleted]"
+				continue
+			}
+
+			(*rcp)[i].AuthorDpUrl = user.DpUrl
+			(*rcp)[i].AuthorName = user.Name
+		}
+	})
+}
+
+func (r *recipeHelper) GetRecipesByUser(lastKey map[string]types.AttributeValue, userId string) (*getRecipesOutput, error) {
+	index := "gsiIndex3"
+	keyCondition := expression.KeyEqual(
 		expression.Key(
 			"gsi3",
 		),
@@ -177,47 +190,19 @@ func (r *recipeHelper) GetAllRecipesByUser(lastKey map[string]types.AttributeVal
 		),
 	)
 
-	expr, err := expression.NewBuilder().WithKeyCondition(condition).Build()
+	return r.getRecipes(lastKey, keyCondition, index, func(rcp *[]models.Recipe) {
+		user, err := NewUserHelper(r.Ctx).GetDisplayDetails(userId)
+		for i := range *rcp {
+			if err != nil || user == nil {
+				(*rcp)[i].AuthorDpUrl = ""
+				(*rcp)[i].AuthorName = "[deleted]"
+				continue
+			}
 
-	input := &dynamodb.QueryInput{
-		TableName:                 &utils.GetDependencies().MainTableName,
-		IndexName:                 aws.String("gsiIndex3"),
-		KeyConditionExpression:    expr.KeyCondition(),
-		ExpressionAttributeValues: expr.Values(),
-		ExpressionAttributeNames:  expr.Names(),
-		ExclusiveStartKey:         lastKey,
-		ScanIndexForward:          aws.Bool(false),
-		Limit:                     aws.Int32(10),
-	}
-
-	result, err := utils.GetDependencies().DbClient.Query(r.Ctx, input)
-	if err != nil {
-		utils.BasicLog("failed to query the db for recipes", err)
-		return nil, err
-	}
-
-	if result.Count < 1 {
-		utils.BasicLog("no recipes found in db", nil)
-		return &getAllRecipesOutput{
-			Recipes: []models.Recipe{},
-			NextKey: nil,
-		}, nil
-	}
-
-	recipes := models.DatabaseItemsToRecipeStructs(&result.Items, utils.GetDependencies().CloudFrontDomainName)
-
-	for i := range *recipes {
-		(*recipes)[i].AuthorDpUrl = user.DpUrl
-		(*recipes)[i].AuthorName = user.Name
-	}
-
-	utils.BasicLog("db item to recipes successful", recipes)
-	utils.BasicLog("last eval key", result.LastEvaluatedKey)
-
-	return &getAllRecipesOutput{
-		Recipes: *recipes,
-		NextKey: result.LastEvaluatedKey,
-	}, nil
+			(*rcp)[i].AuthorDpUrl = user.DpUrl
+			(*rcp)[i].AuthorName = user.Name
+		}
+	})
 }
 
 // get specific recipe from db
