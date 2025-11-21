@@ -182,7 +182,7 @@ const DashBoard = () => {
           ) : (
             <>
               <p className="font-medium text-xl mt-2">Good {greeting}</p>
-              <h1 className="font-bold text-4xl mt-2">Welcome back, {stats?.name}! 👋</h1>
+              <h1 className="font-bold text-3xl mt-2">Welcome back, {stats?.name}! 👋</h1>
               <p className="font-medium text-xl mt-2">
                 Here is what's happening with your recipes today.
               </p>
