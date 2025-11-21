@@ -190,6 +190,8 @@ func (r *recipeHelper) GetRecipesByUser(lastKey map[string]types.AttributeValue,
 		),
 	)
 
+	println(utils.AddPrefix(userId, models.RecipesGsi3Prefix))
+
 	return r.getRecipes(lastKey, keyCondition, index, func(rcp *[]models.Recipe) {
 		user, err := NewUserHelper(r.Ctx).GetDisplayDetails(userId)
 		for i := range *rcp {
