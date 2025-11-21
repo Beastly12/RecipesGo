@@ -196,7 +196,7 @@ func (r *recipeHelper) GetRecipesByUser(lastKey map[string]types.AttributeValue,
 			utils.AddPrefix(userId, models.RecipesGsi3Prefix),
 		),
 	).And(
-		expression.KeyBeginsWith(expression.Key("lsi"), models.PrivateRecipeLsiBeginsWith(userId)),
+		expression.KeyBeginsWith(expression.Key("lsi"), models.RecipesLsiPrefix),
 	)
 
 	if includePrivateRecipes {
