@@ -153,7 +153,7 @@ func TestRecipeToDatabaseFormat(t *testing.T) {
 			&types.AttributeValueMemberS{Value: "water"},
 		}},
 		"gsi":        &types.AttributeValueMemberS{Value: "RECIPE_TYPE#" + "RECIPE"},
-		"lsi":        &types.AttributeValueMemberS{Value: "RECIPE_DATE#" + time},
+		"lsi":        &types.AttributeValueMemberS{Value: "USER#123RECIPE_DATE#" + time},
 		"difficulty": &types.AttributeValueMemberS{Value: "hard"},
 		"isPublic":   &types.AttributeValueMemberBOOL{Value: false},
 	}
@@ -189,5 +189,26 @@ func TestRecipeKey(t *testing.T) {
 
 	if !reflect.DeepEqual(expect, result) {
 		t.Errorf("expected\n%s\nbut got\n%s\ninstead", expect, result)
+	}
+}
+
+func TestLsiBeginsWith(t *testing.T) {
+	tests := []struct {
+		userId string
+		expect string
+	}{
+		{
+			userId: "123",
+			expect: "USER#123RECIPE_DATE#",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.expect, func(t *testing.T) {
+			result := PrivateRecipeLsiBeginsWith(test.userId)
+			if result != test.expect {
+				t.Errorf("Expected %v\nbut got %v instead!", test.expect, result)
+			}
+		})
 	}
 }

@@ -14,12 +14,12 @@ func handleGetRatings(ctx context.Context, req events.APIGatewayV2HTTPRequest) (
 		return models.InvalidRequestErrorResponse("No recipe id provided!"), nil
 	}
 
-	lastKey, err := models.DecodeLastEvalKey(req.QueryStringParameters["last"])
+	lastKey, err := models.DecodeLastEvalKeys(req.QueryStringParameters["last"])
 	if err != nil {
 		return models.InvalidRequestErrorResponse("Failed to decode last evaluated key!"), nil
 	}
 
-	response, err := helpers.NewRatingsHelper(ctx).GetRecipeRatings(recipeId, lastKey)
+	response, err := helpers.NewRatingsHelper(ctx).GetRecipeRatings(recipeId, lastKey[0])
 	if err != nil {
 		return models.ServerSideErrorResponse("Failed to get ratings for this recipe, try again.", err), nil
 	}

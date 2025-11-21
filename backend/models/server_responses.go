@@ -74,14 +74,32 @@ func SuccessfulRequestResponse(msg string, createdResource bool) events.APIGatew
 	return buildResponse(sCode, ResponseBody{msg, nil})
 }
 
-func SuccessfulGetRequestResponse(body interface{}, lastKey map[string]types.AttributeValue) events.APIGatewayV2HTTPResponse {
+func SuccessfulGetRequestResponse(body interface{}, lastKeys ...map[string]types.AttributeValue) events.APIGatewayV2HTTPResponse {
 	return buildResponse(200, ResponseBody{
 		body,
-		encodeLastEvalKey(lastKey),
+		encodeLastEvalKeys(lastKeys...),
 	})
 }
 
-func encodeLastEvalKey(key map[string]types.AttributeValue) string {
+func encodeLastEvalKeys(keys ...map[string]types.AttributeValue) string {
+	data, err := json.Marshal(keys)
+	if err != nil {
+		log.Panicf("Failed to marshal last key: %v, error: %v", keys, err)
+	}
+	return base64.URLEncoding.EncodeToString(data)
+}
+
+func DecodeLastEvalKeys(key string) ([]map[string]types.AttributeValue, error) {
+	data, err := base64.URLEncoding.DecodeString(key)
+	if err != nil {
+		return nil, err
+	}
+	var keys []map[string]types.AttributeValue
+	err = json.Unmarshal(data, &keys)
+	return keys, err
+}
+
+func fencodeLastEvalKey(key map[string]types.AttributeValue) string {
 	utils.BasicLog("encoding last eval key", key)
 	if key == nil {
 		utils.BasicLog("no last eval key provided, skipping", nil)
@@ -98,7 +116,7 @@ func encodeLastEvalKey(key map[string]types.AttributeValue) string {
 	return base64.URLEncoding.EncodeToString(jsonBytes)
 }
 
-func DecodeLastEvalKey(key string) (map[string]types.AttributeValue, error) {
+func fDecodeLastEvalKey(key string) (map[string]types.AttributeValue, error) {
 	utils.BasicLog("decoding last eval key", key)
 
 	if key == "" {

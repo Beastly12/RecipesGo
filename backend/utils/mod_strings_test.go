@@ -1,6 +1,8 @@
 package utils
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestAddPrefix(t *testing.T) {
 	tests := []struct {
@@ -63,6 +65,27 @@ func TestAddSuffix(t *testing.T) {
 			result := AddSuffix(tt.word, tt.suffix)
 			if result != tt.expect {
 				t.Errorf("Expected %v but got %v instead", tt.expect, result)
+			}
+		})
+	}
+}
+
+func TestRemovePrefix(t *testing.T) {
+	tests := []struct {
+		str    string
+		expect string
+	}{
+		{
+			str:    "USER#123#RECIPE_DATE#12-12-2022 18:18:10",
+			expect: "12-12-2022 18:18:10",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.str, func(t *testing.T) {
+			result := RemovePrefix(test.str, "#")
+			if result != test.expect {
+				t.Errorf("Expected: %v\nbut got: %v instead!", test.expect, result)
 			}
 		})
 	}
