@@ -1,10 +1,7 @@
 package utils
 
 import (
-	"encoding/base64"
-	"encoding/json"
 	"log"
-	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 )
@@ -26,46 +23,6 @@ func GetAuthUserId(req events.APIGatewayV2HTTPRequest) string {
 		log.Println("missing or empty sub claim")
 		return ""
 	}
-	return sub
-}
-
-func ForceGetAuthUserId(req events.APIGatewayV2HTTPRequest) string {
-	authHeader := req.Headers["authorization"]
-	if authHeader == "" {
-		authHeader = req.Headers["Authorization"]
-	}
-	if authHeader == "" {
-		log.Println("missing authorization header")
-		return ""
-	}
-
-	token := strings.TrimPrefix(authHeader, "Bearer ")
-	token = strings.TrimPrefix(token, "bearer ")
-
-	parts := strings.Split(token, ".")
-	if len(parts) != 3 {
-		log.Println("invalid JWT format")
-		return ""
-	}
-
-	payload, err := base64.RawURLEncoding.DecodeString(parts[1])
-	if err != nil {
-		log.Printf("failed to decode JWT payload: %v", err)
-		return ""
-	}
-
-	var claims map[string]interface{}
-	if err := json.Unmarshal(payload, &claims); err != nil {
-		log.Printf("failed to parse JWT claims: %v", err)
-		return ""
-	}
-
-	sub, ok := claims["sub"].(string)
-	if !ok || sub == "" {
-		log.Println("missing or empty sub claim")
-		return ""
-	}
-
 	return sub
 }
 

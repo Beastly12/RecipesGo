@@ -74,66 +74,14 @@ func SuccessfulRequestResponse(msg string, createdResource bool) events.APIGatew
 	return buildResponse(sCode, ResponseBody{msg, nil})
 }
 
-func SuccessfulGetRequestResponse(body interface{}, lastKeys ...map[string]types.AttributeValue) events.APIGatewayV2HTTPResponse {
+func SuccessfulGetRequestResponse(body interface{}, lastKey map[string]types.AttributeValue) events.APIGatewayV2HTTPResponse {
 	return buildResponse(200, ResponseBody{
 		body,
-		encodeLastEvalKeys(lastKeys...),
+		encodeLastEvalKey(lastKey),
 	})
 }
 
-func encodeLastEvalKeys(keys ...map[string]types.AttributeValue) string {
-	if len(keys) < 1 {
-		return ""
-	}
-
-	hasNonEmpty := false
-	for _, k := range keys {
-		if len(k) > 0 {
-			hasNonEmpty = true
-			break
-		}
-	}
-	if !hasNonEmpty {
-		return ""
-	}
-
-	// Convert to generic Go types first
-	var generic []map[string]any
-	for _, k := range keys {
-		var m map[string]any
-		if err := attributevalue.UnmarshalMap(k, &m); err != nil {
-			log.Panicf("Failed to unmarshal: %v", err)
-		}
-		generic = append(generic, m)
-	}
-	data, _ := json.Marshal(generic)
-	return base64.URLEncoding.EncodeToString(data)
-}
-
-func DecodeLastEvalKeys(key string) ([]map[string]types.AttributeValue, error) {
-	if key == "" {
-		return []map[string]types.AttributeValue{nil}, nil
-	}
-	data, err := base64.URLEncoding.DecodeString(key)
-	if err != nil {
-		return nil, err
-	}
-	var generic []map[string]any
-	if err := json.Unmarshal(data, &generic); err != nil {
-		return nil, err
-	}
-	var keys []map[string]types.AttributeValue
-	for _, g := range generic {
-		m, err := attributevalue.MarshalMap(g)
-		if err != nil {
-			return nil, err
-		}
-		keys = append(keys, m)
-	}
-	return keys, nil
-}
-
-func fencodeLastEvalKey(key map[string]types.AttributeValue) string {
+func encodeLastEvalKey(key map[string]types.AttributeValue) string {
 	utils.BasicLog("encoding last eval key", key)
 	if key == nil {
 		utils.BasicLog("no last eval key provided, skipping", nil)
@@ -150,7 +98,7 @@ func fencodeLastEvalKey(key map[string]types.AttributeValue) string {
 	return base64.URLEncoding.EncodeToString(jsonBytes)
 }
 
-func fDecodeLastEvalKey(key string) (map[string]types.AttributeValue, error) {
+func DecodeLastEvalKey(key string) (map[string]types.AttributeValue, error) {
 	utils.BasicLog("decoding last eval key", key)
 
 	if key == "" {

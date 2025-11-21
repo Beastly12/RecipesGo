@@ -319,6 +319,14 @@ Resources:
             Path: /recipes
             Method: GET
             ApiId: !Ref RecipeApi
+        GetRecipes:
+          Type: HttpApi
+          Properties:
+            Path: /recipes/me
+            Method: GET
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
         GetRecipe:
           Type: HttpApi
           Properties:

@@ -373,49 +373,35 @@ func (r *recipeHelper) Delete(recipe models.Recipe) error {
 
 func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error {
 	update := expression.UpdateBuilder{}
-	hasUpdates := false
-
 	if recipe.ImageUrl != "" {
 		update = update.Set(expression.Name("imageUrl"), expression.Value(recipe.ImageUrl))
-		hasUpdates = true
 	}
 	if recipe.Name != "" {
 		update = update.Set(expression.Name("name"), expression.Value(recipe.Name))
-		hasUpdates = true
 	}
 	if recipe.Description != "" {
 		update = update.Set(expression.Name("description"), expression.Value(recipe.Description))
-		hasUpdates = true
 	}
 	if recipe.Category != "" {
 		update = update.Set(expression.Name("gsi2"), expression.Value(
 			utils.AddPrefix(recipe.Category, models.RecipesGsi2Prefix),
 		))
-		hasUpdates = true
 	}
 	if len(recipe.Ingredients) > 0 {
 		update = update.Set(expression.Name("ingredients"), expression.Value(recipe.Ingredients))
-		hasUpdates = true
 	}
 	if recipe.PreparationTime > 0 {
 		update = update.Set(expression.Name("preparationTime"), expression.Value(recipe.PreparationTime))
-		hasUpdates = true
 	}
 	if recipe.Difficulty != "" {
 		update = update.Set(expression.Name("difficulty"), expression.Value(recipe.Difficulty))
-		hasUpdates = true
 	}
 	if len(recipe.Instructions) > 0 {
 		update = update.Set(expression.Name("instructions"), expression.Value(recipe.Instructions))
-		hasUpdates = true
 	}
 
 	update = update.Set(expression.Name("isPublic"), expression.Value(recipe.IsPublic))
-	hasUpdates = true
-
-	if !hasUpdates {
-		return fmt.Errorf("no fields to update")
-	}
+	update = update.Set(expression.Name("lsi"), expression.Value(models.GetRecipeDateWithPrefix(recipe)))
 
 	expr, err := expression.NewBuilder().WithUpdate(update).Build()
 	if err != nil {

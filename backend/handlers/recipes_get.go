@@ -11,23 +11,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
-func handleGetRecipesByUser(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
-	userId := req.QueryStringParameters["by"]
-	currentUserId := utils.ForceGetAuthUserId(req)
-
-	if userId == "" {
-		return handleGetRecipes(ctx, req)
-	}
-
-	println("probably logged in as: " + currentUserId)
-	println("user requested: " + userId)
-
-	lastKey, err := models.DecodeLastEvalKeys(req.QueryStringParameters["last"])
-	if err != nil {
-		return models.InvalidRequestErrorResponse("Failed to decode last item key!"), nil
-	}
-
-	response, err := helpers.NewRecipeHelper(ctx).GetRecipesByUser(lastKey[0], userId, currentUserId == userId)
+func getRecipeByUser(lastKey map[string]types.AttributeValue, ctx context.Context, userId string, includePrivateRecipes bool) (events.APIGatewayV2HTTPResponse, error) {
+	response, err := helpers.NewRecipeHelper(ctx).GetRecipesByUser(lastKey, userId, includePrivateRecipes)
 	if err != nil {
 		return models.ServerSideErrorResponse(fmt.Sprintf("Failed to get recipes by user %v", userId), err), nil
 	}
@@ -38,49 +23,50 @@ func handleGetRecipesByUser(ctx context.Context, req events.APIGatewayV2HTTPRequ
 	return models.SuccessfulGetRequestResponse(response.Recipes, response.NextKey), nil
 }
 
-func handleGetRecipes(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
-	println("Getting all public recipes")
-	userId := utils.ForceGetAuthUserId(req)
-	println("probably logged in as : " + userId)
-	category := req.QueryStringParameters["category"]
-	lastKey, err := models.DecodeLastEvalKeys(req.QueryStringParameters["last"])
+func handleGetRecipesByUser(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
+	userId := req.QueryStringParameters["by"]
+
+	if userId == "" {
+		return handleGetAllRecipes(ctx, req)
+	}
+
+	lastKey, err := models.DecodeLastEvalKey(req.QueryStringParameters["last"])
 	if err != nil {
-		println("failed to decode last key")
+		return models.InvalidRequestErrorResponse("Failed to decode last item key!"), nil
+	}
+	return getRecipeByUser(lastKey, ctx, userId, false)
+}
+
+func handleGetAllRecipes(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
+	category := req.QueryStringParameters["category"]
+	lastKey, err := models.DecodeLastEvalKey(req.QueryStringParameters["last"])
+	if err != nil {
+		println("Failed to decode last key")
 		return models.ServerSideErrorResponse("Failed to decode last key!", err), nil
 	}
 
-	var privateLastKey map[string]types.AttributeValue
-	if len(lastKey) > 1 {
-		privateLastKey = lastKey[1]
-	}
-
-	var publicLastKey map[string]types.AttributeValue
-	if len(lastKey) > 0 {
-		publicLastKey = lastKey[0]
-	}
-
-	recipeHelper := helpers.NewRecipeHelper(ctx)
-	publicRecipeResults, err := recipeHelper.GetRecipes(publicLastKey, category)
+	result, err := helpers.NewRecipeHelper(ctx).GetRecipes(lastKey, category)
 	if err != nil {
-		return models.ServerSideErrorResponse("Failed to get recipes.", err), nil
-	}
-
-	privateRecipeResults, err := recipeHelper.GetPrivateRecipes(privateLastKey, category, userId)
-	if err != nil {
+		println("Failed to get recipes")
 		return models.ServerSideErrorResponse("Failed to get recipes", err), nil
 	}
 
-	if publicRecipeResults == nil && privateRecipeResults == nil {
+	if result == nil {
 		return models.SuccessfulGetRequestResponse(nil, nil), nil
 	}
 
-	if publicRecipeResults == nil {
-		return models.SuccessfulGetRequestResponse(privateRecipeResults.Recipes, privateRecipeResults.NextKey), nil
-	} else if privateRecipeResults == nil {
-		return models.SuccessfulGetRequestResponse(publicRecipeResults.Recipes, publicRecipeResults.NextKey), nil
+	return models.SuccessfulGetRequestResponse(result.Recipes, result.NextKey), nil
+}
+
+func handleGetCurrentUserRecipes(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
+	currentUserId := utils.GetAuthUserId(req)
+	if currentUserId == "" {
+		return models.UnauthorizedErrorResponse("You need to be logged in to view your recipes!"), nil
 	}
 
-	publicRecipeResults.Recipes = append(publicRecipeResults.Recipes, privateRecipeResults.Recipes...)
-
-	return models.SuccessfulGetRequestResponse(publicRecipeResults.Recipes, publicRecipeResults.NextKey, privateRecipeResults.NextKey), nil
+	lastKey, err := models.DecodeLastEvalKey(req.QueryStringParameters["last"])
+	if err != nil {
+		return models.InvalidRequestErrorResponse("Failed to decode last item key!"), nil
+	}
+	return getRecipeByUser(lastKey, ctx, currentUserId, true)
 }

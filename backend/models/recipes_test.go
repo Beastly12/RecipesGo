@@ -52,39 +52,6 @@ func TestNewRecipe(t *testing.T) {
 	}
 }
 
-func TestDecodeLastKey(t *testing.T) {
-	result, err := DecodeLastEvalKeys("")
-	if err != nil || len(result) < 1 {
-		t.Errorf("%v", err)
-	}
-}
-
-func TestEncodeDecode(t *testing.T) {
-	tests := []struct {
-		lastKey map[string]types.AttributeValue
-	}{
-		{
-			lastKey: map[string]types.AttributeValue{
-				"pk": &types.AttributeValueMemberS{Value: "pk_val"},
-			},
-		},
-	}
-
-	for _, test := range tests {
-		t.Run("test ", func(t *testing.T) {
-			encodedStr := encodeLastEvalKeys(test.lastKey)
-			decodedStr, err := DecodeLastEvalKeys(encodedStr)
-			if err != nil {
-				t.Errorf("An unexpected error has occurred! %v", err)
-			}
-
-			if !reflect.DeepEqual(decodedStr[0], test.lastKey) {
-				t.Errorf("Expected %v but got %v instead", test.lastKey, decodedStr)
-			}
-		})
-	}
-}
-
 func TestDbItemToRecipesStruct(t *testing.T) {
 	d := utils.GetTimeNow()
 	expect := Recipe{
