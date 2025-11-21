@@ -85,6 +85,18 @@ func encodeLastEvalKeys(keys ...map[string]types.AttributeValue) string {
 	if len(keys) < 1 {
 		return ""
 	}
+
+	hasNonEmpty := false
+	for _, k := range keys {
+		if len(k) > 0 {
+			hasNonEmpty = true
+			break
+		}
+	}
+	if !hasNonEmpty {
+		return ""
+	}
+
 	// Convert to generic Go types first
 	var generic []map[string]any
 	for _, k := range keys {

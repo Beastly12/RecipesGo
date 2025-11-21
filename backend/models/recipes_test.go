@@ -60,17 +60,28 @@ func TestDecodeLastKey(t *testing.T) {
 }
 
 func TestEncodeDecode(t *testing.T) {
-	lastKey := map[string]types.AttributeValue{
-		"pk": &types.AttributeValueMemberS{Value: "pk_val"},
+	tests := []struct {
+		lastKey map[string]types.AttributeValue
+	}{
+		{
+			lastKey: map[string]types.AttributeValue{
+				"pk": &types.AttributeValueMemberS{Value: "pk_val"},
+			},
+		},
 	}
 
-	enc := encodeLastEvalKeys(lastKey)
-	dec, err := DecodeLastEvalKeys(enc)
-	if err != nil {
-		t.Errorf("%v", err)
-	}
-	if !reflect.DeepEqual(dec[0], lastKey) {
-		t.Errorf("Expected: %v, but got %v instead", lastKey, dec)
+	for _, test := range tests {
+		t.Run("test ", func(t *testing.T) {
+			encodedStr := encodeLastEvalKeys(test.lastKey)
+			decodedStr, err := DecodeLastEvalKeys(encodedStr)
+			if err != nil {
+				t.Errorf("An unexpected error has occurred! %v", err)
+			}
+
+			if !reflect.DeepEqual(decodedStr[0], test.lastKey) {
+				t.Errorf("Expected %v but got %v instead", test.lastKey, decodedStr)
+			}
+		})
 	}
 }
 
