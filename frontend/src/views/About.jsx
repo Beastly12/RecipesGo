@@ -1,8 +1,20 @@
 import React from 'react';
 import { ChefHat, Users, Heart, Star, Globe, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { AboutLoading } from '../components/AboutloadingSkeleton';
+
 
 const About = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(t);
+  }, []);
+
+  if (loading) return <AboutLoading />;
+
   return (
     <div className="min-h-screen bg-white text-gray-800">
       {/* Header */}

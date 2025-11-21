@@ -10,7 +10,7 @@ const Footer = () => {
 
           {/* Brand */}
           <div>
-            <h3 className="text-3xl font-bold text-[#ff6b6b] dark:text-[#ff9470] tracking-tight">
+            <h3 className="text-3xl font-bold text-[#ff6b6b] dark:text-[#ff6b6b] tracking-tight">
               Prepify
             </h3>
             <p className="text-gray-600 dark:text-gray-300 text-sm mt-4 leading-relaxed">
