@@ -157,6 +157,9 @@ func (r *recipeHelper) GetPrivateRecipes(lastKey map[string]types.AttributeValue
 		expression.KeyBeginsWith(expression.Key("lsi"), models.PrivateRecipeLsiBeginsWith(userId)),
 	)
 
+	println(models.RecipeTypeKey())
+	println(models.PrivateRecipeLsiBeginsWith(userId))
+
 	if category != "" {
 		index = "gsiIndex2"
 		keyCondition = expression.KeyEqual(expression.Key("gsi2"), expression.Value(models.RecipeCategoryKey(category))).And(
