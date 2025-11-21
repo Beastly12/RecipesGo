@@ -85,26 +85,40 @@ func encodeLastEvalKeys(keys ...map[string]types.AttributeValue) string {
 	if len(keys) < 1 {
 		return ""
 	}
-	data, err := json.Marshal(keys)
-	if err != nil {
-		log.Panicf("Failed to marshal last key: %v, error: %v", keys, err)
+	// Convert to generic Go types first
+	var generic []map[string]any
+	for _, k := range keys {
+		var m map[string]any
+		if err := attributevalue.UnmarshalMap(k, &m); err != nil {
+			log.Panicf("Failed to unmarshal: %v", err)
+		}
+		generic = append(generic, m)
 	}
+	data, _ := json.Marshal(generic)
 	return base64.URLEncoding.EncodeToString(data)
 }
 
 func DecodeLastEvalKeys(key string) ([]map[string]types.AttributeValue, error) {
 	if key == "" {
-		return []map[string]types.AttributeValue{
-			nil,
-		}, nil
+		return []map[string]types.AttributeValue{nil}, nil
 	}
 	data, err := base64.URLEncoding.DecodeString(key)
 	if err != nil {
 		return nil, err
 	}
+	var generic []map[string]any
+	if err := json.Unmarshal(data, &generic); err != nil {
+		return nil, err
+	}
 	var keys []map[string]types.AttributeValue
-	err = json.Unmarshal(data, &keys)
-	return keys, err
+	for _, g := range generic {
+		m, err := attributevalue.MarshalMap(g)
+		if err != nil {
+			return nil, err
+		}
+		keys = append(keys, m)
+	}
+	return keys, nil
 }
 
 func fencodeLastEvalKey(key map[string]types.AttributeValue) string {

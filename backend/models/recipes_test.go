@@ -59,6 +59,21 @@ func TestDecodeLastKey(t *testing.T) {
 	}
 }
 
+func TestEncodeDecode(t *testing.T) {
+	lastKey := map[string]types.AttributeValue{
+		"pk": &types.AttributeValueMemberS{Value: "pk_val"},
+	}
+
+	enc := encodeLastEvalKeys(lastKey)
+	dec, err := DecodeLastEvalKeys(enc)
+	if err != nil {
+		t.Errorf("%v", err)
+	}
+	if !reflect.DeepEqual(dec[0], lastKey) {
+		t.Errorf("Expected: %v, but got %v instead", lastKey, dec)
+	}
+}
+
 func TestDbItemToRecipesStruct(t *testing.T) {
 	d := utils.GetTimeNow()
 	expect := Recipe{
