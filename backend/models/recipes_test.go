@@ -52,6 +52,13 @@ func TestNewRecipe(t *testing.T) {
 	}
 }
 
+func TestDecodeLastKey(t *testing.T) {
+	result, err := DecodeLastEvalKeys("")
+	if err != nil || len(result) < 1 {
+		t.Errorf("%v", err)
+	}
+}
+
 func TestDbItemToRecipesStruct(t *testing.T) {
 	d := utils.GetTimeNow()
 	expect := Recipe{
