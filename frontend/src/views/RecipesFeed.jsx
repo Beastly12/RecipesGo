@@ -7,6 +7,8 @@ import { getAllRecipes } from '../services/RecipesService.mjs';
 import Header from '../components/Header';
 import { useAuthContext } from '../context/AuthContext';
 import { getUserDetails } from '../services/UserService.mjs';
+import About from '../components/Footer';
+import Footer from '../components/Footer';
 
 export default function RecipeFeed() {
   const { user, loading: authLoading } = useAuthContext();
@@ -176,6 +178,8 @@ export default function RecipeFeed() {
         handlePagination={handlePagination}
         loading={loading}
       />
+       <Footer/>
     </div>
+   
   );
 }

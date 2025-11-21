@@ -13,6 +13,7 @@ import '@ant-design/v5-patch-for-react-19';
 import Public from './routes/PublicRoutes';
 import Private from './routes/PrivateRoutes';
 import AuthProvider from './context/AuthContext';
+import About from './views/About';
 
 Amplify.configure({
   Auth: {
@@ -48,6 +49,7 @@ export default function App() {
             </Route>
 
             <Route path="/dashboard" element={<DashBoard />} />
+            <Route path="/about" element={<About />} />
           </Route>
         </Routes>
       </AuthProvider>

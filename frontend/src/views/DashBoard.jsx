@@ -128,7 +128,11 @@ const DashBoard = () => {
             <div className="flex items-center gap-3">
               <Avatar
                 size={48}
-                style={{ background: 'rgba(255,255,255,0.3)', fontSize: '20px', fontWeight: 'bold' }}
+                style={{
+                  background: 'rgba(255,255,255,0.3)',
+                  fontSize: '20px',
+                  fontWeight: 'bold',
+                }}
               >
                 {userName?.charAt(0)}
               </Avatar>
@@ -179,6 +183,10 @@ const DashBoard = () => {
             <>
               <p className="font-medium text-xl mt-2">Good {greeting}</p>
               <h1 className="font-bold text-4xl mt-2">Welcome back, {stats?.name}! 👋</h1>
+              <p className="font-medium text-xl mt-2">
+                Here is what's happening with your recipes today.
+              </p>
+
               <Link to={'/createRecipe'}>
                 <button
                   className="bg-white text-blue-600 dark:bg-[#ff6b6b] dark:text-white font-medium rounded-2xl w-40 h-10 p-2 mt-9
@@ -215,25 +223,20 @@ const DashBoard = () => {
               icon={<HeartIcon className=" w-12 h-12 text-red-500" />}
               value={stats?.likes ?? 0}
               title="Total Likes"
-              
             />
             <DashBoardCard
               icon={<MessageCircleMore className="w-12 h-12 text-purple-500" />}
               value={stats?.overallRating ?? 0}
               title="Total Comments"
-              
             />
           </div>
         )}
 
-       
         <DashBoardManagementTable
           userId={user?.userId}
           initialRecipes={initialRecipes}
           loading={loading}
-          onRecipeCountChange={(count) =>
-            setStats((prev) => ({ ...prev, recipeCount: count }))
-          }
+          onRecipeCountChange={(count) => setStats((prev) => ({ ...prev, recipeCount: count }))}
         />
       </div>
     </section>
