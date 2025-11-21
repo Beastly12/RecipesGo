@@ -94,7 +94,9 @@ func encodeLastEvalKeys(keys ...map[string]types.AttributeValue) string {
 
 func DecodeLastEvalKeys(key string) ([]map[string]types.AttributeValue, error) {
 	if key == "" {
-		return []map[string]types.AttributeValue{}, nil
+		return []map[string]types.AttributeValue{
+			{},
+		}, nil
 	}
 	data, err := base64.URLEncoding.DecodeString(key)
 	if err != nil {
