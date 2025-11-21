@@ -11,7 +11,6 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
   const [editLoadingId, setEditLoadingId] = useState(null);
   const [visible, setVisible] = useState(5);
   const navigate = useNavigate();
-  
 
   useEffect(() => {
     if (!userId) {

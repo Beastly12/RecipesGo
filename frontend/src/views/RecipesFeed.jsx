@@ -178,8 +178,7 @@ export default function RecipeFeed() {
         handlePagination={handlePagination}
         loading={loading}
       />
-       <Footer/>
+      <Footer />
     </div>
-   
   );
 }
