@@ -41,7 +41,12 @@ export default function App() {
           <Route element={<Private />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<ProfileSettings />} />
-            <Route path="/createRecipe" element={<CreateRecipePage />} />
+            {/* <Route path="/createRecipe" element={<CreateRecipePage />} /> */}
+            <Route path="/createRecipe">
+              <Route index element={<CreateRecipePage />} />
+              <Route path=":id" element={<CreateRecipePage />} />
+            </Route>
+
             <Route path="/dashboard" element={<DashBoard />} />
           </Route>
         </Routes>

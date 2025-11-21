@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DashBoardCard from '../components/DashBoardCard';
 import { HeartIcon, NotebookPen, Eye, MessageCircleMore } from 'lucide-react';
 import DashBoardManagementTable from '../components/DashBoardManagementTable';
-import { getUserDetails } from '../services/UserService.mjs';
+import { getUser } from '../services/UserService.mjs';
 import { getRecipesByUser } from '../services/RecipesService.mjs';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
@@ -37,8 +37,10 @@ const DashBoard = () => {
       setLoading(true);
       try {
         const [userStatsRes, userRecipesRes] = await Promise.all([
-          getUserDetails(user.userId),
+          getUser(),
+          // console.log(user),
           getRecipesByUser(user.userId),
+          // console.log(user.userId)
         ]);
 
         const userRecipes = userRecipesRes.data?.message || [];
@@ -211,18 +213,20 @@ const DashBoard = () => {
             />
             <DashBoardCard
               icon={<HeartIcon className=" w-12 h-12 text-red-500" />}
-              value={stats?.overallRating ?? 0}
-              title="Total Comments"
+              value={stats?.likes ?? 0}
+              title="Total Likes"
+              
             />
             <DashBoardCard
               icon={<MessageCircleMore className="w-12 h-12 text-purple-500" />}
-              value={stats?.likes ?? 0}
-              title="Total Likes"
+              value={stats?.overallRating ?? 0}
+              title="Total Comments"
+              
             />
           </div>
         )}
 
-        {/* Management Table */}
+       
         <DashBoardManagementTable
           userId={user?.userId}
           initialRecipes={initialRecipes}
