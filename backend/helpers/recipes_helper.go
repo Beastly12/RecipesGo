@@ -182,7 +182,7 @@ func (r *recipeHelper) GetPrivateRecipes(lastKey map[string]types.AttributeValue
 	})
 }
 
-func (r *recipeHelper) GetRecipesByUser(lastKey map[string]types.AttributeValue, userId string) (*getRecipesOutput, error) {
+func (r *recipeHelper) GetRecipesByUser(lastKey map[string]types.AttributeValue, userId string, includePrivateRecipes bool) (*getRecipesOutput, error) {
 	index := "gsiIndex3"
 	keyCondition := expression.KeyEqual(
 		expression.Key(
@@ -193,7 +193,18 @@ func (r *recipeHelper) GetRecipesByUser(lastKey map[string]types.AttributeValue,
 		),
 	)
 
-	println(utils.AddPrefix(userId, models.RecipesGsi3Prefix))
+	if includePrivateRecipes {
+		keyCondition = expression.KeyEqual(
+			expression.Key(
+				"gsi3",
+			),
+			expression.Value(
+				utils.AddPrefix(userId, models.RecipesGsi3Prefix),
+			),
+		).And(
+			expression.KeyBeginsWith(expression.Key("lsi"), models.PrivateRecipeLsiBeginsWith(userId)),
+		)
+	}
 
 	return r.getRecipes(lastKey, keyCondition, index, func(rcp *[]models.Recipe) {
 		user, err := NewUserHelper(r.Ctx).GetDisplayDetails(userId)

@@ -13,6 +13,8 @@ import (
 
 func handleGetRecipesByUser(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	userId := req.QueryStringParameters["by"]
+	currentUserId := utils.ForceGetAuthUserId(req)
+
 	if userId == "" {
 		return handleGetRecipes(ctx, req)
 	}
@@ -22,7 +24,7 @@ func handleGetRecipesByUser(ctx context.Context, req events.APIGatewayV2HTTPRequ
 		return models.InvalidRequestErrorResponse("Failed to decode last item key!"), nil
 	}
 
-	response, err := helpers.NewRecipeHelper(ctx).GetRecipesByUser(lastKey[0], userId)
+	response, err := helpers.NewRecipeHelper(ctx).GetRecipesByUser(lastKey[0], userId, currentUserId == userId)
 	if err != nil {
 		return models.ServerSideErrorResponse(fmt.Sprintf("Failed to get recipes by user %v", userId), err), nil
 	}
@@ -34,7 +36,7 @@ func handleGetRecipesByUser(ctx context.Context, req events.APIGatewayV2HTTPRequ
 }
 
 func handleGetRecipes(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
-	userId := utils.GetAuthUserId(req)
+	userId := utils.ForceGetAuthUserId(req)
 	category := req.QueryStringParameters["category"]
 	lastKey, err := models.DecodeLastEvalKeys(req.QueryStringParameters["last"])
 	if err != nil {
