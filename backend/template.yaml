@@ -319,7 +319,7 @@ Resources:
             Path: /recipes
             Method: GET
             ApiId: !Ref RecipeApi
-        GetRecipes:
+        GetMyRecipes:
           Type: HttpApi
           Properties:
             Path: /recipes/me
