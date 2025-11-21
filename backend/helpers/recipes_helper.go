@@ -119,13 +119,13 @@ func (r *recipeHelper) getRecipes(lastKey map[string]types.AttributeValue, keyCo
 
 func (r *recipeHelper) GetRecipes(lastKey map[string]types.AttributeValue, category string) (*getRecipesOutput, error) {
 	index := "gsiIndex"
-	keyCondition := expression.KeyEqual(expression.Key("gsi"), expression.Value(models.RecipeItemType)).And(
+	keyCondition := expression.KeyEqual(expression.Key("gsi"), expression.Value(models.RecipeTypeKey())).And(
 		expression.KeyBeginsWith(expression.Key("lsi"), models.RecipesLsiPrefix),
 	)
 
 	if category != "" {
 		index = "gsiIndex2"
-		keyCondition = expression.KeyEqual(expression.Key("gsi2"), expression.Value(category)).And(
+		keyCondition = expression.KeyEqual(expression.Key("gsi2"), expression.Value(models.RecipeCategoryKey(category))).And(
 			expression.KeyBeginsWith(expression.Key("lsi"), models.RecipesLsiPrefix),
 		)
 	}
@@ -153,13 +153,13 @@ func (r *recipeHelper) GetPrivateRecipes(lastKey map[string]types.AttributeValue
 		}, nil
 	}
 	index := "gsiIndex"
-	keyCondition := expression.KeyEqual(expression.Key("gsi"), expression.Value(models.RecipeItemType)).And(
+	keyCondition := expression.KeyEqual(expression.Key("gsi"), expression.Value(models.RecipeTypeKey())).And(
 		expression.KeyBeginsWith(expression.Key("lsi"), models.PrivateRecipeLsiBeginsWith(userId)),
 	)
 
 	if category != "" {
 		index = "gsiIndex2"
-		keyCondition = expression.KeyEqual(expression.Key("gsi2"), expression.Value(category)).And(
+		keyCondition = expression.KeyEqual(expression.Key("gsi2"), expression.Value(models.RecipeCategoryKey(category))).And(
 			expression.KeyBeginsWith(expression.Key("lsi"), models.PrivateRecipeLsiBeginsWith(userId)),
 		)
 	}

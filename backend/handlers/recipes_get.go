@@ -63,13 +63,13 @@ func handleGetRecipes(ctx context.Context, req events.APIGatewayV2HTTPRequest) (
 		return models.ServerSideErrorResponse("Failed to get recipes", err), nil
 	}
 
-	if publicRecipeResults.Recipes == nil && privateRecipeResults.Recipes == nil {
+	if publicRecipeResults == nil && privateRecipeResults == nil {
 		return models.SuccessfulGetRequestResponse(nil, nil), nil
 	}
 
-	if publicRecipeResults.Recipes == nil {
+	if publicRecipeResults == nil {
 		return models.SuccessfulGetRequestResponse(privateRecipeResults.Recipes, privateRecipeResults.NextKey), nil
-	} else if privateRecipeResults.Recipes == nil {
+	} else if privateRecipeResults == nil {
 		return models.SuccessfulGetRequestResponse(publicRecipeResults.Recipes, publicRecipeResults.NextKey), nil
 	}
 

@@ -125,3 +125,11 @@ func RecipeKey(recipeId string) *map[string]types.AttributeValue {
 		"sk": &types.AttributeValueMemberS{Value: RecipesSkPrefix},
 	}
 }
+
+func RecipeTypeKey() string {
+	return utils.AddPrefix(RecipeItemType, RecipesGsiPrefix)
+}
+
+func RecipeCategoryKey(category string) string {
+	return utils.AddPrefix(category, RecipesGsi2Prefix)
+}
