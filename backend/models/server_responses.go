@@ -82,6 +82,9 @@ func SuccessfulGetRequestResponse(body interface{}, lastKeys ...map[string]types
 }
 
 func encodeLastEvalKeys(keys ...map[string]types.AttributeValue) string {
+	if len(keys) < 1 {
+		return ""
+	}
 	data, err := json.Marshal(keys)
 	if err != nil {
 		log.Panicf("Failed to marshal last key: %v, error: %v", keys, err)
@@ -90,6 +93,9 @@ func encodeLastEvalKeys(keys ...map[string]types.AttributeValue) string {
 }
 
 func DecodeLastEvalKeys(key string) ([]map[string]types.AttributeValue, error) {
+	if key == "" {
+		return nil, nil
+	}
 	data, err := base64.URLEncoding.DecodeString(key)
 	if err != nil {
 		return nil, err
