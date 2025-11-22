@@ -3,8 +3,8 @@ import FilterTab from '../components/FilterTab';
 import RecipesList from '../components/RecipeList';
 import useDarkMode from '../hooks/useDarkMode';
 import HeroSection from '../components/HeroSection';
-import { getAllRecipes } from '../services/RecipesService.mjs';
-import Header from '../components/Header';  
+import { getAllRecipes,searchRecipes } from '../services/RecipesService.mjs';
+import Header from '../components/Header';
 import { useAuthContext } from '../context/AuthContext';
 import { getUserDetails } from '../services/UserService.mjs';
 
@@ -21,22 +21,20 @@ export default function RecipeFeed() {
   const [userLoading, setUserLoading] = useState(false);
 
   useEffect(() => {
-    const fetchuserDetails= async () => {
+    const fetchuserDetails = async () => {
       setUserLoading(true);
-    try {
-        const res = await getUserDetails() 
+      try {
+        const res = await getUserDetails();
         setUserDetails(res);
-    } catch (error) {
-      
-    }finally{
-      setUserLoading(false);
-    }
-   
-  }
-    if (user){
+      } catch (error) {
+      } finally {
+        setUserLoading(false);
+      }
+    };
+    if (user) {
       fetchuserDetails();
     }
-  },[user]);
+  }, [user]);
 
   useEffect(() => {
     let isMounted = true;
@@ -100,7 +98,7 @@ export default function RecipeFeed() {
         profilePic: recipe.authorDpUrl,
         img: recipe.imageUrl,
       }));
-
+      
       setRecipes(formatted);
       setMore(Boolean(data.last));
       setLastkey(data.last);
@@ -142,8 +140,22 @@ export default function RecipeFeed() {
     }
   };
 
+  const handleSeqarch = async (searchTerm) => {
+    const response = await searchRecipes(searchTerm);
 
-   if (authLoading || userLoading) {
+    const formatted = response.data.message.map((recipe) => ({
+      key: recipe.id,
+      title: recipe.name,
+      author: recipe.authorName,
+      likes: recipe.likes,
+      profilePic: recipe.authorDpUrl,
+      img: recipe.imageUrl,
+    }));
+    setRecipes(formatted);
+
+  };
+
+  if (authLoading || userLoading) {
     return (
       <div className="bg-[#fafafa] text-[#1a1a1a] min-h-screen font-sans dark:bg-[#0a0a0a] dark:text-[#e5e5e5]">
         <div className="lg:max-w-[900px] py-10 lg:mx-auto px-5 lg:px-10">
@@ -152,18 +164,20 @@ export default function RecipeFeed() {
           </div>
           <div className="h-10 w-64 bg-gray-200 dark:bg-gray-700 rounded mb-2 animate-pulse"></div>
           <div className="h-6 w-96 bg-gray-200 dark:bg-gray-700 rounded mb-6 animate-pulse"></div>
-       </div>
+        </div>
       </div>
     );
   }
 
   return (
-   
-
     <div className="bg-[#fafafa] dark:bg-[#1a1a1a] text-[#1a1a1a] dark:text-[#fafafa] min-h-screen font-sans transition-colors duration-300">
-
-      {/* Header now receives user from AuthContext */}
-      <Header userId={user?.userId ?? null} colorTheme={colorTheme} setTheme={setTheme} userName={userDetails?userDetails.name:""} />
+      <Header
+        userId={user?.userId ?? null}
+        colorTheme={colorTheme}
+        setTheme={setTheme}
+        userName={userDetails ? userDetails.name : ''}
+        profilePic={userDetails ? userDetails.dpUrl : ''}
+      />
 
       <HeroSection />
 

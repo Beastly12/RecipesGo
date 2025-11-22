@@ -56,3 +56,7 @@ export async function editRecipe(recipeId, data) {
 export async function getRecipebyId(recipeId) {
   return await axios.get(`/recipes/${recipeId}`);
 }
+
+export async function searchRecipes(searchTerm) {
+  return await axios.get(`/search?recipe=${searchTerm}`,);
+}

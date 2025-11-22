@@ -20,7 +20,7 @@ export default function ProfileSettings() {
   const [location, setLocation] = useState('');
   const [userId, setUserId] = useState(null);
   const [dpUrl, setDpUrl] = useState('');
-  
+
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -38,7 +38,7 @@ export default function ProfileSettings() {
       return;
     }
 
-    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    const maxSize = 5 * 1024 * 1024; 
     if (file.size > maxSize) {
       Modal.error({
         title: 'File Too Large',
@@ -70,7 +70,7 @@ export default function ProfileSettings() {
       }
 
       setProfilePic(file);
-      
+
       Modal.success({
         title: 'Success',
         content: 'Profile picture uploaded successfully!',
@@ -109,11 +109,14 @@ export default function ProfileSettings() {
     fileInputRef.current?.click();
   };
 
-  const handleRemovePhoto = () => {
+  const handleRemovePhoto = async () => {
     setProfilePic(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+
+    await editUserDetails({ dpUrl: '' });
+    
   };
 
   const handleToggleDarkMode = () => {
@@ -171,7 +174,8 @@ export default function ProfileSettings() {
         setBio(userData.bio || '');
         setName(userData.name || '');
         setUserId(userData.userid || null);
-        setDpUrl(userData.dpUrl === '' ? null : userData.dpUrl);
+        setProfilePic(userData.dpUrl === '' ? null : userData.dpUrl);
+        console.log(userData.dpUrl);
       } catch (error) {
         console.error('Failed to fetch user data:', error);
         Modal.error({
@@ -195,7 +199,7 @@ export default function ProfileSettings() {
           </div>
           <div className="h-10 w-64 bg-gray-200 dark:bg-gray-700 rounded mb-2 animate-pulse"></div>
           <div className="h-6 w-96 bg-gray-200 dark:bg-gray-700 rounded mb-6 animate-pulse"></div>
-          
+
           <div className="bg-white rounded-2xl dark:bg-[#1a1a1a] p-8 mb-6 shadow dark:shadow-lg dark:shadow-black/50">
             <div className="flex flex-col items-center lg:flex-row p-2 gap-5">
               <div className="w-20 h-20 lg:w-40 lg:h-40 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
@@ -240,12 +244,12 @@ export default function ProfileSettings() {
           <div className="flex flex-col items-center lg:flex-row p-2 gap-5">
             {profilePic ? (
               <img
-                src={URL.createObjectURL(profilePic)}
+                src={profilePic instanceof File ? URL.createObjectURL(profilePic) : profilePic}
                 alt="Profile"
                 className="w-20 h-20 lg:w-40 lg:h-40 rounded-full object-cover"
               />
             ) : (
-              <div className="w-20 h-20 lg:w-40 lg:h-40 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 cursor-pointer hover:scale-105 transition-transform"></div>
+              <div className="w-20 h-20 lg:w-40 lg:h-40 rounded-full bg-linear-to-br from-indigo-400 to-purple-600 cursor-pointer hover:scale-105 transition-transform"></div>
             )}
             <div className="flex flex-col gap-6 p-6">
               <input
