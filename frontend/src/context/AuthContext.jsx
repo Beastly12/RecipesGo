@@ -14,7 +14,7 @@ export default function AuthProvider({ children }) {
       try {
         const session = await getCurrentUser();
         setUser(session);
-        const userDetails = await getUserDetails();
+        const userDetails = await getUserDetails(session.userId);
         setUserName(userDetails.name);
       } catch {
         setUser(null);
