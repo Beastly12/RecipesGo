@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Skull, Loader2 } from 'lucide-react';
 import useDarkMode from '../hooks/useDarkMode';
 import { Modal } from 'antd';
-import { editUserDetails, handleDeleteUser, getUserDetails } from '../services/UserService.mjs';
+import { editUserDetails, handleDeleteUser, getUser } from '../services/UserService.mjs';
 import { getUploadUrl } from '../services/ImageUploadService.mjs';
 import axios from 'axios';
 
@@ -164,7 +164,7 @@ export default function ProfileSettings() {
     const fetchUserData = async () => {
       setIsLoadingProfile(true);
       try {
-        const res = await getUserDetails();
+        const res = await getUser();
         const userData = res;
         if (userData.imageUrl) {
           setProfilePic(userData.dpUrl);

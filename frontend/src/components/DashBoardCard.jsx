@@ -9,7 +9,7 @@ const DashBoardCard = ({ icon, value, title }) => {
         shadow-[0_4px_12px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_12px_rgba(0,0,0,0.3)] 
         bg-white dark:bg-[#1a1a1a]
         hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)]
-        hover:border-[rgba(255,107,107,0.3)]"
+        hover:border-[rgba(255,107,107,0.3)] dark:border-gray-500"
     >
       <div className="relative z-10 flex flex-col items-start">
         <div className="p-2">{icon}</div>

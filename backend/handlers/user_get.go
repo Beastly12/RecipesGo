@@ -12,24 +12,32 @@ import (
 func handleGetUsers(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	requestedUserId := req.PathParameters["id"]
 	currentUserId := utils.GetAuthUserId(req)
+	isRequestingTheirDetails := false
 
 	if currentUserId == "" && requestedUserId == "" {
+		// if not logged in and requesting their info
 		return models.UnauthorizedErrorResponse("You need to be signed in to view your profile!"), nil
 	}
 
 	if requestedUserId == "" {
+		isRequestingTheirDetails = true
 		requestedUserId = currentUserId
+	}
+
+	if requestedUserId == currentUserId {
+		isRequestingTheirDetails = true
 	}
 
 	user, err := helpers.NewUserHelper(ctx).Get(requestedUserId)
 	if err != nil {
 		return models.ServerSideErrorResponse("Failed to get uer details!", err), nil
 	}
-
-	if currentUserId != "" {
-		return models.SuccessfulGetRequestResponse(user, nil), nil
+	if user == nil {
+		return models.NotFoundResponse("No such user exists!"), nil
 	}
 
-	user.UserStats = models.UserStats{} // to hide stats of other users
+	if !isRequestingTheirDetails {
+		user.UserStats = models.UserStats{}
+	}
 	return models.SuccessfulGetRequestResponse(user, nil), nil
 }

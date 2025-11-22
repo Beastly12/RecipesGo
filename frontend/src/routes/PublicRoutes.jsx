@@ -1,5 +1,5 @@
 import { Outlet, Navigate } from 'react-router-dom';
-import  {useAuthContext}  from '../context/AuthContext';
+import { useAuthContext } from '../context/AuthContext';
 import { Spin } from 'antd';
 
 const Public = () => {

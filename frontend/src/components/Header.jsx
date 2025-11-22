@@ -13,7 +13,7 @@ import {
 } from '@ant-design/icons';
 import { handleSignOut } from '../services/AuthService.mjs';
 
-export default function Header({ userId, colorTheme, setTheme, userName,profilePic }) {
+export default function Header({ userId, colorTheme, setTheme, userName, profilePic }) {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   // Mock user data - you can replace with actual user data from props
@@ -28,7 +28,7 @@ export default function Header({ userId, colorTheme, setTheme, userName,profileP
   // Desktop Dropdown Menu
   const dropdownMenu = (
     <Menu
-      className={colorTheme === 'dark' ? 'dark-menu':'light-menu' }
+      className={colorTheme === 'dark' ? 'dark-menu' : 'light-menu'}
       style={{
         width: 280,
         borderRadius: '16px',
@@ -53,14 +53,13 @@ export default function Header({ userId, colorTheme, setTheme, userName,profileP
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <Avatar
-          src={profilePic}
+            src={profilePic}
             size={48}
             style={{
               background: 'rgba(255,255,255,0.3)',
               fontSize: '20px',
               fontWeight: 'bold',
             }}
-            
           >
             {userName.charAt(0)}
           </Avatar>
@@ -182,7 +181,7 @@ export default function Header({ userId, colorTheme, setTheme, userName,profileP
           {userId ? (
             <Dropdown overlay={dropdownMenu} trigger={['click']} placement="bottomRight">
               <Avatar
-              src={profilePic}
+                src={profilePic}
                 size={40}
                 style={{
                   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -286,7 +285,7 @@ export default function Header({ userId, colorTheme, setTheme, userName,profileP
           }}
         >
           <Avatar
-          src={profilePic}
+            src={profilePic}
             size={64}
             style={{
               background: 'rgba(255,255,255,0.3)',
