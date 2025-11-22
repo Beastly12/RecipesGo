@@ -14,6 +14,7 @@ import Public from './routes/PublicRoutes';
 import Private from './routes/PrivateRoutes';
 import AuthProvider from './context/AuthContext';
 import About from './views/About';
+import NotFound from './views/NotFound';
 
 Amplify.configure({
   Auth: {
@@ -34,6 +35,7 @@ export default function App() {
         <Routes>
           <Route path="/recipe/:id" element={<RecipeDetailPage />} />
           <Route path="/" element={<RecipeFeed />} />
+          <Route path="*" element={<NotFound />} />
 
           <Route element={<Public />}>
             <Route path="/auth" element={<AuthPage />} />
