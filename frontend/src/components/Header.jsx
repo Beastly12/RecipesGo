@@ -13,7 +13,7 @@ import {
 } from '@ant-design/icons';
 import { handleSignOut } from '../services/AuthService.mjs';
 
-export default function Header({ userId, colorTheme, setTheme, userName }) {
+export default function Header({ userId, colorTheme, setTheme, userName, profilePic }) {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   // Mock user data - you can replace with actual user data from props
@@ -53,6 +53,7 @@ export default function Header({ userId, colorTheme, setTheme, userName }) {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <Avatar
+            src={profilePic}
             size={48}
             style={{
               background: 'rgba(255,255,255,0.3)',
@@ -180,6 +181,7 @@ export default function Header({ userId, colorTheme, setTheme, userName }) {
           {userId ? (
             <Dropdown overlay={dropdownMenu} trigger={['click']} placement="bottomRight">
               <Avatar
+                src={profilePic}
                 size={40}
                 style={{
                   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -283,6 +285,7 @@ export default function Header({ userId, colorTheme, setTheme, userName }) {
           }}
         >
           <Avatar
+            src={profilePic}
             size={64}
             style={{
               background: 'rgba(255,255,255,0.3)',

@@ -135,7 +135,7 @@ const CreateRecipePage = () => {
     } catch (e) {
       hideLoading();
       message.error('Failed to publish recipe. Please try again.');
-      console.error('Upload error:', e);
+      console.error('Upload error:', e.data?.message);
     } finally {
       setLoading(false);
     }
