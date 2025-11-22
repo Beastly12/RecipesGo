@@ -117,7 +117,7 @@ const DashBoard = () => {
         width={280}
         bodyStyle={{
           padding: 0,
-          background: colorTheme === 'dark' ? '#1a1a1a' : 'white',
+          background: colorTheme === 'white' ? 'light' : 'dark',
         }}
       >
         <div className="p-4">
