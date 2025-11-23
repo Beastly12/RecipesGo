@@ -60,19 +60,20 @@ function RecipeDetailPage() {
       const { data } = await getAllRatings({ recipeId: id});
 
       const ratingsData = data.message.map((rating) => ({
-        key: rating.RecipeId,
+        key: rating.userId,
         stars: rating.stars,
         text: rating.comment,
         profilePic:rating.dpUrl,
         name:rating.name,
         posted:rating.dateAdded
-
       }));
       console.log(ratingsData)
 
       setRatings(ratingsData);
       setMore(Boolean(data.last));
       setLastkey(data.last);
+      console.log("Backend rating data:", data.message);
+
     } catch (error) {
       console.error('Failed to fetch ratings for recipe:', error);
     } finally {
@@ -111,6 +112,7 @@ function RecipeDetailPage() {
       setMore(Boolean(data.last));
       setLastkey(data.last);
       setLikes(recipeData.Likes)
+      console.log("Backend data:", data.message);
     } catch (error) {
       console.error('Failed to fetch details for recipe:', error);
     } finally {

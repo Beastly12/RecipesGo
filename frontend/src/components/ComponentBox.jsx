@@ -85,20 +85,20 @@ const CommentBox = ({
         </div>
       </Modal>
 
-      {totalComments?.slice(0, visibleComments).map((comment) => (
+      {totalComments?.slice(0, visibleComments).map((rate) => (
         <div
-          key={comment.key}
+          key={rate.key}
           className="flex items-start gap-3 bg-gray-50 dark:bg-[#2a2a2a] p-3 rounded-lg mb-3 border-b border-gray-300 dark:border-gray-700 transition-colors duration-500"
         >
           <img
-            src={comment.profilePic}
-            alt={comment.name}
+            src={rate.profilePic}
+            alt={rate.name}
             className="w-10 h-10 rounded-full"
           />
           <div>
-            <h4 className="font-medium text-gray-800 dark:text-gray-100">{comment.name}</h4>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{comment.posted}</p>
-            <p className="mt-1 text-gray-800 dark:text-gray-200">{comment.text}</p>
+            <h4 className="font-medium text-gray-800 dark:text-gray-100">{rate.name}</h4>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{rate.posted}</p>
+            <p className="mt-1 text-gray-800 dark:text-gray-200">{rate.text}</p>
           </div>
         </div>
       ))}
