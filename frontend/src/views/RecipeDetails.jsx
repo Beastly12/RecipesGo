@@ -13,7 +13,7 @@ import { Accordion } from '../components/Accordion';
 import InstructionBox from '../components/InstructionBox';
 import IngredientsBox from '../components/IngredientsBox';
 import CommentBox from '../components/ComponentBox';
-import { favoriteRecipe, getAllRatings, getRecipebyId, favoriteCheck, rateRecipe, deleteFavoriteRecipe} from '../services/RecipesDetailsService.mjs';
+import { favoriteRecipe, getAllRatings, getRecipebyId, rateRecipe, deleteFavoriteRecipe} from '../services/RecipesDetailsService.mjs';
 
 function RecipeDetailPage() {
   const { id } = useParams();
