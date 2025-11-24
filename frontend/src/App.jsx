@@ -1,5 +1,9 @@
 import './App.css';
+<<<<<<< HEAD
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+=======
+import { Routes, Route } from 'react-router-dom';
+>>>>>>> origin/main
 import RecipeDetailPage from './views/RecipeDetails';
 import AuthPage from './views/AuthPage';
 import RecipeFeed from './views/RecipesFeed';
@@ -18,6 +22,7 @@ import AuthProvider,{useAuthContext} from './context/AuthContext';
 Amplify.configure({
   Auth: {
     Cognito: {
+      region: import.meta.env.VITE_AMPLIFY_REGION,
       userPoolId: import.meta.env.VITE_AMPLIFY_POOL_ID,
       userPoolClientId: import.meta.env.VITE_AMPLIFY_CLIENT_ID,
     },

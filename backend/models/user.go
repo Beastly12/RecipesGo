@@ -60,5 +60,8 @@ func DbItemsToUserStructs(items *[]map[string]types.AttributeValue) *[]User {
 	return utils.DatabaseItemsToStructs(items, func(u *User) {
 		u.Userid = strings.TrimPrefix(u.Userid, UserPkPrefix)
 		u.Name = utils.RemovePrefix(u.Name, "#")
+		if u.DpUrl != "" {
+			u.DpUrl = utils.GenerateViewURL(u.DpUrl, utils.GetDependencies().CloudFrontDomainName)
+		}
 	})
 }

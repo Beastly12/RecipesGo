@@ -13,28 +13,63 @@ import { Accordion } from '../components/Accordion';
 import InstructionBox from '../components/InstructionBox';
 import IngredientsBox from '../components/IngredientsBox';
 import CommentBox from '../components/ComponentBox';
-import { getRecipebyId } from '../services/RecipesService.mjs';
-import { favoriteRecipe } from '../services/RecipesDetailsService.mjs';
-import { getAllRatings } from '../services/RecipesDetailsService.mjs';
+import { favoriteRecipe, getAllRatings, getRecipebyId, getUserbyId, rateRecipe, deleteFavoriteRecipe} from '../services/RecipesDetailsService.mjs';
 
-function RecipeDetails() {
-  const { id } = useParams(); 
-  const [loading, setLoading] = useState(false);
+function RecipeDetailPage() {
+  const { id } = useParams();
+  const [recipe, setRecipe] = useState([]);
+  const [visibleComment, setVisibleComment] = useState(2);
+  const [loading, setLoading] = useState(true);
   const [ratings, setRatings] = useState([]);
   const [hasMore, setMore] = useState(false);
   const [lastKey, setLastkey] = useState('');
+  const [isPopupOpen, setPopupOpen] = useState(false);
+  const [likes, setLikes] = useState(0);
+  const [newComment, setNewComment] = useState('');
+  const [starRating, setStarRating] = useState(0);
+  const [liked, setLiked] = useState(false);
+  
+  useEffect(() => {
+    async function fetchRecipe() {
+      try {
+        await handleDetails(id);
+      } catch (error) {
+        console.log('failed to fetch recipe', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchRecipe();
+  }, []);
 
-  const handleRatings = async (id, lastKey) => {
+  const handleViewMore = () => {
+    setVisibleComment((prev) => prev + 2);
+  };
+
+  const handlePopupOpen = () => {
+    setPopupOpen(true);
+  }
+
+  const handlePopupClosed = () => {
+    setPopupOpen(false);
+  }
+
+  const handleRatings = async (id) => {
     setLoading(true);
     try {
-      const { data } = await getAllRatings({ recipeId: id, last: lastKey });
-  
+      const { data } = await getAllRatings({ recipeId: id});
+
       const ratingsData = data.message.map((rating) => ({
-        key: rating.id,
+        key: rating.RecipeId,
         stars: rating.stars,
-        comments: rating.comment
+        text: rating.comment,
+        profilePic:rating.dpUrl,
+        name:rating.name,
+        posted:rating.dateAdded
+
       }));
-  
+      console.log(ratingsData)
+
       setRatings(ratingsData);
       setMore(Boolean(data.last));
       setLastkey(data.last);
@@ -44,32 +79,93 @@ function RecipeDetails() {
       setLoading(false);
     }
   };
-}
 
+  useEffect(()=>{
+    handleRatings(id)
 
-function RecipeDetailPage() {
-  const { id } = useParams();
-  const [recipe, setRecipe] = useState('');
-  const [visibleComment, setVisibleComment] = useState(2);
-  const [loading, setLoading] = useState(true);
+  },[]);
 
-  useEffect(() => {
-    async function fetchRecipe() {
-      try {
-        const response = await getRecipebyId(id);
-        setRecipe(response.data);
-      } catch (error) {
-        console.log('failed to fetch recipe', error);
-      } finally {
-        setLoading(false);
-      }
+  const handleDetails = async (id) => {
+    setLoading(true);
+    try {
+      const { data } = await getRecipebyId({ recipeId: id });
+
+      const detail = data.message;
+      const recipeData = {
+        key: detail.id,
+        Name: detail.name,
+        Image: detail.imageUrl,
+        Description: detail.description,
+        Category: detail.category,
+        Ingredients: detail.ingredients,
+        Instructions: detail.instructions,
+        Time: detail.preparationTime,
+        Published: detail.isPublic,
+        Difficulty: detail.difficulty,
+        AuthorID: detail.authorId,
+        AuthorName: detail.authorName,
+        Likes: detail.likes
+      };
+
+      setRecipe(recipeData);
+      setMore(Boolean(data.last));
+      setLastkey(data.last);
+      setLikes(recipeData.Likes)
+    } catch (error) {
+      console.error('Failed to fetch details for recipe:', error);
+    } finally {
+      setLoading(false);
     }
-    fetchRecipe();
-  }, [id]);
-
-  const handleViewMore = () => {
-    setVisibleComment((prev) => prev + 2);
   };
+
+  const handleComment = async () => {
+    if (!starRating === 0) {
+      alert('Please enter a comment and select a star rating.');
+      return;
+    }
+  
+    try {
+      await rateRecipe(id, starRating, newComment);
+
+      alert('Comment added successfully!');
+      handleRatings(id, lastKey); 
+  
+      setNewComment('');
+      setStarRating(0);
+      setPopupOpen(false);
+    } catch (error) {
+      console.error('Failed to add comment:', error);
+      alert('Failed to add comment');
+    }
+  };
+
+  const handleLike = async () => {
+    try {
+      await favoriteRecipe(id);
+      if (!liked) {
+        await favoriteRecipe(id);
+        setLikes(prev => prev + 1);
+        setLiked(true);
+        alert('LIKED SUCCESSFULLY');
+      } else {
+        await deleteFavoriteRecipe(id);
+        setLikes(prev => prev - 1);
+        setLiked(false);
+        alert('UNLIKED SUCCESSFULLY');
+      }
+    } catch (error) {
+      console.error('Error LIKING RECIPE:', error);
+      alert('FAILED TO LIKE');
+    }
+  };
+  
+  const handleShare = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    console.log("Current URL:", url);
+    alert('Link copied to clipboard!');
+  };
+  
 
   if (loading) return <p className="text-center mt-10">Loading recipe....</p>;
   if (!recipe) return <p className="text-center mt-10">Recipe not found.</p>;
@@ -96,18 +192,18 @@ function RecipeDetailPage() {
             <div className="rounded-4xl w-full mt-8 mb-8 shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
               <img
                 className="w-full h-96 object-cover rounded-3xl"
-                src={recipe.image}
+                src={recipe.Image}
                 alt="Recipe Image"
               />
             </div>
             {/* User Info Card */}
-            <h1 className="text-5xl font-semibold mb-5 mt-8 dark:text-white ">{recipe.title}</h1>
+            <h1 className="text-5xl font-semibold mb-5 mt-8 dark:text-white ">{recipe.Name}</h1>
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-1 md:grid-cols-2 text-sm text-gray-500 mb-4 mt-6 p-7 shadow-[0_12px_24px_rgba(0,0,0,0.12)] rounded-2xl  dark:bg-[#fafafa] ">
               <div className="grid grid-cols-1 gap-3 sm:grid-rows-1 ">
-                <Link to={'/profile'}>
+                <Link to={`/profile/${recipe.AuthorID}`}>
                   <p className="font-bold text-xl text-gray-800 px-4 cursor-pointer dark:text-gray-600">
-                    {recipe.name}
+                    {recipe.AuthorName}
                   </p>
                 </Link>
 
@@ -118,34 +214,20 @@ function RecipeDetailPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3 dark:text-[#fafafa]">
                 {/* Likes Button */}
-                <button className="cursor-pointer flex items-center justify-center gap-2 bg-[#ff6b6b] text-white py-2 px-4 sm:px-6 rounded-3xl text-sm hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300 w-full  dark:text-[#fafafa]">
-                  <Heart className="w-5 h-5" />
-                  <span>Likes ({recipe.Likes})</span>
-                </button>
-
-                {/* Favorite Button */}
-                <button
-                onClick={async () => {
-                  try {
-                    await favoriteRecipe(id);
-                    alert("Added to favorites!");
-                  } catch (error) {
-                    console.error("Error adding to favorites:", error);
-                    alert("Failed to add to favorites.");
-                  }
-                }}
-                  className="cursor-pointer flex items-center justify-center gap-2 bg-yellow-100 text-yellow-600 border py-2 px-4 sm:px-6
-                rounded-3xl text-sm hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full 
-                dark:bg-yellow-800 dark:text-yellow-300"
+                <button className={`cursor-pointer flex items-center justify-center gap-2 py-2 px-4 sm:px-6 rounded-3xl text-sm transition-all duration-300 w-full dark:text-[#fafafa]
+                                   ${liked ? "bg-[#ff6b6b] text-white hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]" : "bg-white text-[#ff6b6b] border border-[#ff6b6b] hover:shadow-md"}`}
+                         onClick={handleLike}
                 >
-                  <Star className="w-5 h-5" />
-                  <span>Favorite</span>
+                  <Heart className="w-5 h-5" />
+                  <span>Likes ({likes})</span>
                 </button>
+                
 
                 {/* Share Button */}
                 <button
                   className=" cursor-pointer flex items-center justify-center gap-2 bg-gray-100 text-gray-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm
                  hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full dark:bg-[#2a2a2a] dark:text-gray-300 "
+                 onClick={handleShare}
                 >
                   <ExternalLink className="w-5 h-5" />
                   <span>Share</span>
@@ -153,7 +235,7 @@ function RecipeDetailPage() {
               </div>
             </div>
 
-            <Accordion sections={recipe.descriptionSections} />
+            <Accordion sections={[{ id: 1, text: recipe.Description }]} />
 
             <div className="grid md:grid-cols-2 gap-10 mt-10">
               <div>
@@ -174,19 +256,31 @@ function RecipeDetailPage() {
                 </div>
 
                 {/* Ingredients */}
-                <IngredientsBox ingredients={recipe.ingredients} />
+                <IngredientsBox ingredients={recipe.Ingredients} />
               </div>
 
               {/* Instructions */}
-              <InstructionBox instructions={recipe.instructions} />
+              <InstructionBox instructions={recipe.Instructions} />
             </div>
 
-            {/* <CommentBox
-              totalComments={recipe.comments}
+            <CommentBox
+              totalComments={ratings}
               visibleComments={visibleComment}
               hasMore={hasMore}
               handleViewMore={handleViewMore}
-            /> */}
+              handlePopupOpen = {handlePopupOpen}// po upo
+              handlePopupClosed = {handlePopupClosed}
+              isPopupOpen={isPopupOpen}
+              comment={newComment}
+              setComment={setNewComment}// pop up
+              starRating={starRating}//pop up
+              setStarRating={setStarRating}// pop up
+              handleComment={handleComment}// pop up 
+              handleRatings = {handleRatings}
+              recipeId={id}
+              lastKey={lastKey}
+            /> 
+             
           </div>
         </div>
       </div>
@@ -195,3 +289,5 @@ function RecipeDetailPage() {
 }
 
 export default RecipeDetailPage;
+
+                        

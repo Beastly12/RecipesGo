@@ -4,7 +4,6 @@ import { Spin } from 'antd';
 
 const Protected = () => {
   const { user, loading } = useAuthContext();
-  
 
   if (loading) return <Spin />;
 

@@ -28,7 +28,7 @@ export default function Header({ userId, colorTheme, setTheme, userName }) {
   // Desktop Dropdown Menu
   const dropdownMenu = (
     <Menu
-      className={colorTheme === 'dark' ? 'dark-menu':'light-menu' }
+      className={colorTheme === 'dark' ? 'dark-menu' : 'light-menu'}
       style={{
         width: 280,
         borderRadius: '16px',

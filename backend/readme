@@ -21,6 +21,11 @@ To get all recipes:
 	To get next batch:
 		GET /recipes?last={last key returned}&category={category you want to filter by (OPTIONAL)}
 
+To get all recipes by a user:
+	GET /recipes?by={userid}
+	to get next batch
+	GET /recipes?by={userid}&last={last key}
+
 To edit a recipe:
 	PUT /recipes/{recipe_id}
 	JSON:
@@ -83,6 +88,7 @@ To edit user details (NOT YET WORKING):
 	PUT /users
 	JSON:
 		(only include properties to update not all of them)
+		dpUrl: string
 		name: string
 		bio: string 
 		location: string

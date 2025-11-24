@@ -2,4 +2,4 @@ samconfig.toml
 bin/
 bin
 todo.txt
-DS_Store
+.DS_Store

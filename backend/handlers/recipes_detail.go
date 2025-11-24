@@ -24,6 +24,9 @@ func handleGetRecipeDetails(ctx context.Context, req events.APIGatewayV2HTTPRequ
 		utils.BasicLog("Failed to get recipe details!", err)
 		return models.ServerSideErrorResponse("Failed to get recipe details, try again.", err), nil
 	}
+	if response == nil {
+		return models.NotFoundResponse("No such recipe exists, check the id and try again!"), nil
+	}
 
 	err = recipeHelper.IncreaseViewCount(*response)
 	if err != nil {
