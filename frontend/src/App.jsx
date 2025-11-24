@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import RecipeDetailPage from './views/RecipeDetails';
 import AuthPage from './views/AuthPage';
 import RecipeFeed from './views/RecipesFeed';
@@ -12,7 +12,8 @@ import useDarkMode from './hooks/useDarkMode';
 import '@ant-design/v5-patch-for-react-19';
 import Public from './routes/PublicRoutes';
 import Private from './routes/PrivateRoutes';
-import AuthProvider from './context/AuthContext';
+import AuthProvider,{useAuthContext} from './context/AuthContext';
+
 
 Amplify.configure({
   Auth: {
@@ -25,10 +26,19 @@ Amplify.configure({
 
 export default function App() {
   const [colorTheme, setTheme] = useDarkMode();
+ 
+  return(
+    <AuthProvider>
+      <AppRoutes/>
+    </AuthProvider>
+   
+  )
+}
 
+function AppRoutes(){
+  const {user: loggedInUser} = useAuthContext();
   return (
     <>
-      <AuthProvider>
         <Routes>
           <Route path="/recipe/:id" element={<RecipeDetailPage />} />
           <Route path="/" element={<RecipeFeed />} />
@@ -36,15 +46,19 @@ export default function App() {
           <Route element={<Public />}>
             <Route path="/auth" element={<AuthPage />} />
           </Route>
+        
 
           <Route element={<Private />}>
-            <Route path="/profile" element={<Profile />} />
+            <Route 
+            path= "/profile"
+              element={<Navigate to ={`/profile/${loggedInUser?.userId}`} replace/>}
+              />
+            <Route path="/profile/:id" element={<Profile />} />
             <Route path="/settings" element={<ProfileSettings />} />
             <Route path="/createRecipe" element={<CreateRecipePage />} />
             <Route path="/dashboard" element={<DashBoard />} />
           </Route>
         </Routes>
-      </AuthProvider>
     </>
   );
 }

@@ -3,6 +3,8 @@ import { ArrowLeft, Settings } from "lucide-react";
 import RecipesList from "../components/RecipeList";
 import { useNavigate, Link } from "react-router-dom";
 import axios from '../services/Axios.mjs'
+import { useParams } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
 
 export default function Profile() {
   const navigate =useNavigate();
@@ -21,15 +23,26 @@ const [loading , setLoading] = useState(true);
 const [error, setError] = useState(null);
 const [loadingMore, setLoadingMore]= useState(false);
 const [userId, setUserId] = useState(null);
+const {id: profileUserIdRaw} = useParams();
+const {user: loggedInUser} = useAuthContext();
+const profileUserId = profileUserIdRaw ? String(profileUserIdRaw) : "";
 
+const isOwner = String(loggedInUser?.userId) === profileUserId;
+
+useEffect(() => {
+  if((!profileUserId || profileUserId.trim() === "") && loggedInUser?.userId){
+    navigate(`/profile/${loggedInUser.userId}`);
+  }
+}, [profileUserId,loggedInUser, navigate])
 useEffect(() =>{
+if (!profileUserId) return;
   let on = true;
   (async () => {
     try{
       setLoading(true);
       setError(null);
 
-  const userRes = await axios.get("/users");
+  const userRes = await axios.get(`/users/${profileUserId}`);
   console.log("USER RES DATA:", userRes.data)
   const user = userRes.data.message;
 
@@ -41,10 +54,10 @@ useEffect(() =>{
       ? user.dpUrl 
       : "https://randomuser.me/api/portraits/lego/6.jpg"
     );
-    setUserId(user.userid)
+    setUserId(String(user.userid));
     
   const recipesPage = await axios.get("/recipes", {
-    params: {by: user.userid},
+    params: {by: profileUserId},
   });
   console.log("USER:",user);
   console.log("RECIPES RESPONSE:", recipesPage.data);
@@ -54,7 +67,7 @@ useEffect(() =>{
         console.log("FIRST RECIPE OBJECT:", allRecipes[0]);
         console.log("FIRST RECIPE KEYS:", Object.keys(allRecipes[0]))
       }
-      const userRecipes = allRecipes.filter(r => r.authorId === user.userid)
+      const userRecipes = allRecipes.filter(r => String (r.authorId) === profileUserId);
       setMyRecipes(userRecipes);
       setMyCursor(recipesPage.data.last ?? null);
 
@@ -87,14 +100,14 @@ async function loadMore(){
   try{
     const params = {last: cursor};
     if (usingMy && userId){
-      params.userid = userId;
+      params.by = userId;
     }
     const page = await axios.get(usingMy ? "/recipes" : "/favorites", {params});
     console.log("LOAD MORE RAW PAGE:", page.data)
     let items = page.data.message ?? [];
     const last = page.data.last ?? null;
     if(usingMy) {
-      items = items.filter (r => r.authorId === userId);
+      items = items.filter (r => String(r.authorId) === userId);
       setMyRecipes((prev) => [...prev, ...items]);
       setMyCursor(last);
     } else {
@@ -182,13 +195,15 @@ const hasMore = activeTab === "myRecipes" ? !!myCursor : !!favCursor;
                 </p>
               </div>
             </div>
-
+          {isOwner && (
             <button onClick={() => navigate("/settings")} className="font-bold flex items-center bg-[#ff6b6b] text-white hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300 rounded-xl p-3 mt-4 ">
               <Settings size={16} strokeWidth={1.75} />
               Settings
             </button>
+             )}
           </div>
         </div>
+          
 
         <div className="flex space-x-20 mt-4 text-[#1a1a1a] border-b border-b-gray-600 dark:text-white">
           <button
@@ -201,7 +216,7 @@ const hasMore = activeTab === "myRecipes" ? !!myCursor : !!favCursor;
           >
             My Recipes
           </button>
-
+            { isOwner && (
           <button
             onClick={() => setActiveTab("favorites")}
             className={`cursor-pointer pb-2 border-b-2 ${
@@ -212,6 +227,7 @@ const hasMore = activeTab === "myRecipes" ? !!myCursor : !!favCursor;
           >
             Favorites
           </button>
+        )}
         </div>
 
         <div className="m-10 mt-20">
