@@ -13,6 +13,8 @@ import '@ant-design/v5-patch-for-react-19';
 import Public from './routes/PublicRoutes';
 import Private from './routes/PrivateRoutes';
 import AuthProvider from './context/AuthContext';
+import About from './views/About';
+import NotFound from './views/NotFound';
 
 Amplify.configure({
   Auth: {
@@ -33,6 +35,7 @@ export default function App() {
         <Routes>
           <Route path="/recipe/:id" element={<RecipeDetailPage />} />
           <Route path="/" element={<RecipeFeed />} />
+          <Route path="*" element={<NotFound />} />
 
           <Route element={<Public />}>
             <Route path="/auth" element={<AuthPage />} />
@@ -41,8 +44,14 @@ export default function App() {
           <Route element={<Private />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<ProfileSettings />} />
-            <Route path="/createRecipe" element={<CreateRecipePage />} />
+            {/* <Route path="/createRecipe" element={<CreateRecipePage />} /> */}
+            <Route path="/createRecipe">
+              <Route index element={<CreateRecipePage />} />
+              <Route path=":id" element={<CreateRecipePage />} />
+            </Route>
+
             <Route path="/dashboard" element={<DashBoard />} />
+            <Route path="/about" element={<About />} />
           </Route>
         </Routes>
       </AuthProvider>

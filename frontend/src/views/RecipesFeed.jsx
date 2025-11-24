@@ -3,13 +3,15 @@ import FilterTab from '../components/FilterTab';
 import RecipesList from '../components/RecipeList';
 import useDarkMode from '../hooks/useDarkMode';
 import HeroSection from '../components/HeroSection';
-import { getAllRecipes } from '../services/RecipesService.mjs';
+import { getAllRecipes, searchRecipes } from '../services/RecipesService.mjs';
 import Header from '../components/Header';
 import { useAuthContext } from '../context/AuthContext';
 import { getUserDetails } from '../services/UserService.mjs';
+import About from '../components/Footer';
+import Footer from '../components/Footer';
 
 export default function RecipeFeed() {
-  const { user, loading: authLoading } = useAuthContext();
+  const { user,userDetails, loading: authLoading } = useAuthContext();
 
   const [recipes, setRecipes] = useState([]);
   const [hasMore, setMore] = useState(false);
@@ -17,24 +19,7 @@ export default function RecipeFeed() {
   const [lastKey, setLastkey] = useState('');
   const [loading, setLoading] = useState(false);
   const [colorTheme, setTheme] = useDarkMode();
-  const [userDetails, setUserDetails] = useState(null);
-  const [userLoading, setUserLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchuserDetails = async () => {
-      setUserLoading(true);
-      try {
-        const res = await getUserDetails();
-        setUserDetails(res);
-      } catch (error) {
-      } finally {
-        setUserLoading(false);
-      }
-    };
-    if (user) {
-      fetchuserDetails();
-    }
-  }, [user]);
+  
 
   useEffect(() => {
     let isMounted = true;
@@ -140,7 +125,21 @@ export default function RecipeFeed() {
     }
   };
 
-  if (authLoading || userLoading) {
+  const handleSeqarch = async (searchTerm) => {
+    const response = await searchRecipes(searchTerm);
+
+    const formatted = response.data.message.map((recipe) => ({
+      key: recipe.id,
+      title: recipe.name,
+      author: recipe.authorName,
+      likes: recipe.likes,
+      profilePic: recipe.authorDpUrl,
+      img: recipe.imageUrl,
+    }));
+    setRecipes(formatted);
+  };
+
+  if (authLoading) {
     return (
       <div className="bg-[#fafafa] text-[#1a1a1a] min-h-screen font-sans dark:bg-[#0a0a0a] dark:text-[#e5e5e5]">
         <div className="lg:max-w-[900px] py-10 lg:mx-auto px-5 lg:px-10">
@@ -156,12 +155,12 @@ export default function RecipeFeed() {
 
   return (
     <div className="bg-[#fafafa] dark:bg-[#1a1a1a] text-[#1a1a1a] dark:text-[#fafafa] min-h-screen font-sans transition-colors duration-300">
-      {/* Header now receives user from AuthContext */}
       <Header
         userId={user?.userId ?? null}
         colorTheme={colorTheme}
         setTheme={setTheme}
-        userName={userDetails ? userDetails.name : ''}
+        userName={userDetails ? userDetails.name: ''}
+        profilePic={userDetails ? userDetails.dpUrl : ''}
       />
 
       <HeroSection />
@@ -176,6 +175,7 @@ export default function RecipeFeed() {
         handlePagination={handlePagination}
         loading={loading}
       />
+      <Footer />
     </div>
   );
 }

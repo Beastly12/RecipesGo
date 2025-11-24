@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DashBoardCard from '../components/DashBoardCard';
 import { HeartIcon, NotebookPen, Eye, MessageCircleMore } from 'lucide-react';
 import DashBoardManagementTable from '../components/DashBoardManagementTable';
-import { getUserDetails } from '../services/UserService.mjs';
+import { getUser } from '../services/UserService.mjs';
 import { getRecipesByUser } from '../services/RecipesService.mjs';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
@@ -37,8 +37,10 @@ const DashBoard = () => {
       setLoading(true);
       try {
         const [userStatsRes, userRecipesRes] = await Promise.all([
-          getUserDetails(user.userId),
+          getUser(),
+          // console.log(user),
           getRecipesByUser(user.userId),
+          // console.log(user.userId)
         ]);
 
         const userRecipes = userRecipesRes.data?.message || [];
@@ -115,7 +117,7 @@ const DashBoard = () => {
         width={280}
         bodyStyle={{
           padding: 0,
-          background: colorTheme === 'dark' ? '#1a1a1a' : 'white',
+          background: colorTheme === 'white' ? 'light' : 'dark',
         }}
       >
         <div className="p-4">
@@ -180,7 +182,11 @@ const DashBoard = () => {
           ) : (
             <>
               <p className="font-medium text-xl mt-2">Good {greeting}</p>
-              <h1 className="font-bold text-4xl mt-2">Welcome back, {stats?.name}! 👋</h1>
+              <h1 className="font-bold text-3xl mt-2">Welcome back, {stats?.name}! 👋</h1>
+              <p className="font-medium text-xl mt-2">
+                Here is what's happening with your recipes today.
+              </p>
+
               <Link to={'/createRecipe'}>
                 <button
                   className="bg-white text-blue-600 dark:bg-[#ff6b6b] dark:text-white font-medium rounded-2xl w-40 h-10 p-2 mt-9
@@ -215,25 +221,22 @@ const DashBoard = () => {
             />
             <DashBoardCard
               icon={<HeartIcon className=" w-12 h-12 text-red-500" />}
-              value={stats?.overallRating ?? 0}
-              title="Total Comments"
+              value={stats?.likes ?? 0}
+              title="Total Likes"
             />
             <DashBoardCard
               icon={<MessageCircleMore className="w-12 h-12 text-purple-500" />}
-              value={stats?.likes ?? 0}
-              title="Total Likes"
+              value={stats?.overallRating ?? 0}
+              title="Total Comments"
             />
           </div>
         )}
 
-        {/* Management Table */}
         <DashBoardManagementTable
           userId={user?.userId}
           initialRecipes={initialRecipes}
           loading={loading}
-          onRecipeCountChange={(count) =>
-            setStats((prev) => ({ ...prev, recipeCount: count }))
-          }
+          onRecipeCountChange={(count) => setStats((prev) => ({ ...prev, recipeCount: count }))}
         />
       </div>
     </section>

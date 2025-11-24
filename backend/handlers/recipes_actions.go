@@ -13,14 +13,15 @@ func HandleRecipesActions(ctx context.Context, req events.APIGatewayV2HTTPReques
 		return handleAddRecipe(ctx, req)
 
 	case "GET":
+		pathParam := getPathParam(req)
+		if pathParam == "me" {
+			return handleGetCurrentUserRecipes(ctx, req)
+		}
 		recipeId, _ := req.PathParameters["id"]
 		if recipeId != "" {
 			return handleGetRecipeDetails(ctx, req)
 		}
-		if userId := req.QueryStringParameters["by"]; userId != "" {
-			return handleGetRecipesByUser(ctx, req)
-		}
-		return handleGetRecipes(ctx, req)
+		return handleGetRecipesByUser(ctx, req)
 
 	case "DELETE":
 		return handleDeleteRecipe(ctx, req)

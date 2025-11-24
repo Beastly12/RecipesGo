@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Skull, Loader2 } from 'lucide-react';
 import useDarkMode from '../hooks/useDarkMode';
 import { Modal } from 'antd';
-import { editUserDetails, handleDeleteUser, getUserDetails } from '../services/UserService.mjs';
+import { editUserDetails, handleDeleteUser, getUser } from '../services/UserService.mjs';
 import { getUploadUrl } from '../services/ImageUploadService.mjs';
 import axios from 'axios';
 
@@ -38,7 +38,7 @@ export default function ProfileSettings() {
       return;
     }
 
-    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    const maxSize = 5 * 1024 * 1024; 
     if (file.size > maxSize) {
       Modal.error({
         title: 'File Too Large',
@@ -109,11 +109,14 @@ export default function ProfileSettings() {
     fileInputRef.current?.click();
   };
 
-  const handleRemovePhoto = () => {
+  const handleRemovePhoto = async () => {
     setProfilePic(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+
+    await editUserDetails({ dpUrl: '' });
+    
   };
 
   const handleToggleDarkMode = () => {
@@ -161,7 +164,7 @@ export default function ProfileSettings() {
     const fetchUserData = async () => {
       setIsLoadingProfile(true);
       try {
-        const res = await getUserDetails();
+        const res = await getUser();
         const userData = res;
         if (userData.imageUrl) {
           setProfilePic(userData.dpUrl);
@@ -171,7 +174,8 @@ export default function ProfileSettings() {
         setBio(userData.bio || '');
         setName(userData.name || '');
         setUserId(userData.userid || null);
-        setDpUrl(userData.dpUrl === '' ? null : userData.dpUrl);
+        setProfilePic(userData.dpUrl === '' ? null : userData.dpUrl);
+        console.log(userData.dpUrl);
       } catch (error) {
         console.error('Failed to fetch user data:', error);
         Modal.error({
@@ -240,12 +244,12 @@ export default function ProfileSettings() {
           <div className="flex flex-col items-center lg:flex-row p-2 gap-5">
             {profilePic ? (
               <img
-                src={URL.createObjectURL(profilePic)}
+                src={profilePic instanceof File ? URL.createObjectURL(profilePic) : profilePic}
                 alt="Profile"
                 className="w-20 h-20 lg:w-40 lg:h-40 rounded-full object-cover"
               />
             ) : (
-              <div className="w-20 h-20 lg:w-40 lg:h-40 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 cursor-pointer hover:scale-105 transition-transform"></div>
+              <div className="w-20 h-20 lg:w-40 lg:h-40 rounded-full bg-linear-to-br from-indigo-400 to-purple-600 cursor-pointer hover:scale-105 transition-transform"></div>
             )}
             <div className="flex flex-col gap-6 p-6">
               <input
