@@ -57,7 +57,19 @@ export async function editRatingRecipe(recipeId, stars, comment = null) {
     },
   });
 }
-
+export async function favoriteCheck(recipeId) {
+  const session = await fetchAuthSession();
+  const token = session.tokens?.accessToken?.toString();
+  const currentUserId = session.username; 
+  const { data } = await axios.get(`/favorites/${recipeId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  console.log("Favorites response from backend:", data);
+  const userLiked = data.some(fav => fav.userId === currentUserId);
+  return userLiked; 
+}
 
 
 export async function deleteRatingRecipe(recipeId) {

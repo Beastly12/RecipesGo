@@ -13,7 +13,7 @@ import { Accordion } from '../components/Accordion';
 import InstructionBox from '../components/InstructionBox';
 import IngredientsBox from '../components/IngredientsBox';
 import CommentBox from '../components/ComponentBox';
-import { favoriteRecipe, getAllRatings, getRecipebyId, getUserbyId, rateRecipe, deleteFavoriteRecipe} from '../services/RecipesDetailsService.mjs';
+import { favoriteRecipe, getAllRatings, getRecipebyId, favoriteCheck, rateRecipe, deleteFavoriteRecipe} from '../services/RecipesDetailsService.mjs';
 
 function RecipeDetailPage() {
   const { id } = useParams();
@@ -143,7 +143,6 @@ function RecipeDetailPage() {
 
   const handleLike = async () => {
     try {
-      await favoriteRecipe(id);
       if (!liked) {
         await favoriteRecipe(id);
         setLikes(prev => prev + 1);
@@ -160,6 +159,19 @@ function RecipeDetailPage() {
       alert('FAILED TO LIKE');
     }
   };
+
+  useEffect(() => {
+    async function LikeStatus() {
+      try {
+        const likedStatus = await favoriteCheck(id);
+        setLiked(likedStatus);
+      } catch (error) {
+        console.error('Failed to fetch liked status:', error);
+      }
+    }
+  
+    LikeStatus();
+  }, [id]);
   
   const handleShare = () => {
     const url = window.location.href;
