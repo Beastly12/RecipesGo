@@ -30,7 +30,6 @@ func NewRecipeHelper(ctx context.Context) *recipeHelper {
 
 // adds recipe to db
 func (this *recipeHelper) Add(recipe *models.Recipe) error {
-	authored := models.NewAuthoredRecipe(recipe.AuthorId, recipe.Id, recipe.RecipeDetails)
 	recipeSearchIndexTrans := newSearchHelper().getRecipeSearchIndexTransactions(recipe)
 
 	update := expression.Add(expression.Name("recipeCount"), expression.Value(1))
@@ -44,19 +43,13 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 	transactions := []types.TransactWriteItem{
 		{
 			Put: &types.Put{
-				Item:      *utils.ToDatabaseFormat(authored),
-				TableName: &utils.GetDependencies().MainTableName,
-			},
-		},
-		{
-			Put: &types.Put{
 				Item:      *utils.ToDatabaseFormat(recipe),
 				TableName: &utils.GetDependencies().MainTableName,
 			},
 		},
 		{
 			Update: &types.Update{
-				Key:                       *models.UserKey(authored.UserId),
+				Key:                       *models.UserKey(recipe.Id),
 				TableName:                 &utils.GetDependencies().MainTableName,
 				UpdateExpression:          expr.Update(),
 				ExpressionAttributeNames:  expr.Names(),
@@ -327,12 +320,6 @@ func (r *recipeHelper) Delete(recipe models.Recipe) error {
 		{
 			Delete: &types.Delete{
 				Key:       *models.RecipeKey(recipe.Id),
-				TableName: &utils.GetDependencies().MainTableName,
-			},
-		},
-		{
-			Delete: &types.Delete{
-				Key:       models.AuthoredKey(recipe.AuthorId, recipe.Id),
 				TableName: &utils.GetDependencies().MainTableName,
 			},
 		},
