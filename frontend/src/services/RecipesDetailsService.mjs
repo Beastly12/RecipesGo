@@ -93,6 +93,4 @@ export async function getRecipebyId({ recipeId }) {
   return await axios.get(`/recipes/${recipeId}`);
 }
 
-export async function getUserbyId({ userId }) {
-  return await axios.get(`/users/${userId}`);
-}
+
