@@ -67,6 +67,19 @@ func (r *favoritesHelper) recipeInUserFavorites(userId, recipeId string) (bool, 
 	return len(result.Item) > 0, nil
 }
 
+func (r *favoritesHelper) RecipeInFavorites(recipeId, userId string) (bool, error) {
+	input := &dynamodb.GetItemInput{
+		Key:       *models.FavoriteKey(userId, recipeId),
+		TableName: &utils.GetDependencies().MainTableName,
+	}
+	result, err := utils.GetDependencies().DbClient.GetItem(r.Ctx, input)
+	if err != nil {
+		return false, nil
+	}
+
+	return len(result.Item) > 0, nil
+}
+
 func (this *favoritesHelper) Add(favorite *models.Favorite, recipeAuthorId string) error {
 	recipeInFavorites, err := this.recipeInUserFavorites(favorite.UserId, favorite.RecipeId)
 	if err != nil {

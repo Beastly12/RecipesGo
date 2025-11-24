@@ -361,6 +361,11 @@ func (r *recipeHelper) Delete(recipe models.Recipe) error {
 func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error {
 	update := expression.UpdateBuilder{}
 	updateSearchIndexes := false
+	oldRecipe, err := r.Get(recipeId)
+	if err != nil {
+		log.Print("Failed to get recipes old details!")
+		return err
+	}
 	if recipe.ImageUrl != "" {
 		update = update.Set(expression.Name("imageUrl"), expression.Value(recipe.ImageUrl))
 	}
@@ -412,15 +417,15 @@ func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error
 	}
 
 	if updateSearchIndexes {
-		r.UpdateSearchIndexes(recipeId, recipe)
+		r.UpdateSearchIndexes(recipe.Id, *oldRecipe, recipe)
 	}
 
 	return nil
 }
 
-func (r *recipeHelper) UpdateSearchIndexes(recipeId string, recipe models.Recipe) {
+func (r *recipeHelper) UpdateSearchIndexes(recipeId string, oldRecipe, newRecipe models.Recipe) {
 	// delete old search indexes
-	searchIndexesToDelete := models.GetSearchItemKeys(recipe.Name, recipeId, models.SEARCH_ITEM_TYPE_RECIPE)
+	searchIndexesToDelete := models.GetSearchItemKeys(oldRecipe.Name, recipeId, models.SEARCH_ITEM_TYPE_RECIPE)
 
 	for _, key := range *searchIndexesToDelete {
 		err := newHelper(r.Ctx).deleteFromDb(&key)
@@ -430,7 +435,7 @@ func (r *recipeHelper) UpdateSearchIndexes(recipeId string, recipe models.Recipe
 	}
 
 	// add new search indexes
-	newSearchIndexes := newSearchHelper().getRecipeSearchIndexTransactions(&recipe)
+	newSearchIndexes := newSearchHelper().getRecipeSearchIndexTransactions(&newRecipe)
 	searchIndexInput := &dynamodb.TransactWriteItemsInput{
 		TransactItems: newSearchIndexes,
 	}
