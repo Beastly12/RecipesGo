@@ -15,6 +15,7 @@ import Private from './routes/PrivateRoutes';
 import AuthProvider from './context/AuthContext';
 import About from './views/About';
 import NotFound from './views/NotFound';
+import { useAuthContext } from './context/AuthContext';
 
 Amplify.configure({
   Auth: {
@@ -52,10 +53,6 @@ function AppRoutes(){
         
 
           <Route element={<Private />}>
-            <Route 
-            path= "/profile"
-              element={<Navigate to ={`/profile/${loggedInUser?.userId}`} replace/>}
-              />
             <Route path="/profile/:id" element={<Profile />} />
             <Route path="/settings" element={<ProfileSettings />} />
             {/* <Route path="/createRecipe" element={<CreateRecipePage />} /> */}
