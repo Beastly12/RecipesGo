@@ -16,7 +16,7 @@ const CommentBox = ({
   setComment,
   starRating,
   setStarRating,
-  handleComment
+  handleComment,
 }) => {
 
   return (

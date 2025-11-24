@@ -160,7 +160,18 @@ function RecipeDetailPage() {
     }
   };
 
-
+  useEffect(() => {
+    async function LikeStatus() {
+      try {
+        const likedStatus = await favoriteCheck(id);
+        setLiked(likedStatus);
+      } catch (error) {
+        console.error('Failed to fetch liked status:', error);
+      }
+    }
+  
+    LikeStatus();
+  }, [id]);
   
   const handleShare = () => {
     const url = window.location.href;
