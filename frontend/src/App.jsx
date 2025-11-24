@@ -28,10 +28,19 @@ Amplify.configure({
 
 export default function App() {
   const [colorTheme, setTheme] = useDarkMode();
+ 
+  return(
+    <AuthProvider>
+      <AppRoutes/>
+    </AuthProvider>
+   
+  )
+}
 
+function AppRoutes(){
+  const {user: loggedInUser} = useAuthContext();
   return (
     <>
-      <AuthProvider>
         <Routes>
           <Route path="/recipe/:id" element={<RecipeDetailPage />} />
           <Route path="/" element={<RecipeFeed />} />
@@ -40,9 +49,14 @@ export default function App() {
           <Route element={<Public />}>
             <Route path="/auth" element={<AuthPage />} />
           </Route>
+        
 
           <Route element={<Private />}>
-            <Route path="/profile" element={<Profile />} />
+            <Route 
+            path= "/profile"
+              element={<Navigate to ={`/profile/${loggedInUser?.userId}`} replace/>}
+              />
+            <Route path="/profile/:id" element={<Profile />} />
             <Route path="/settings" element={<ProfileSettings />} />
             {/* <Route path="/createRecipe" element={<CreateRecipePage />} /> */}
             <Route path="/createRecipe">
@@ -54,7 +68,6 @@ export default function App() {
             <Route path="/about" element={<About />} />
           </Route>
         </Routes>
-      </AuthProvider>
     </>
   );
 }

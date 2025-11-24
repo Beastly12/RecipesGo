@@ -84,6 +84,12 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
     return 'Just now';
   };
 
+<<<<<<< HEAD
+  const handleEdit = (recipeId) => {
+    setEditLoadingId(recipeId);
+    setTimeout(() => {
+      navigate(`/createRecipe${recipeId}`);
+=======
   // const handleEdit = (recipeId) => {
   //   setEditLoadingId(recipeId);
   //   setTimeout(() => {
@@ -96,6 +102,7 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
 
     navigate(`/createRecipe/${recipe.id}`, {
       state: { recipe },
+>>>>>>> upstream/main
     });
   };
 
