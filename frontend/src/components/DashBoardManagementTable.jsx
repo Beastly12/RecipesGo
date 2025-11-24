@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
 import { Globe, Lock, PenLine, Trash2 } from 'lucide-react';
-import { getRecipesByUser, deleteRecipe } from '../services/RecipesService.mjs';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { deleteRecipe, getRecipesByUser } from '../services/RecipesService.mjs';
 
 const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashboardLoading }) => {
   const [searchRecipe, SetSearchRecipe] = useState('');
@@ -84,10 +84,25 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
     return 'Just now';
   };
 
+<<<<<<< HEAD
   const handleEdit = (recipeId) => {
     setEditLoadingId(recipeId);
     setTimeout(() => {
       navigate(`/createRecipe${recipeId}`);
+=======
+  // const handleEdit = (recipeId) => {
+  //   setEditLoadingId(recipeId);
+  //   setTimeout(() => {
+  //     navigate(`/createRecipe${recipeId}`);
+  //   });
+  // };
+
+  const handleEdit = (recipe) => {
+    setEditLoadingId(recipe.id);
+
+    navigate(`/createRecipe/${recipe.id}`, {
+      state: { recipe },
+>>>>>>> upstream/main
     });
   };
 
@@ -185,7 +200,7 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
             <div className="flex items-center space-x-4">
               <button
                 className="cursor-pointer hover:scale-110 transition-transform"
-                onClick={() => handleEdit(recipe.id)}
+                onClick={() => handleEdit(recipe)}
               >
                 <PenLine size={23} className="bg-[#ff6b6b] rounded-md text-white p-1" />
               </button>

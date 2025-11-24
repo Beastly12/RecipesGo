@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { createRecipeService } from '../services/RecipesService.mjs';
 import { getUploadUrl } from '../services/ImageUploadService.mjs';
 import axios from 'axios';
@@ -20,6 +20,23 @@ const CreateRecipePage = () => {
   const [privacy, setPrivacy] = useState(true);
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
+  const editingRecipe = location.state?.recipe || null;
+  const { id } = useParams();
+
+  useEffect(() => {
+    if (!editingRecipe) return;
+
+    setRecipeImage(editingRecipe.imageUrl);
+    setTitle(editingRecipe.name);
+    setDescription(editingRecipe.description);
+    setCookTime(editingRecipe.preparationTime);
+    setDifficulty(editingRecipe.difficulty);
+    setCategory(editingRecipe.category);
+    setIngredients(editingRecipe.ingredients);
+    setSteps(editingRecipe.instructions);
+    setPrivacy(editingRecipe.isPublic);
+  }, [editingRecipe]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -118,7 +135,7 @@ const CreateRecipePage = () => {
     } catch (e) {
       hideLoading();
       message.error('Failed to publish recipe. Please try again.');
-      console.error('Upload error:', e);
+      console.error('Upload error:', e.data?.message);
     } finally {
       setLoading(false);
     }
@@ -151,6 +168,30 @@ const CreateRecipePage = () => {
           </div>
           <label className="border-dashed border-[#dee2e6] border-2 rounded-2xl py-[60px] px-5 text-center cursor-pointer transition-all bg-[#f8f9fa] hover:border-[#ff6b6b] hover:bg-[#fff5f5] dark:border-gray-600 dark:bg-[#0a0a0a] dark:hover:border-[#ff5252] dark:hover:bg-[#2a0a0a] block">
             {recipeImage ? (
+              typeof recipeImage === 'string' ? (
+                // Already a URL (editing mode)
+                <img src={recipeImage} className="mx-auto rounded-xl w-48" alt="Recipe Preview" />
+              ) : (
+                // File uploaded (create mode)
+                <img
+                  src={URL.createObjectURL(recipeImage)}
+                  className="mx-auto rounded-xl w-48"
+                  alt="Recipe Preview"
+                />
+              )
+            ) : (
+              <>
+                <div className="text-5xl mb-3.5">📸</div>
+                <div className="text-[16px] font-medium text-[#495057] dark:text-gray-300">
+                  Click to upload recipe photo
+                </div>
+                <div className="text-sm mt-2 text-[#868e96] dark:text-gray-500">
+                  JPG, PNG or WEBP (max 5MB)
+                </div>
+              </>
+            )}
+
+            {/* {recipeImage ? (
               <img
                 src={URL.createObjectURL(recipeImage)}
                 className="mx-auto rounded-xl w-48"
@@ -166,7 +207,7 @@ const CreateRecipePage = () => {
                   JPG, PNG or WEBP (max 5MB)
                 </div>
               </>
-            )}
+            )} */}
             <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
           </label>
         </div>

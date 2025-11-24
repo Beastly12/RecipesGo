@@ -86,7 +86,22 @@ func (r *Recipe) ApplyPrefixes() {
 	r.ItemType = utils.AddPrefix(r.ItemType, RecipesGsiPrefix)
 	r.Category = utils.AddPrefix(r.Category, RecipesGsi2Prefix)
 	r.AuthorIdGsi = utils.AddPrefix(r.AuthorIdGsi, RecipesGsi3Prefix)
-	r.DateCreated = utils.AddPrefix(r.DateCreated, RecipesLsiPrefix)
+	r.DateCreated = GetRecipeDateWithPrefix(*r)
+}
+
+func GetRecipeDateWithPrefix(r Recipe) string {
+	if r.IsPublic {
+		// RECIPE_DATE#2025-11-18 18:08:42
+		return utils.AddPrefix(r.DateCreated, RecipesLsiPrefix)
+	} else {
+		// USER#123RECIPE_DATE#2025-11-18 18:08:42
+		return utils.AddPrefix(r.DateCreated, PrivateRecipeLsiBeginsWith(r.AuthorId))
+	}
+}
+
+func PrivateRecipeLsiBeginsWith(userId string) string {
+	userPrefix := utils.AddPrefix(userId, UserPkPrefix)
+	return userPrefix + RecipesLsiPrefix
 }
 
 // Converts db items to recipe structs
@@ -95,7 +110,7 @@ func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue, clou
 		r.Id = strings.TrimPrefix(r.Id, RecipesPkPrefix)
 		r.ItemType = strings.TrimPrefix(r.ItemType, RecipesGsiPrefix)
 		r.Category = strings.TrimPrefix(r.Category, RecipesGsi2Prefix)
-		r.DateCreated = strings.TrimPrefix(r.DateCreated, RecipesLsiPrefix)
+		r.DateCreated = utils.RemovePrefix(r.DateCreated, "#")
 		r.AuthorIdGsi = utils.RemovePrefix(r.AuthorIdGsi, "#")
 		if r.ImageUrl != "" {
 			r.ImageUrl = utils.GenerateViewURL(r.ImageUrl, cloudfrontDomainName)
@@ -109,4 +124,12 @@ func RecipeKey(recipeId string) *map[string]types.AttributeValue {
 		"pk": &types.AttributeValueMemberS{Value: RecipesPkPrefix + utils.RemovePrefix(recipeId, "#")},
 		"sk": &types.AttributeValueMemberS{Value: RecipesSkPrefix},
 	}
+}
+
+func RecipeTypeKey() string {
+	return utils.AddPrefix(RecipeItemType, RecipesGsiPrefix)
+}
+
+func RecipeCategoryKey(category string) string {
+	return utils.AddPrefix(category, RecipesGsi2Prefix)
 }

@@ -24,10 +24,10 @@ type User struct {
 }
 
 type UserStats struct {
-	RecipeCount         int     `dynamodbav:"recipeCount" json:"recipeCount"`
-	ViewCount           int     `dynamodbav:"views" json:"views"`
-	LikeCount           int     `dynamodbav:"likes" json:"likes"`
-	RecipeOverallRating float32 `dynamodbav:"overallRating" json:"overallRating"`
+	RecipeCount         int     `dynamodbav:"recipeCount" json:"recipeCount,omitempty"`
+	ViewCount           int     `dynamodbav:"views" json:"views,omitempty"`
+	LikeCount           int     `dynamodbav:"likes" json:"likes,omitempty"`
+	RecipeOverallRating float32 `dynamodbav:"overallRating" json:"overallRating,omitempty"`
 }
 
 // Returns key to query given user from db

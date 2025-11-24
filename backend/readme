@@ -17,9 +17,15 @@ To create a new recipe:
 		difficulty: string
 
 To get all recipes:
+	(this will return ONLY PUBLIC recipes)
 	GET /recipes?category={category you want to filter by (OPTIONAL)}
 	To get next batch:
 		GET /recipes?last={last key returned}&category={category you want to filter by (OPTIONAL)}
+
+To get all recipes by current user only INCLUDING PRIVATE recipes:
+	GET /recipes/me
+	to get next batch
+	GET /recipes/me?last={last key}
 
 To get all recipes by a user:
 	GET /recipes?by={userid}
