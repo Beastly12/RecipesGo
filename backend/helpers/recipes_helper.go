@@ -360,10 +360,12 @@ func (r *recipeHelper) Delete(recipe models.Recipe) error {
 
 func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error {
 	update := expression.UpdateBuilder{}
+	updateSearchIndexes := false
 	if recipe.ImageUrl != "" {
 		update = update.Set(expression.Name("imageUrl"), expression.Value(recipe.ImageUrl))
 	}
 	if recipe.Name != "" {
+		updateSearchIndexes = true
 		update = update.Set(expression.Name("name"), expression.Value(recipe.Name))
 	}
 	if recipe.Description != "" {
@@ -409,7 +411,34 @@ func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error
 		return err
 	}
 
+	if updateSearchIndexes {
+		r.UpdateSearchIndexes(recipeId, recipe)
+	}
+
 	return nil
+}
+
+func (r *recipeHelper) UpdateSearchIndexes(recipeId string, recipe models.Recipe) {
+	// delete old search indexes
+	searchIndexesToDelete := models.GetSearchItemKeys(recipe.Name, recipeId, models.SEARCH_ITEM_TYPE_RECIPE)
+
+	for _, key := range *searchIndexesToDelete {
+		err := newHelper(r.Ctx).deleteFromDb(&key)
+		if err != nil {
+			log.Printf("An error occurred while trying to delete search index: %v", err)
+		}
+	}
+
+	// add new search indexes
+	newSearchIndexes := newSearchHelper().getRecipeSearchIndexTransactions(&recipe)
+	searchIndexInput := &dynamodb.TransactWriteItemsInput{
+		TransactItems: newSearchIndexes,
+	}
+	_, err := utils.GetDependencies().DbClient.TransactWriteItems(r.Ctx, searchIndexInput)
+	if err != nil {
+		log.Print("Failed to add new search indexes")
+		utils.PrintTransactWriteCancellationReason(err)
+	}
 }
 
 func (r *recipeHelper) RecipeLikesPlus1(userId, recipeId string) error {
