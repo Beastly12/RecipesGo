@@ -144,7 +144,7 @@ const CreateRecipePage = () => {
   return (
     <div className="bg-[#fafafa] text-[#1a1a1a] min-h-screen dark:bg-[#0a0a0a] dark:text-[#e5e5e5] font-sans">
       <nav className="bg-white px-10 py-4 shadow-sm dark:bg-[#0a0a0a] dark:text-[#e5e5e5] sticky top-0 z-50 flex items-center justify-between">
-        <Link to="/" className="text-xl font-semibold dark:text-[#e5e5e5]">
+        <Link onClick={() => window.history.back()} className="text-xl font-semibold dark:text-[#e5e5e5]">
           ← Cancel
         </Link>
 

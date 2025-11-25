@@ -84,13 +84,6 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
     return 'Just now';
   };
 
-  // const handleEdit = (recipeId) => {
-  //   setEditLoadingId(recipeId);
-  //   setTimeout(() => {
-  //     navigate(`/createRecipe${recipeId}`);
-  //   });
-  // };
-
   const handleEdit = (recipe) => {
     setEditLoadingId(recipe.id);
 
