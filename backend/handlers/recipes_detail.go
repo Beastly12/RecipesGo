@@ -5,9 +5,15 @@ import (
 	"backend/models"
 	"backend/utils"
 	"context"
+	"log"
 
 	"github.com/aws/aws-lambda-go/events"
 )
+
+type recipeData struct {
+	models.Recipe
+	Liked bool `json:"liked"`
+}
 
 func handleGetRecipeDetails(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	utils.BasicLog("Executing get recipes details...", nil)
@@ -34,5 +40,16 @@ func handleGetRecipeDetails(ctx context.Context, req events.APIGatewayV2HTTPRequ
 	}
 
 	utils.BasicLog("Recipe details gotten successfully! Ending function execution", response)
-	return models.SuccessfulGetRequestResponse(response, nil), nil
+
+	liked, err := helpers.NewFavoritesHelper(ctx).RecipeInFavorites(recipeId, utils.GetAuthUserId(req))
+	if err != nil {
+		log.Printf("Failed to check if recipe is in users favorites: %v", err)
+	}
+
+	details := recipeData{
+		*response,
+		liked,
+	}
+
+	return models.SuccessfulGetRequestResponse(details, nil), nil
 }

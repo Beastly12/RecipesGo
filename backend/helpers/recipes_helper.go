@@ -30,7 +30,6 @@ func NewRecipeHelper(ctx context.Context) *recipeHelper {
 
 // adds recipe to db
 func (this *recipeHelper) Add(recipe *models.Recipe) error {
-	authored := models.NewAuthoredRecipe(recipe.AuthorId, recipe.Id, recipe.RecipeDetails)
 	recipeSearchIndexTrans := newSearchHelper().getRecipeSearchIndexTransactions(recipe)
 
 	update := expression.Add(expression.Name("recipeCount"), expression.Value(1))
@@ -44,19 +43,13 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 	transactions := []types.TransactWriteItem{
 		{
 			Put: &types.Put{
-				Item:      *utils.ToDatabaseFormat(authored),
-				TableName: &utils.GetDependencies().MainTableName,
-			},
-		},
-		{
-			Put: &types.Put{
 				Item:      *utils.ToDatabaseFormat(recipe),
 				TableName: &utils.GetDependencies().MainTableName,
 			},
 		},
 		{
 			Update: &types.Update{
-				Key:                       *models.UserKey(authored.UserId),
+				Key:                       *models.UserKey(recipe.Id),
 				TableName:                 &utils.GetDependencies().MainTableName,
 				UpdateExpression:          expr.Update(),
 				ExpressionAttributeNames:  expr.Names(),
@@ -331,12 +324,6 @@ func (r *recipeHelper) Delete(recipe models.Recipe) error {
 			},
 		},
 		{
-			Delete: &types.Delete{
-				Key:       models.AuthoredKey(recipe.AuthorId, recipe.Id),
-				TableName: &utils.GetDependencies().MainTableName,
-			},
-		},
-		{
 			Update: &types.Update{
 				Key:                       *models.UserKey(recipe.AuthorId),
 				TableName:                 &utils.GetDependencies().MainTableName,
@@ -373,10 +360,17 @@ func (r *recipeHelper) Delete(recipe models.Recipe) error {
 
 func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error {
 	update := expression.UpdateBuilder{}
+	updateSearchIndexes := false
+	oldRecipe, err := r.Get(recipeId)
+	if err != nil {
+		log.Print("Failed to get recipes old details!")
+		return err
+	}
 	if recipe.ImageUrl != "" {
 		update = update.Set(expression.Name("imageUrl"), expression.Value(recipe.ImageUrl))
 	}
 	if recipe.Name != "" {
+		updateSearchIndexes = true
 		update = update.Set(expression.Name("name"), expression.Value(recipe.Name))
 	}
 	if recipe.Description != "" {
@@ -422,7 +416,34 @@ func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error
 		return err
 	}
 
+	if updateSearchIndexes {
+		r.UpdateSearchIndexes(recipe.Id, *oldRecipe, recipe)
+	}
+
 	return nil
+}
+
+func (r *recipeHelper) UpdateSearchIndexes(recipeId string, oldRecipe, newRecipe models.Recipe) {
+	// delete old search indexes
+	searchIndexesToDelete := models.GetSearchItemKeys(oldRecipe.Name, recipeId, models.SEARCH_ITEM_TYPE_RECIPE)
+
+	for _, key := range *searchIndexesToDelete {
+		err := newHelper(r.Ctx).deleteFromDb(&key)
+		if err != nil {
+			log.Printf("An error occurred while trying to delete search index: %v", err)
+		}
+	}
+
+	// add new search indexes
+	newSearchIndexes := newSearchHelper().getRecipeSearchIndexTransactions(&newRecipe)
+	searchIndexInput := &dynamodb.TransactWriteItemsInput{
+		TransactItems: newSearchIndexes,
+	}
+	_, err := utils.GetDependencies().DbClient.TransactWriteItems(r.Ctx, searchIndexInput)
+	if err != nil {
+		log.Print("Failed to add new search indexes")
+		utils.PrintTransactWriteCancellationReason(err)
+	}
 }
 
 func (r *recipeHelper) RecipeLikesPlus1(userId, recipeId string) error {
