@@ -69,25 +69,99 @@ const CreateRecipePage = () => {
     if (steps.length > 1) setSteps(steps.filter((_, index) => index !== i));
   };
 
+  // const validateRecipe = () => {
+  //   if (!recipeImage) return 'Please upload a recipe image.';
+  //   if (!title.trim()) return 'Recipe title is required.';
+  //   if (!description.trim()) return 'Description is required.';
+
+  //   if (!cookTime.trim() || isNaN(cookTime) || Number(cookTime) <= 0) {
+  //     return 'Please enter a valid cook time (greater than 0).';
+  //   }
+
+  //   const invalidIngredients = ingredients.filter((ing) => !ing.trim());
+  //   if (invalidIngredients.length > 0) return 'All ingredients must be filled out.';
+  //   if (ingredients.length === 0) return 'Add at least one ingredient.';
+
+  //   const invalidSteps = steps.filter((step) => !step.trim());
+  //   if (invalidSteps.length > 0) return 'All steps must be filled out.';
+  //   if (steps.length === 0) return 'Add at least one step.';
+
+  //   return null;
+  // };
   const validateRecipe = () => {
     if (!recipeImage) return 'Please upload a recipe image.';
     if (!title.trim()) return 'Recipe title is required.';
     if (!description.trim()) return 'Description is required.';
-
-    if (!cookTime.trim() || isNaN(cookTime) || Number(cookTime) <= 0) {
+  
+    const numericCook = Number(cookTime);
+  
+    if (!cookTime || isNaN(numericCook) || numericCook <= 0) {
       return 'Please enter a valid cook time (greater than 0).';
     }
-
-    const invalidIngredients = ingredients.filter((ing) => !ing.trim());
-    if (invalidIngredients.length > 0) return 'All ingredients must be filled out.';
+  
+    if (ingredients.some((ing) => !ing.trim()))
+      return 'All ingredients must be filled out.';
     if (ingredients.length === 0) return 'Add at least one ingredient.';
-
-    const invalidSteps = steps.filter((step) => !step.trim());
-    if (invalidSteps.length > 0) return 'All steps must be filled out.';
+  
+    if (steps.some((step) => !step.trim()))
+      return 'All steps must be filled out.';
     if (steps.length === 0) return 'Add at least one step.';
-
+  
     return null;
   };
+  
+
+  // const handlePublish = async () => {
+  //   const error = validateRecipe();
+  //   if (error) {
+  //     message.error(error);
+  //     return;
+  //   }
+
+  //   if (!recipeImage) {
+  //     message.error('Please upload a recipe image.');
+  //     return;
+  //   }
+
+  //   const hideLoading = message.loading('Publishing your recipe...', 0);
+
+  //   try {
+  //     setLoading(true);
+
+  //     const ext = recipeImage.type.split('/')[1];
+
+  //     const uploadres = await getUploadUrl(ext);
+
+  //     await axios.put(uploadres.message.uploadUrl, recipeImage, {
+  //       headers: {
+  //         'Content-Type': recipeImage.type,
+  //       },
+  //     });
+
+  //     const recipeData = {
+  //       name: title,
+  //       description,
+  //       preparationTime: parseInt(cookTime, 10),
+  //       difficulty,
+  //       category,
+  //       ingredients,
+  //       instructions: steps,
+  //       isPublic: privacy,
+  //       imageUrl: uploadres.message.imageKey,
+  //     };
+
+  //     const createdRecipe = await createRecipeService(recipeData);
+  //     hideLoading();
+  //     message.success('Recipe published successfully!');
+  //     navigate(`/`);
+  //   } catch (e) {
+  //     hideLoading();
+  //     message.error('Failed to publish recipe. Please try again.');
+  //     console.error('Upload error:', e.data?.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handlePublish = async () => {
     const error = validateRecipe();
@@ -95,27 +169,35 @@ const CreateRecipePage = () => {
       message.error(error);
       return;
     }
-
-    if (!recipeImage) {
-      message.error('Please upload a recipe image.');
-      return;
-    }
-
+  
     const hideLoading = message.loading('Publishing your recipe...', 0);
-
+  
     try {
       setLoading(true);
-
-      const ext = recipeImage.type.split('/')[1];
-
-      const uploadres = await getUploadUrl(ext);
-
-      await axios.put(uploadres.message.uploadUrl, recipeImage, {
-        headers: {
-          'Content-Type': recipeImage.type,
-        },
-      });
-
+  
+      let finalImageKey = recipeImage;
+  
+      // If recipeImage is a File, we need to upload it
+      const isNewImageUpload = recipeImage && typeof recipeImage !== "string";
+  
+      if (isNewImageUpload) {
+        const ext = recipeImage.type.split('/')[1];
+        const uploadres = await getUploadUrl(ext);
+  
+        await axios.put(uploadres.message.uploadUrl, recipeImage, {
+          headers: {
+            'Content-Type': recipeImage.type,
+          },
+        });
+  
+        finalImageKey = uploadres.message.imageKey;
+      }
+  
+      // If editing, keep the existing image URL if no new image was uploaded
+      if (!isNewImageUpload && editingRecipe) {
+        finalImageKey = editingRecipe.imageUrl;
+      }
+  
       const recipeData = {
         name: title,
         description,
@@ -125,22 +207,23 @@ const CreateRecipePage = () => {
         ingredients,
         instructions: steps,
         isPublic: privacy,
-        imageUrl: uploadres.message.imageKey,
+        imageUrl: finalImageKey,
       };
-
+  
       const createdRecipe = await createRecipeService(recipeData);
+  
       hideLoading();
-      message.success('Recipe published successfully!');
+      message.success(editingRecipe ? "Recipe updated successfully!" : "Recipe published successfully!");
       navigate(`/`);
     } catch (e) {
       hideLoading();
       message.error('Failed to publish recipe. Please try again.');
-      console.error('Upload error:', e.data?.message);
+      console.error('Upload error:', e?.response?.data || e.message);
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="bg-[#fafafa] text-[#1a1a1a] min-h-screen dark:bg-[#0a0a0a] dark:text-[#e5e5e5] font-sans">
       <nav className="bg-white px-10 py-4 shadow-sm dark:bg-[#0a0a0a] dark:text-[#e5e5e5] sticky top-0 z-50 flex items-center justify-between">
