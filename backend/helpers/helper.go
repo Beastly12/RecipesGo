@@ -102,7 +102,7 @@ func (h *helper) findItems(items []map[string]types.AttributeValue, targetName, 
 	for _, item := range items {
 		if nameAttr, exists := item[targetName]; exists {
 			if s, ok := nameAttr.(*types.AttributeValueMemberS); ok {
-				if strings.Contains(s.Value, searchStr) {
+				if strings.Contains(strings.ToLower(s.Value), strings.ToLower(searchStr)) {
 					// check if this recipe is public
 					if isPublicAttr, exists := item["isPublic"]; exists {
 						if p, ok := isPublicAttr.(*types.AttributeValueMemberBOOL); ok {
