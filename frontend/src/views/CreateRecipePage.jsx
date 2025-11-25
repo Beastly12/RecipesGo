@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
-import { createRecipeService } from '../services/RecipesService.mjs';
+import { createRecipeService, editRecipe } from '../services/RecipesService.mjs';
 import { getUploadUrl } from '../services/ImageUploadService.mjs';
 import axios from 'axios';
 import { Spin, message } from 'antd';
@@ -92,24 +92,21 @@ const CreateRecipePage = () => {
     if (!recipeImage) return 'Please upload a recipe image.';
     if (!title.trim()) return 'Recipe title is required.';
     if (!description.trim()) return 'Description is required.';
-  
+
     const numericCook = Number(cookTime);
-  
+
     if (!cookTime || isNaN(numericCook) || numericCook <= 0) {
       return 'Please enter a valid cook time (greater than 0).';
     }
-  
-    if (ingredients.some((ing) => !ing.trim()))
-      return 'All ingredients must be filled out.';
+
+    if (ingredients.some((ing) => !ing.trim())) return 'All ingredients must be filled out.';
     if (ingredients.length === 0) return 'Add at least one ingredient.';
-  
-    if (steps.some((step) => !step.trim()))
-      return 'All steps must be filled out.';
+
+    if (steps.some((step) => !step.trim())) return 'All steps must be filled out.';
     if (steps.length === 0) return 'Add at least one step.';
-  
+
     return null;
   };
-  
 
   // const handlePublish = async () => {
   //   const error = validateRecipe();
@@ -163,45 +160,105 @@ const CreateRecipePage = () => {
   //   }
   // };
 
+  // const handlePublish = async () => {
+  //   const error = validateRecipe();
+  //   if (error) {
+  //     message.error(error);
+  //     return;
+  //   }
+
+  //   const hideLoading = message.loading('Publishing your recipe...', 0);
+
+  //   try {
+  //     setLoading(true);
+
+  //     let finalImageKey = recipeImage;
+
+  //     // If recipeImage is a File, we need to upload it
+  //     const isNewImageUpload = recipeImage && typeof recipeImage !== "string";
+
+  //     if (isNewImageUpload) {
+  //       const ext = recipeImage.type.split('/')[1];
+  //       const uploadres = await getUploadUrl(ext);
+
+  //       await axios.put(uploadres.message.uploadUrl, recipeImage, {
+  //         headers: {
+  //           'Content-Type': recipeImage.type,
+  //         },
+  //       });
+
+  //       finalImageKey = uploadres.message.imageKey;
+  //     }
+
+  //     // If editing, keep the existing image URL if no new image was uploaded
+  //     if (!isNewImageUpload && editingRecipe) {
+  //       finalImageKey = editingRecipe.imageUrl;
+  //     }
+
+  //     const recipeData = {
+  //       name: title,
+  //       description,
+  //       preparationTime: parseInt(cookTime, 10),
+  //       difficulty,
+  //       category,
+  //       ingredients,
+  //       instructions: steps,
+  //       isPublic: privacy,
+  //       imageUrl: finalImageKey,
+  //     };
+
+  //     const createdRecipe = await createRecipeService(recipeData);
+
+  //     hideLoading();
+  //     message.success(editingRecipe ? "Recipe updated successfully!" : "Recipe published successfully!");
+  //     navigate(`/`);
+  //   } catch (e) {
+  //     hideLoading();
+  //     message.error('Failed to publish recipe. Please try again.');
+  //     console.error('Upload error:', e?.response?.data || e.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handlePublish = async () => {
     const error = validateRecipe();
     if (error) {
       message.error(error);
       return;
     }
-  
-    const hideLoading = message.loading('Publishing your recipe...', 0);
-  
+
+    const hideLoading = message.loading(
+      editingRecipe ? 'Updating recipe...' : 'Publishing your recipe...',
+      0
+    );
+
     try {
       setLoading(true);
-  
+
       let finalImageKey = recipeImage;
-  
-      // If recipeImage is a File, we need to upload it
-      const isNewImageUpload = recipeImage && typeof recipeImage !== "string";
-  
+
+      const isNewImageUpload = recipeImage && typeof recipeImage !== 'string';
+
       if (isNewImageUpload) {
         const ext = recipeImage.type.split('/')[1];
         const uploadres = await getUploadUrl(ext);
-  
+
         await axios.put(uploadres.message.uploadUrl, recipeImage, {
-          headers: {
-            'Content-Type': recipeImage.type,
-          },
+          headers: { 'Content-Type': recipeImage.type },
         });
-  
+
         finalImageKey = uploadres.message.imageKey;
       }
-  
-      // If editing, keep the existing image URL if no new image was uploaded
+
       if (!isNewImageUpload && editingRecipe) {
         finalImageKey = editingRecipe.imageUrl;
       }
-  
+
       const recipeData = {
         name: title,
         description,
-        preparationTime: parseInt(cookTime, 10),
+        preparationTime: Number(cookTime),
         difficulty,
         category,
         ingredients,
@@ -209,11 +266,17 @@ const CreateRecipePage = () => {
         isPublic: privacy,
         imageUrl: finalImageKey,
       };
-  
-      const createdRecipe = await createRecipeService(recipeData);
-  
+
+      if (editingRecipe) {
+        await editRecipe(editingRecipe.id, recipeData);
+      } else {
+        await createRecipeService(recipeData);
+      }
+
       hideLoading();
-      message.success(editingRecipe ? "Recipe updated successfully!" : "Recipe published successfully!");
+      message.success(
+        editingRecipe ? 'Recipe updated successfully!' : 'Recipe published successfully!'
+      );
       navigate(`/`);
     } catch (e) {
       hideLoading();
@@ -223,11 +286,14 @@ const CreateRecipePage = () => {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="bg-[#fafafa] text-[#1a1a1a] min-h-screen dark:bg-[#0a0a0a] dark:text-[#e5e5e5] font-sans">
       <nav className="bg-white px-10 py-4 shadow-sm dark:bg-[#0a0a0a] dark:text-[#e5e5e5] sticky top-0 z-50 flex items-center justify-between">
-        <Link onClick={() => window.history.back()} className="text-xl font-semibold dark:text-[#e5e5e5]">
+        <Link
+          onClick={() => window.history.back()}
+          className="text-xl font-semibold dark:text-[#e5e5e5]"
+        >
           ← Cancel
         </Link>
 

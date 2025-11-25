@@ -38,7 +38,7 @@ export default function ProfileSettings() {
       return;
     }
 
-    const maxSize = 5 * 1024 * 1024; 
+    const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
       Modal.error({
         title: 'File Too Large',
@@ -116,7 +116,6 @@ export default function ProfileSettings() {
     }
 
     await editUserDetails({ dpUrl: '' });
-    
   };
 
   const handleToggleDarkMode = () => {

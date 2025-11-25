@@ -58,7 +58,7 @@ export async function getRecipebyId(recipeId) {
 }
 
 export async function searchRecipes(searchTerm) {
-  return await axios.get(`/search?recipe=${searchTerm}`,);
+  return await axios.get(`/search?recipe=${searchTerm}`);
 }
 
 export async function getRecipesByUser(userId, last) {
