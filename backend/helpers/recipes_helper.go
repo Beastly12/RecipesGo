@@ -456,7 +456,7 @@ func (r *recipeHelper) SearchRecipe(str string) (*[]models.Recipe, error) {
 		KeyConditionExpression:    expr.KeyCondition(),
 		ExpressionAttributeNames:  expr.Names(),
 		ExpressionAttributeValues: expr.Values(),
-		IndexName:                 aws.String("gsi"),
+		IndexName:                 aws.String("gsiIndex"),
 		ScanIndexForward:          aws.Bool(false),
 	}
 
