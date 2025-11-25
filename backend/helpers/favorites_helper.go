@@ -173,6 +173,10 @@ func (this *favoritesHelper) GetAll(userId string, lastEvalKey map[string]types.
 			log.Printf("Failed to get recipe details for %v, ERROR: %v", fav.RecipeId, err)
 			continue
 		}
+		if r == nil || !r.IsPublic {
+			// recipe has been deleted or is no longer public
+			continue
+		}
 		recipes = append(recipes, *r)
 	}
 
