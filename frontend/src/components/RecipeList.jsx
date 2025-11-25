@@ -19,7 +19,7 @@ const RecipesList = ({ recipes, hasmore, handlePagination, loading }) => {
         <>
           <div className="px-10 mt-2 min-h-[50vh] pb-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {recipes.map((recipe) => (
-              <Link to={`/recipe/${recipe.id}`} key={recipe.key}>
+              <Link to={`/recipe/${recipe.key}`} key={recipe.key}>
                 <div className="mb-6 bg-white dark:bg-[#1a1a1a] dark:shadow-lg dark:shadow-black/50 rounded-2xl overflow-hidden shadow hover:shadow-xl transition-transform duration-300 ease-out hover:-translate-y-1 cursor-pointer">
                   <div className="overflow-hidden">
                     <div
