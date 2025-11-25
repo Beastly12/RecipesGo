@@ -30,8 +30,6 @@ func NewRecipeHelper(ctx context.Context) *recipeHelper {
 
 // adds recipe to db
 func (this *recipeHelper) Add(recipe *models.Recipe) error {
-	recipeSearchIndexTrans := newSearchHelper().getRecipeSearchIndexTransactions(recipe)
-
 	update := expression.Add(expression.Name("recipeCount"), expression.Value(1))
 
 	expr, err := expression.NewBuilder().WithUpdate(update).Build()
@@ -57,7 +55,6 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 			},
 		},
 	}
-	transactions = append(transactions, recipeSearchIndexTrans...)
 	input := &dynamodb.TransactWriteItemsInput{
 		TransactItems: transactions,
 	}
@@ -344,33 +341,15 @@ func (r *recipeHelper) Delete(recipe models.Recipe) error {
 		return err
 	}
 
-	// del search indexes
-	keysToDelete := models.GetSearchItemKeys(recipe.Name, recipe.Id, models.SEARCH_ITEM_TYPE_RECIPE)
-
-	helper := newHelper(r.Ctx)
-	for _, key := range *keysToDelete {
-		err := helper.deleteFromDb(&key)
-		if err != nil {
-			log.Printf("An error occurred while trying to delete recipe search index! ERROR: %v", err)
-		}
-	}
-
 	return nil
 }
 
 func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error {
 	update := expression.UpdateBuilder{}
-	updateSearchIndexes := false
-	oldRecipe, err := r.Get(recipeId)
-	if err != nil {
-		log.Print("Failed to get recipes old details!")
-		return err
-	}
 	if recipe.ImageUrl != "" {
 		update = update.Set(expression.Name("imageUrl"), expression.Value(recipe.ImageUrl))
 	}
 	if recipe.Name != "" {
-		updateSearchIndexes = true
 		update = update.Set(expression.Name("name"), expression.Value(recipe.Name))
 	}
 	if recipe.Description != "" {
@@ -416,34 +395,7 @@ func (r *recipeHelper) UpdateRecipe(recipeId string, recipe models.Recipe) error
 		return err
 	}
 
-	if updateSearchIndexes {
-		r.UpdateSearchIndexes(recipe.Id, *oldRecipe, recipe)
-	}
-
 	return nil
-}
-
-func (r *recipeHelper) UpdateSearchIndexes(recipeId string, oldRecipe, newRecipe models.Recipe) {
-	// delete old search indexes
-	searchIndexesToDelete := models.GetSearchItemKeys(oldRecipe.Name, recipeId, models.SEARCH_ITEM_TYPE_RECIPE)
-
-	for _, key := range *searchIndexesToDelete {
-		err := newHelper(r.Ctx).deleteFromDb(&key)
-		if err != nil {
-			log.Printf("An error occurred while trying to delete search index: %v", err)
-		}
-	}
-
-	// add new search indexes
-	newSearchIndexes := newSearchHelper().getRecipeSearchIndexTransactions(&newRecipe)
-	searchIndexInput := &dynamodb.TransactWriteItemsInput{
-		TransactItems: newSearchIndexes,
-	}
-	_, err := utils.GetDependencies().DbClient.TransactWriteItems(r.Ctx, searchIndexInput)
-	if err != nil {
-		log.Print("Failed to add new search indexes")
-		utils.PrintTransactWriteCancellationReason(err)
-	}
 }
 
 func (r *recipeHelper) RecipeLikesPlus1(userId, recipeId string) error {
@@ -485,4 +437,36 @@ func (r *recipeHelper) RecipeLikesMinus1(userId, recipeId string) error {
 	}
 
 	return nil
+}
+
+func (r *recipeHelper) SearchRecipe(str string) (*[]models.Recipe, error) {
+	keyCondition := expression.KeyEqual(
+		expression.Key("gsi"),
+		expression.Value(utils.AddPrefix(models.RecipeItemType, models.RecipesGsiPrefix)),
+	)
+
+	expr, err := expression.NewBuilder().WithKeyCondition(keyCondition).Build()
+	if err != nil {
+		println("Failed to build query expression")
+		return nil, err
+	}
+
+	input := &dynamodb.QueryInput{
+		TableName:                 &utils.GetDependencies().MainTableName,
+		KeyConditionExpression:    expr.KeyCondition(),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		IndexName:                 aws.String("gsi"),
+		ScanIndexForward:          aws.Bool(false),
+	}
+
+	found, err := newHelper(r.Ctx).searchDb(input, "name", str)
+	if err != nil {
+		println("ERROR OCCURRED WHILE SEARCHING RECIPES")
+		return nil, err
+	}
+
+	matchingRecipes := models.DatabaseItemsToRecipeStructs(found, utils.GetDependencies().CloudFrontDomainName)
+
+	return matchingRecipes, nil
 }
