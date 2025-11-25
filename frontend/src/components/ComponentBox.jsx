@@ -17,9 +17,7 @@ const CommentBox = ({
   setStarRating,
   handleComment,
 }) => {
-
   return (
-  
     <div className="bg-white dark:bg-[#1e1e1e] mt-14 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_24px_rgba(255,255,255,0.05)] mb-8 transition-colors duration-500">
       <div className="flex justify-between items-center mb-10">
         <h2 className="font-bold text-3xl text-gray-800 dark:text-gray-100">
@@ -86,11 +84,7 @@ const CommentBox = ({
           key={rate.key}
           className="flex items-start gap-3 bg-gray-50 dark:bg-[#2a2a2a] p-3 rounded-lg mb-3 border-b border-gray-300 dark:border-gray-700 transition-colors duration-500"
         >
-          <img
-            src={rate.profilePic}
-            alt={rate.name}
-            className="w-10 h-10 rounded-full"
-          />
+          <img src={rate.profilePic} alt={rate.name} className="w-10 h-10 rounded-full" />
           <div>
             <h4 className="font-medium text-gray-800 dark:text-gray-100">{rate.name}</h4>
             <p className="text-sm text-gray-500 dark:text-gray-400">{rate.posted}</p>

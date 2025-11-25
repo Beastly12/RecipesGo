@@ -11,7 +11,7 @@ import About from '../components/Footer';
 import Footer from '../components/Footer';
 
 export default function RecipeFeed() {
-  const { user,userDetails, loading: authLoading } = useAuthContext();
+  const { user, userDetails, loading: authLoading } = useAuthContext();
 
   const [recipes, setRecipes] = useState([]);
   const [hasMore, setMore] = useState(false);
@@ -19,7 +19,6 @@ export default function RecipeFeed() {
   const [lastKey, setLastkey] = useState('');
   const [loading, setLoading] = useState(false);
   const [colorTheme, setTheme] = useDarkMode();
-  
 
   useEffect(() => {
     let isMounted = true;
@@ -159,7 +158,7 @@ export default function RecipeFeed() {
         userId={user?.userId ?? null}
         colorTheme={colorTheme}
         setTheme={setTheme}
-        userName={userDetails ? userDetails.name: ''}
+        userName={userDetails ? userDetails.name : ''}
         profilePic={userDetails ? userDetails.dpUrl : ''}
       />
 
