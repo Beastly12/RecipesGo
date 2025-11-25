@@ -29,42 +29,40 @@ Amplify.configure({
 
 export default function App() {
   const [colorTheme, setTheme] = useDarkMode();
- 
-  return(
+
+  return (
     <AuthProvider>
-      <AppRoutes/>
+      <AppRoutes />
     </AuthProvider>
-   
-  )
+  );
 }
 
-function AppRoutes(){
-  const {user: loggedInUser} = useAuthContext();
+function AppRoutes() {
+  const { user: loggedInUser } = useAuthContext();
   return (
     <>
-        <Routes>
-          <Route path="/recipe/:id" element={<RecipeDetailPage />} />
-          <Route path="/" element={<RecipeFeed />} />
-          <Route path="*" element={<NotFound />} />
+      <Routes>
+        <Route path="/recipe/:id" element={<RecipeDetailPage />} />
+        <Route path="/" element={<RecipeFeed />} />
+        <Route path="*" element={<NotFound />} />
 
-          <Route element={<Public />}>
-            <Route path="/auth" element={<AuthPage />} />
+        <Route element={<Public />}>
+          <Route path="/auth" element={<AuthPage />} />
+        </Route>
+
+        <Route element={<Private />}>
+          <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/settings" element={<ProfileSettings />} />
+          {/* <Route path="/createRecipe" element={<CreateRecipePage />} /> */}
+          <Route path="/createRecipe">
+            <Route index element={<CreateRecipePage />} />
+            <Route path=":id" element={<CreateRecipePage />} />
           </Route>
-        
 
-          <Route element={<Private />}>
-            <Route path="/profile/:id" element={<Profile />} />
-            <Route path="/settings" element={<ProfileSettings />} />
-            {/* <Route path="/createRecipe" element={<CreateRecipePage />} /> */}
-            <Route path="/createRecipe">
-              <Route index element={<CreateRecipePage />} />
-              <Route path=":id" element={<CreateRecipePage />} />
-            </Route>
-
-            <Route path="/dashboard" element={<DashBoard />} />
-            <Route path="/about" element={<About />} />
-          </Route>
-        </Routes>
+          <Route path="/dashboard" element={<DashBoard />} />
+          <Route path="/about" element={<About />} />
+        </Route>
+      </Routes>
     </>
   );
 }

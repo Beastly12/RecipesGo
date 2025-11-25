@@ -24,7 +24,7 @@ export async function rateRecipe(recipeId, stars, comment = null) {
 export async function favoriteRecipe(recipeId) {
   const session = await fetchAuthSession();
   const token = session.tokens?.accessToken?.toString();
-  console.log("FAV recipe id:", recipeId);
+  console.log('FAV recipe id:', recipeId);
   return await axios.post(
     '/favorites',
     { recipeId: String(recipeId) },
@@ -63,7 +63,7 @@ export async function favoriteCheck(recipeId) {
   try {
     const session = await fetchAuthSession();
     const token = session.tokens?.accessToken?.toString();
-    console.log("recipe id:", recipeId);
+    console.log('recipe id:', recipeId);
 
     const { data } = await axios.get('/favorites', {
       headers: {
@@ -71,17 +71,16 @@ export async function favoriteCheck(recipeId) {
       },
     });
 
-    console.log("favorites data:", data);
+    console.log('favorites data:', data);
 
-    const recipeLiked = data.message.some(fav => String(fav.id) === String(recipeId));
-    console.log("favorites status:", recipeLiked);
+    const recipeLiked = data.message.some((fav) => String(fav.id) === String(recipeId));
+    console.log('favorites status:', recipeLiked);
     return recipeLiked;
   } catch (error) {
     console.error('Failed to fetch favorites:', error);
     return false;
   }
 }
-
 
 export async function deleteRatingRecipe(recipeId) {
   return await axios.delete(`/ratings/${recipeId}`);
