@@ -24,29 +24,7 @@ func NewUserHelper(ctx context.Context) *userHelper {
 }
 
 func (u *userHelper) AddUser(user *models.User) error {
-	var transactionItems []types.TransactWriteItem
-
-	transactionItems = append(transactionItems, types.TransactWriteItem{
-		Put: &types.Put{
-			Item:      *utils.ToDatabaseFormat(user),
-			TableName: &utils.GetDependencies().MainTableName,
-		},
-	})
-
-	transactionItems = append(transactionItems, newSearchHelper().getUserSearchIndexTransactions(user)...)
-
-	input := &dynamodb.TransactWriteItemsInput{
-		TransactItems: transactionItems,
-	}
-
-	_, err := utils.GetDependencies().DbClient.TransactWriteItems(u.Ctx, input)
-	if err != nil {
-		log.Println("Failed to add user items to db")
-		utils.PrintTransactWriteCancellationReason(err)
-		return err
-	}
-
-	return nil
+	return newHelper(u.Ctx).putIntoDb(utils.ToDatabaseFormat(user))
 }
 
 // gets user details from db

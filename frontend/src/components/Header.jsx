@@ -16,7 +16,6 @@ import { handleSignOut } from '../services/AuthService.mjs';
 export default function Header({ userId, colorTheme, setTheme, userName, profilePic }) {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
-  // Mock user data - you can replace with actual user data from props
   const userEmail = userId ? `${userId.substring(0, 10)}...` : '';
 
   const handleLogout = async () => {
@@ -106,7 +105,7 @@ export default function Header({ userId, colorTheme, setTheme, userName, profile
         icon={<UserOutlined style={{ fontSize: '16px' }} />}
         style={{ borderRadius: '8px', margin: '4px 0' }}
       >
-        <Link to="/profile">Profile</Link>
+        <Link to={`/profile/${userId}`}>Profile</Link>
       </Menu.Item>
 
       <Menu.Item
@@ -315,7 +314,7 @@ export default function Header({ userId, colorTheme, setTheme, userName, profile
             icon={<UserOutlined style={{ fontSize: '18px' }} />}
             onClick={() => setMobileDrawerOpen(false)}
           >
-            <Link to="/profile">Profile</Link>
+            <Link to={`/profile/${userId}`}>Profile</Link>
           </Menu.Item>
 
           <Menu.Item

@@ -1,7 +1,8 @@
 import React from 'react';
-import Modal from 'react-modal';
+// import Modal from 'react-modal';
+import { useEffect } from 'react';
 
-Modal.setAppElement('#root');
+// Modal.setAppElement('#root');
 
 const CommentBox = ({
   totalComments,
@@ -31,7 +32,7 @@ const CommentBox = ({
         </button>
       </div>
 
-      <Modal
+      {/* <Modal
         isOpen={isPopupOpen}
         onRequestClose={handlePopupClosed}
         className="bg-white dark:bg-[#1e1e1e] p-6 rounded-xl shadow-xl max-w-md mx-auto mt-24 outline-none"
@@ -77,7 +78,7 @@ const CommentBox = ({
             Cancel
           </button>
         </div>
-      </Modal>
+      </Modal> */}
 
       {totalComments?.slice(0, visibleComments).map((rate) => (
         <div

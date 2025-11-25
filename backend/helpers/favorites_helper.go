@@ -67,6 +67,19 @@ func (r *favoritesHelper) recipeInUserFavorites(userId, recipeId string) (bool, 
 	return len(result.Item) > 0, nil
 }
 
+func (r *favoritesHelper) RecipeInFavorites(recipeId, userId string) (bool, error) {
+	input := &dynamodb.GetItemInput{
+		Key:       *models.FavoriteKey(userId, recipeId),
+		TableName: &utils.GetDependencies().MainTableName,
+	}
+	result, err := utils.GetDependencies().DbClient.GetItem(r.Ctx, input)
+	if err != nil {
+		return false, nil
+	}
+
+	return len(result.Item) > 0, nil
+}
+
 func (this *favoritesHelper) Add(favorite *models.Favorite, recipeAuthorId string) error {
 	recipeInFavorites, err := this.recipeInUserFavorites(favorite.UserId, favorite.RecipeId)
 	if err != nil {
@@ -158,6 +171,10 @@ func (this *favoritesHelper) GetAll(userId string, lastEvalKey map[string]types.
 		r, err := recipeHelper.Get(fav.RecipeId)
 		if err != nil {
 			log.Printf("Failed to get recipe details for %v, ERROR: %v", fav.RecipeId, err)
+			continue
+		}
+		if r == nil || !r.IsPublic {
+			// recipe has been deleted or is no longer public
 			continue
 		}
 		recipes = append(recipes, *r)

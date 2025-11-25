@@ -398,6 +398,14 @@ Resources:
             Auth:
               Authorizer: CognitoAuthorizer
 
+        # search
+        SearchRecipe:
+          Type: HttpApi
+          Properties:
+            Path: /search
+            Method: GET
+            ApiId: !Ref RecipeApi
+
   # to generate presigned url for image uploads
   GetUploadUrl:
     Type: AWS::Serverless::Function
