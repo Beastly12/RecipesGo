@@ -49,7 +49,7 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 		},
 		{
 			Update: &types.Update{
-				Key:                       *models.UserKey(recipe.Id),
+				Key:                       *models.UserKey(recipe.AuthorId),
 				TableName:                 &utils.GetDependencies().MainTableName,
 				UpdateExpression:          expr.Update(),
 				ExpressionAttributeNames:  expr.Names(),
