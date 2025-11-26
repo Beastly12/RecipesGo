@@ -9,6 +9,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
+	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
@@ -213,4 +214,28 @@ func (u *userHelper) RemoveUserPicture(userId string) error {
 
 	_, err = utils.GetDependencies().DbClient.UpdateItem(u.Ctx, input)
 	return err
+}
+
+func (u *userHelper) DeleteUser(userid string) error {
+	cognitoInput := &cognitoidentityprovider.AdminDeleteUserInput{
+		UserPoolId: &utils.GetDependencies().UserPoolId,
+		Username:   &userid,
+	}
+
+	dynamodbInput := &dynamodb.DeleteItemInput{
+		Key:       *models.UserKey(userid),
+		TableName: &utils.GetDependencies().MainTableName,
+	}
+
+	_, err := utils.GetDependencies().CognitoClient.AdminDeleteUser(u.Ctx, cognitoInput)
+	if err != nil {
+		return err
+	}
+
+	_, err = utils.GetDependencies().DbClient.DeleteItem(u.Ctx, dynamodbInput)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

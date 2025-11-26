@@ -397,6 +397,14 @@ Resources:
             ApiId: !Ref RecipeApi
             Auth:
               Authorizer: CognitoAuthorizer
+        DeleteUser:
+          Type: HttpApi
+          Properties:
+            Path: /users
+            Method: DELETE
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
 
         # search
         SearchRecipe:
