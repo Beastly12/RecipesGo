@@ -41,14 +41,18 @@ func (r *Rating) ApplyPrefixes() {
 	r.UserName = utils.AddPrefix(r.UserName, RatingGsiPrefix)
 }
 
+func (r *Rating) RemovePrefixes() {
+	r.RecipeId = strings.TrimPrefix(r.RecipeId, RatingPkPrefix)
+	r.Userid = strings.TrimPrefix(r.Userid, RatingSkPrefix)
+	r.UserName = utils.RemovePrefix(r.UserName, "#")
+	if r.UserDpUrl != "" {
+		r.UserDpUrl = utils.GenerateViewURL(r.UserDpUrl)
+	}
+}
+
 func DbItemsToRatingsStructs(items *[]map[string]types.AttributeValue) *[]Rating {
 	return utils.DatabaseItemsToStructs(items, func(r *Rating) {
-		r.RecipeId = strings.TrimPrefix(r.RecipeId, RatingPkPrefix)
-		r.Userid = strings.TrimPrefix(r.Userid, RatingSkPrefix)
-		r.UserName = utils.RemovePrefix(r.UserName, "#")
-		if r.UserDpUrl != "" {
-			r.UserDpUrl = utils.GenerateViewURL(r.UserDpUrl)
-		}
+		r.RemovePrefixes()
 	})
 }
 

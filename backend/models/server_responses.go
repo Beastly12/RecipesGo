@@ -18,6 +18,10 @@ type ResponseBody struct {
 	Last    interface{} `json:"last,omitempty"`
 }
 
+type iModel interface {
+	RemovePrefixes()
+}
+
 // buildResponse builds a standard API Gateway proxy response
 func buildResponse(statusCode int, body ResponseBody) events.APIGatewayV2HTTPResponse {
 	jsonBody, _ := json.Marshal(body)
@@ -74,7 +78,8 @@ func SuccessfulRequestResponse(msg string, createdResource bool) events.APIGatew
 	return buildResponse(sCode, ResponseBody{msg, nil})
 }
 
-func SuccessfulPostRequestResponse(itemCreated interface{}) events.APIGatewayV2HTTPResponse {
+func SuccessfulPostRequestResponse(itemCreated iModel) events.APIGatewayV2HTTPResponse {
+	itemCreated.RemovePrefixes()
 	return buildResponse(201, ResponseBody{itemCreated, nil})
 }
 

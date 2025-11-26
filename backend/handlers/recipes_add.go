@@ -86,5 +86,5 @@ func handleAddRecipe(ctx context.Context, req events.APIGatewayV2HTTPRequest) (e
 	}
 
 	// if add successful
-	return models.SuccessfulPostRequestResponse(*newRecipe), nil
+	return models.SuccessfulPostRequestResponse(newRecipe), nil
 }
