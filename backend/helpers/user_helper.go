@@ -134,11 +134,15 @@ func (u *userHelper) RecalculateRecipesOverallRatings(userId string) (float32, e
 	// convert to recipe items
 	recipes := models.DatabaseItemsToRecipeStructs(&result)
 
-	recipeCount := len(*recipes)
+	recipeCount := 0
 	var ratings float32
 	for _, recipe := range *recipes {
+		if recipe.Rating < 1 {
+			continue
+		}
 		log.Printf("RECIPE: %v, RATING: %v", recipe.Name, recipe.Rating)
 		ratings += float32(recipe.Rating)
+		recipeCount++
 	}
 
 	return ratings / float32(recipeCount), nil

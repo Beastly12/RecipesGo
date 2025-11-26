@@ -35,6 +35,13 @@ func (r *ratingsHelper) AddRating(rating *models.Rating) error {
 		return err
 	}
 
+	// get sum of all ratings
+	// add new rating to it
+	// update it in recipe
+
+	// get sum of all ratings for user
+	// add new rating to it
+
 	NewQueueHelper(r.Ctx).PutInQueue(WithRecalculateRatingsAction(rating.RecipeId))
 
 	return nil
