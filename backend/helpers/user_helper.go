@@ -131,7 +131,7 @@ func (u *userHelper) RecalculateRecipesOverallRatings(userId string) (float32, e
 	log.Printf("FOUND %v RECIPES CREATED BY THIS USER", len(result))
 
 	// convert to recipe items
-	recipes := models.DatabaseItemsToRecipeStructs(&result, utils.GetDependencies().CloudFrontDomainName)
+	recipes := models.DatabaseItemsToRecipeStructs(&result)
 
 	recipeCount := len(*recipes)
 	var ratings float32

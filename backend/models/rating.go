@@ -47,7 +47,7 @@ func DbItemsToRatingsStructs(items *[]map[string]types.AttributeValue) *[]Rating
 		r.Userid = strings.TrimPrefix(r.Userid, RatingSkPrefix)
 		r.UserName = utils.RemovePrefix(r.UserName, "#")
 		if r.UserDpUrl != "" {
-			r.UserDpUrl = utils.GenerateViewURL(r.UserDpUrl, utils.GetDependencies().CloudFrontDomainName)
+			r.UserDpUrl = utils.GenerateViewURL(r.UserDpUrl)
 		}
 	})
 }

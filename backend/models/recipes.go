@@ -105,7 +105,7 @@ func PrivateRecipeLsiBeginsWith(userId string) string {
 }
 
 // Converts db items to recipe structs
-func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue, cloudfrontDomainName string) *[]Recipe {
+func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue) *[]Recipe {
 	return utils.DatabaseItemsToStructs(items, func(r *Recipe) {
 		r.Id = strings.TrimPrefix(r.Id, RecipesPkPrefix)
 		r.ItemType = strings.TrimPrefix(r.ItemType, RecipesGsiPrefix)
@@ -113,7 +113,7 @@ func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue, clou
 		r.DateCreated = utils.RemovePrefix(r.DateCreated, "#")
 		r.AuthorIdGsi = utils.RemovePrefix(r.AuthorIdGsi, "#")
 		if r.ImageUrl != "" {
-			r.ImageUrl = utils.GenerateViewURL(r.ImageUrl, cloudfrontDomainName)
+			r.ImageUrl = utils.GenerateViewURL(r.ImageUrl)
 		}
 	})
 }

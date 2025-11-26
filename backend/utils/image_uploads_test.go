@@ -114,20 +114,34 @@ func TestGenerateViewUrl(t *testing.T) {
 	tests := []struct {
 		name     string
 		imageKey string
-		cfDomain string
 		expect   string
 	}{
 		{
 			name:     "test url with cloud front",
 			imageKey: "test.jpg",
-			cfDomain: "cdn.cf.com",
-			expect:   "https://cdn.cf.com/test.jpg",
+			expect:   "https://123abc.cloudfront.net/images/test.jpg",
+		},
+		{
+			name:     "test url with cloud front",
+			imageKey: "images/test.jpg",
+			expect:   "https://123abc.cloudfront.net/images/test.jpg",
+		},
+		{
+			name:     "test url with duplicate cloud front",
+			imageKey: "https://cdn.cf.com/images/test.jpg",
+			expect:   "https://123abc.cloudfront.net/images/test.jpg",
+		},
+		{
+			name:     "test url with duplicate cloud front",
+			imageKey: "https://d28on1laul5ygu.cloudfront.net/https://d28on1laul5ygu.cloudfront.net/images/96e2e2d4-60d1-700d-61fe-09c0d7f2d609/1764164851_1fafc2e2.jpeg",
+			expect:   "https://123abc.cloudfront.net/images/96e2e2d4-60d1-700d-61fe-09c0d7f2d609/1764164851_1fafc2e2.jpeg",
 		},
 	}
 
+	TEST_InitCloudFrontDependencies()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := GenerateViewURL(tt.imageKey, tt.cfDomain)
+			result := GenerateViewURL(tt.imageKey)
 			if tt.expect != result {
 				t.Errorf("expected\n%v\n but got \n%v\n instead", tt.expect, result)
 			}

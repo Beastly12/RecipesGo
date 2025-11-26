@@ -100,7 +100,7 @@ func (r *recipeHelper) getRecipes(lastKey map[string]types.AttributeValue, keyCo
 		}, nil
 	}
 
-	recipes := models.DatabaseItemsToRecipeStructs(&result.Items, utils.GetDependencies().CloudFrontDomainName)
+	recipes := models.DatabaseItemsToRecipeStructs(&result.Items)
 
 	postProcess(recipes)
 
@@ -235,7 +235,7 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 		return nil, nil
 	}
 
-	recipe := (*models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, utils.GetDependencies().CloudFrontDomainName))[0]
+	recipe := (*models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}))[0]
 
 	user, err := NewUserHelper(this.Ctx).GetDisplayDetails(recipe.AuthorId)
 	if err != nil || user == nil {
@@ -469,7 +469,7 @@ func (r *recipeHelper) SearchRecipe(str string) (*[]models.Recipe, error) {
 		return nil, err
 	}
 
-	matchingRecipes := models.DatabaseItemsToRecipeStructs(found, utils.GetDependencies().CloudFrontDomainName)
+	matchingRecipes := models.DatabaseItemsToRecipeStructs(found)
 
 	return matchingRecipes, nil
 }
