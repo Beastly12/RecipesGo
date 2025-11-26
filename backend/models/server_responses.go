@@ -74,6 +74,10 @@ func SuccessfulRequestResponse(msg string, createdResource bool) events.APIGatew
 	return buildResponse(sCode, ResponseBody{msg, nil})
 }
 
+func SuccessfulPostRequestResponse(itemCreated interface{}) events.APIGatewayV2HTTPResponse {
+	return buildResponse(201, ResponseBody{itemCreated, nil})
+}
+
 func SuccessfulGetRequestResponse(body interface{}, lastKey map[string]types.AttributeValue) events.APIGatewayV2HTTPResponse {
 	return buildResponse(200, ResponseBody{
 		body,
