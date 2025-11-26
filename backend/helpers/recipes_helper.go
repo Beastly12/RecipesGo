@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
@@ -117,7 +118,7 @@ func (r *recipeHelper) GetRecipes(lastKey map[string]types.AttributeValue, categ
 
 	if category != "" {
 		index = "gsiIndex2"
-		keyCondition = expression.KeyEqual(expression.Key("gsi2"), expression.Value(models.RecipeCategoryKey(category))).And(
+		keyCondition = expression.KeyEqual(expression.Key("gsi2"), expression.Value(models.RecipeCategoryKey(strings.ToLower(category)))).And(
 			expression.KeyBeginsWith(expression.Key("lsi"), models.RecipesLsiPrefix),
 		)
 	}
