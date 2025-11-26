@@ -49,6 +49,14 @@ export async function getAllRecipes({ category, last } = {}) {
   return await axios.get('/recipes', { params });
 }
 
+export async function getFavoritesRecipes({ last } = {}) {
+  const params = {};
+
+  if (last) params.last = last;
+
+  return await axios.get('/favorites', { params });
+}
+
 export async function editRecipe(recipeId, data) {
   return await axios.put(`/recipes/${recipeId}`, data);
 }
@@ -66,4 +74,10 @@ export async function getRecipesByUser(userId, last) {
 
   if (last) params.last = last;
   return await axios.get('/recipes', { params });
+}
+
+export async function getMyRecipes() {
+  const res = await axios.get('/recipes/me');
+  console.log(res)
+  return res
 }
