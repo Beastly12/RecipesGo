@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"backend"
 	"backend/models"
 	"backend/utils"
 	"context"
@@ -83,6 +84,7 @@ func (r *recipeHelper) getRecipes(lastKey map[string]types.AttributeValue, keyCo
 		ExpressionAttributeNames:  expr.Names(),
 		ExpressionAttributeValues: expr.Values(),
 		ScanIndexForward:          aws.Bool(false),
+		Limit:                     aws.Int32(backend.MAX_RECIPES_DUMP),
 	}
 
 	result, err := utils.GetDependencies().DbClient.Query(r.Ctx, input)
