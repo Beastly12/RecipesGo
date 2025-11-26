@@ -84,13 +84,6 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
     return 'Just now';
   };
 
-  // const handleEdit = (recipeId) => {
-  //   setEditLoadingId(recipeId);
-  //   setTimeout(() => {
-  //     navigate(`/createRecipe${recipeId}`);
-  //   });
-  // };
-
   const handleEdit = (recipe) => {
     setEditLoadingId(recipe.id);
 
@@ -164,44 +157,49 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
         {filteredRecipes.slice(0, visible).map((recipe) => (
           <li
             key={recipe.id}
-            className="flex items-center justify-between p-5 hover:bg-gray-50 transition shadow dark:hover:bg-slate-500/35"
+            className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-5 hover:bg-gray-50 dark:hover:bg-slate-500/35 transition shadow"
           >
-            <div className="flex space-x-3 items-center">
+            {/* LEFT: Image + Title */}
+            <div className="flex items-start gap-3 md:w-1/3">
               <img
                 src={recipe.imageUrl}
-                alt="Recipe Image"
-                className="w-28 h-28 object-cover rounded-xl shadow"
+                alt="Recipe"
+                className="w-24 h-24 object-cover rounded-xl shadow flex-shrink-0"
               />
-              <div className="sm:flex-row justify-between items-center">
-                <h2 className="font-semibold text-gray-500 dark:text-white">{recipe.name}</h2>
+              <div>
+                <h2 className="font-semibold text-gray-700 dark:text-white">{recipe.name}</h2>
                 <p className="text-sm text-gray-500 dark:text-gray-300">
-                  {recipe.category}•{recipe.difficulty}•{recipe.preparationTime}mins
+                  {recipe.category} • {recipe.difficulty} • {recipe.preparationTime}mins
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center sm:flex-row md:flex-row mr-2 sm:ml-8 gap-4">
-              <span> {statusTheme(recipe.isPublic)}</span>
-              <div className="flex sm:flex-col md:flex-row gap-4 text-sm dark:text-gray-200 text-gray-700">
-                <span>❤️{recipe.likes}</span> <span>💬 {recipe.rating}</span>
-                <span className="text-gray-500 dark:text-gray-300">
-                  {timeAgo(recipe.dateCreated)}
-                </span>
-              </div>
+            {/* CENTER: Status + Stats */}
+            <div className="flex flex-wrap items-center gap-3 md:justify-center md:w-1/3 text-sm dark:text-gray-200 text-gray-700">
+              {statusTheme(recipe.isPublic)}
+
+              <span className="flex items-center gap-1">❤️ {recipe.likes}</span>
+              <span className="flex items-center gap-1">💬 {recipe.rating}</span>
+
+              <span className="text-gray-500 dark:text-gray-300">
+                {timeAgo(recipe.dateCreated)}
+              </span>
             </div>
 
-            <div className="flex items-center space-x-4">
+            {/* RIGHT: Buttons */}
+            <div className="flex items-center gap-4 md:justify-end md:w-1/3">
               <button
                 className="cursor-pointer hover:scale-110 transition-transform"
                 onClick={() => handleEdit(recipe)}
               >
-                <PenLine size={23} className="bg-[#ff6b6b] rounded-md text-white p-1" />
+                <PenLine size={20} className="bg-[#ff6b6b] rounded-md text-white p-1" />
               </button>
+
               <button
                 className="cursor-pointer hover:scale-110 transition-transform"
                 onClick={() => handleDelete(recipe.id)}
               >
-                <Trash2 size={23} className="bg-[#ff6b6b] rounded-md text-white p-1" />
+                <Trash2 size={20} className="bg-[#ff6b6b] rounded-md text-white p-1" />
               </button>
             </div>
           </li>

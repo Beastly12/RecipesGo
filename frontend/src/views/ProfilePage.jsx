@@ -1,20 +1,18 @@
-import { useState, useEffect, useMemo } from "react";
-import { ArrowLeft, Settings } from "lucide-react";
-import RecipesList from "../components/RecipeList";
-import { Link, useParams } from "react-router-dom";
-import { useAuthContext } from "../context/AuthContext";
-import { getUserDetails } from "../services/UserService.mjs";
-import axios from "axios";
+import { useState, useEffect, useMemo } from 'react';
+import { ArrowLeft, Settings } from 'lucide-react';
+import RecipesList from '../components/RecipeList';
+import { Link, useParams } from 'react-router-dom';
+import { useAuthContext } from '../context/AuthContext';
+import { getUserDetails } from '../services/UserService.mjs';
+import axios from 'axios';
 
 export default function Profile() {
-  const [activeTab, setActiveTab] = useState("myRecipes");
+  const [activeTab, setActiveTab] = useState('myRecipes');
 
-  const [displayName, setDisplayName] = useState("");
-  const [bio, setBio] = useState("");
-  const [location, setLocation] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState(
-    "https://randomuser.me/api/portraits/lego/6.jpg"
-  );
+  const [displayName, setDisplayName] = useState('');
+  const [bio, setBio] = useState('');
+  const [location, setLocation] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('https://randomuser.me/api/portraits/lego/6.jpg');
 
   const [myRecipes, setMyRecipes] = useState([]);
   const [myCursor, setMyCursor] = useState(null);
@@ -30,7 +28,7 @@ export default function Profile() {
 
   const { id: profileUserIdRaw } = useParams();
   const { user: loggedInUser, userDetails } = useAuthContext();
-  const profileUserId = profileUserIdRaw ? String(profileUserIdRaw) : "";
+  const profileUserId = profileUserIdRaw ? String(profileUserIdRaw) : '';
 
   const isOwner = loggedInUser?.userId && String(loggedInUser.userId) === profileUserId;
 
@@ -54,46 +52,41 @@ export default function Profile() {
           user = userRes;
         }
 
-        if (!user) throw new Error("User not found.");
+        if (!user) throw new Error('User not found.');
 
-        setDisplayName(user.name ?? "");
-        setBio(user.bio ?? "");
-        setLocation(user.location ?? "");
+        setDisplayName(user.name ?? '');
+        setBio(user.bio ?? '');
+        setLocation(user.location ?? '');
         setAvatarUrl(
           user.dpUrl && user.dpUrl.length > 0
             ? user.dpUrl
-            : "https://randomuser.me/api/portraits/lego/6.jpg"
+            : 'https://randomuser.me/api/portraits/lego/6.jpg'
         );
         setUserId(String(user.userid));
 
         // Fetch user's recipes
-        const recipesPage = await axios.get("/recipes", {
+        const recipesPage = await axios.get('/recipes', {
           params: { by: profileUserId },
         });
 
         if (!on) return;
 
         const allRecipes = recipesPage.data.message ?? [];
-        const userRecipes = allRecipes.filter(
-          (r) => String(r.authorId) === profileUserId
-        );
+        const userRecipes = allRecipes.filter((r) => String(r.authorId) === profileUserId);
 
         setMyRecipes(userRecipes);
         setMyCursor(recipesPage.data.last ?? null);
 
         // Fetch user's favorites (only if owner)
         if (isOwner) {
-          const favsPage = await axios.get("/favorites");
+          const favsPage = await axios.get('/favorites');
           if (on) {
             setFavs(favsPage.data.message ?? []);
             setFavCursor(favsPage.data.last ?? null);
           }
         }
       } catch (e) {
-        const msg =
-          e.response?.data?.message ||
-          e.message ||
-          "An unexpected error occurred.";
+        const msg = e.response?.data?.message || e.message || 'An unexpected error occurred.';
         if (on) setError(msg);
       } finally {
         if (on) setLoading(false);
@@ -109,7 +102,7 @@ export default function Profile() {
   // Pagination (Load More)
   // -----------------------------------------
   async function loadMore() {
-    const usingMy = activeTab === "myRecipes";
+    const usingMy = activeTab === 'myRecipes';
     const cursor = usingMy ? myCursor : favCursor;
     if (!cursor) return;
 
@@ -118,7 +111,7 @@ export default function Profile() {
       const params = { last: cursor };
       if (usingMy && userId) params.by = userId;
 
-      const page = await axios.get(usingMy ? "/recipes" : "/favorites", {
+      const page = await axios.get(usingMy ? '/recipes' : '/favorites', {
         params,
       });
 
@@ -134,30 +127,26 @@ export default function Profile() {
         setFavCursor(last);
       }
     } catch (e) {
-      setError(
-        e.response?.data?.message ||
-          e.message ||
-          "Could not load more items."
-      );
+      setError(e.response?.data?.message || e.message || 'Could not load more items.');
     } finally {
       setLoadingMore(false);
     }
   }
 
   const listForUI = useMemo(() => {
-    const src = activeTab === "myRecipes" ? myRecipes : favs;
+    const src = activeTab === 'myRecipes' ? myRecipes : favs;
 
     return src.map((r, idx) => ({
       key: r.id ?? idx,
       title: r.name,
-      author: activeTab === "myRecipes" ? "You" : r.authorName || "Unknown",
+      author: activeTab === 'myRecipes' ? 'You' : r.authorName || 'Unknown',
       likes: r.likes ?? 0,
-      profilePic: activeTab === "myRecipes" ? avatarUrl : r.authorDp || "",
-      img: r.imageUrl ?? "",
+      profilePic: activeTab === 'myRecipes' ? avatarUrl : r.authorDp || '',
+      img: r.imageUrl ?? '',
     }));
   }, [activeTab, myRecipes, favs, avatarUrl]);
 
-  const hasMore = activeTab === "myRecipes" ? !!myCursor : !!favCursor;
+  const hasMore = activeTab === 'myRecipes' ? !!myCursor : !!favCursor;
 
   if (loading) {
     return (
@@ -201,9 +190,7 @@ export default function Profile() {
 
             <div className="flex items-center space-x-10 mt-8">
               <div>
-                <p className="font-bold text-xl text-gray-600">
-                  {myRecipes.length}
-                </p>
+                <p className="font-bold text-xl text-gray-600">{myRecipes.length}</p>
                 <p className="text-xl">Recipes</p>
               </div>
               <div>
@@ -226,23 +213,23 @@ export default function Profile() {
         {/* TABS */}
         <div className="flex space-x-20 border-b dark:border-white/10">
           <button
-            onClick={() => setActiveTab("myRecipes")}
+            onClick={() => setActiveTab('myRecipes')}
             className={`pb-2 text-xl ${
-              activeTab === "myRecipes"
-                ? "border-b-2 border-[#ff6b6b] text-[#ff6b6b]"
-                : "hover:border-b-gray-400 dark:hover:border-white/30"
+              activeTab === 'myRecipes'
+                ? 'border-b-2 border-[#ff6b6b] text-[#ff6b6b]'
+                : 'hover:border-b-gray-400 dark:hover:border-white/30'
             }`}
           >
-            {isOwner ? "My Recipes" : "Recipes"}
+            {isOwner ? 'My Recipes' : 'Recipes'}
           </button>
 
           {isOwner && (
             <button
-              onClick={() => setActiveTab("favorites")}
+              onClick={() => setActiveTab('favorites')}
               className={`pb-2 text-xl ${
-                activeTab === "favorites"
-                  ? "border-b-2 border-[#ff6b6b] text-[#ff6b6b]"
-                  : "hover:border-b-gray-400 dark:hover:border-white/30"
+                activeTab === 'favorites'
+                  ? 'border-b-2 border-[#ff6b6b] text-[#ff6b6b]'
+                  : 'hover:border-b-gray-400 dark:hover:border-white/30'
               }`}
             >
               Favorites
@@ -253,7 +240,7 @@ export default function Profile() {
         <div className="m-10 mt-20">
           {listForUI.length === 0 ? (
             <p className="text-center text-gray-500">
-              No {activeTab === "myRecipes" ? "recipes" : "favorites"} yet.
+              No {activeTab === 'myRecipes' ? 'recipes' : 'favorites'} yet.
             </p>
           ) : (
             <>
@@ -265,7 +252,7 @@ export default function Profile() {
                   onClick={loadMore}
                   className="mt-6 bg-gray-200 dark:bg-gray-700 px-6 py-3 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50"
                 >
-                  {loadingMore ? "Loading..." : "Load More"}
+                  {loadingMore ? 'Loading...' : 'Load More'}
                 </button>
               )}
             </>
