@@ -276,6 +276,12 @@ Resources:
             TableName: !Ref MainTable
         - SQSSendMessagePolicy:
             QueueName: !GetAtt RecipesQueue.QueueName
+        - Statement:
+            Effect: Allow
+            Action:
+              - cognito-idp:AdminGetUser
+              - cognito-idp:AdminDeleteUser
+            Resource: "*"
       Events:
 
         # favorites
