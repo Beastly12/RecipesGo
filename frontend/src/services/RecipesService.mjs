@@ -78,6 +78,6 @@ export async function getRecipesByUser(userId, last) {
 
 export async function getMyRecipes() {
   const res = await axios.get('/recipes/me');
-  console.log(res)
-  return res
+  console.log(res);
+  return res;
 }

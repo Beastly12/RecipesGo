@@ -17,9 +17,6 @@ const CommentBox = ({
   starRating,
   setStarRating,
   handleComment,
-  handleRatings,
-  recipeId,
-  lastKey,
 }) => {
   return (
     <div className="bg-white dark:bg-[#1e1e1e] mt-14 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_24px_rgba(255,255,255,0.05)] mb-8 transition-colors duration-500">
@@ -47,7 +44,7 @@ const CommentBox = ({
             <button
               key={star}
               onClick={() => setStarRating(star)}
-              className={`px-4 py-2 rounded-lg hover:bg-[#ff6b6b] ${
+              className={`px-4 py-2 rounded-lg hover:bg-[#ff6b6b] ${git 
                 star <= starRating ? 'bg-[#ff6b6b] text-white' : 'bg-white'
               }`}
             >
@@ -83,16 +80,16 @@ const CommentBox = ({
         </div>
       </Modal> */}
 
-      {totalComments?.slice(0, visibleComments).map((comment) => (
+      {totalComments?.slice(0, visibleComments).map((rate) => (
         <div
-          key={comment.key}
+          key={rate.key}
           className="flex items-start gap-3 bg-gray-50 dark:bg-[#2a2a2a] p-3 rounded-lg mb-3 border-b border-gray-300 dark:border-gray-700 transition-colors duration-500"
         >
-          <img src={comment.profilePic} alt={comment.name} className="w-10 h-10 rounded-full" />
+          <img src={rate.profilePic} alt={rate.name} className="w-10 h-10 rounded-full" />
           <div>
-            <h4 className="font-medium text-gray-800 dark:text-gray-100">{comment.name}</h4>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{comment.posted}</p>
-            <p className="mt-1 text-gray-800 dark:text-gray-200">{comment.text}</p>
+            <h4 className="font-medium text-gray-800 dark:text-gray-100">{rate.name}</h4>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{rate.posted}</p>
+            <p className="mt-1 text-gray-800 dark:text-gray-200">{rate.text}</p>
           </div>
         </div>
       ))}

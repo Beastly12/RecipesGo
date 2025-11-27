@@ -17,9 +17,9 @@ import {
   favoriteRecipe,
   getAllRatings,
   getRecipebyId,
-  getUserbyId,
   rateRecipe,
   deleteFavoriteRecipe,
+  favoriteCheck,
 } from '../services/RecipesDetailsService.mjs';
 
 function RecipeDetailPage() {
@@ -67,7 +67,7 @@ function RecipeDetailPage() {
       const { data } = await getAllRatings({ recipeId: id });
 
       const ratingsData = data.message.map((rating) => ({
-        key: rating.RecipeId,
+        key: rating.userId,
         stars: rating.stars,
         text: rating.comment,
         profilePic: rating.dpUrl,
@@ -79,6 +79,7 @@ function RecipeDetailPage() {
       setRatings(ratingsData);
       setMore(Boolean(data.last));
       setLastkey(data.last);
+      console.log('Backend rating data:', data.message);
     } catch (error) {
       console.error('Failed to fetch ratings for recipe:', error);
     } finally {
@@ -146,7 +147,6 @@ function RecipeDetailPage() {
 
   const handleLike = async () => {
     try {
-      await favoriteRecipe(id);
       if (!liked) {
         await favoriteRecipe(id);
         setLikes((prev) => prev + 1);
@@ -163,6 +163,18 @@ function RecipeDetailPage() {
       alert('FAILED TO LIKE');
     }
   };
+
+  useEffect(() => {
+    async function LikeStatus() {
+      try {
+        const likedStatus = await favoriteCheck(id);
+        setLiked(likedStatus);
+      } catch (error) {
+        console.error('Failed to fetch liked status:', error);
+      }
+    }
+    LikeStatus();
+  }, [id]);
 
   const handleShare = () => {
     const url = window.location.href;
@@ -280,9 +292,6 @@ function RecipeDetailPage() {
               starRating={starRating} //pop up
               setStarRating={setStarRating} // pop up
               handleComment={handleComment} // pop up
-              handleRatings={handleRatings}
-              recipeId={id}
-              lastKey={lastKey}
             />
           </div>
         </div>
