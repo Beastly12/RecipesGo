@@ -1,6 +1,5 @@
 import React from 'react';
 import Modal from 'react-modal';
-import { useEffect } from 'react';
 import { useModal } from '../context/CustomModalContext';
 import CustomInput from './CustomInput';
 
