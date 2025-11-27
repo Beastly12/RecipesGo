@@ -67,7 +67,7 @@ func (r *ratingsHelper) UpdateRating(recipeId, authorId string) error {
 	}
 
 	// calc the new overall rating for author
-	authorRating, err := NewUserHelper(r.Ctx).RecalculateRecipesOverallRatings(authorId)
+	authorRating, err := NewUserHelper(r.Ctx).RecalculateRecipesOverallRatings(authorId, recipeId, recipeRating)
 	if err != nil {
 		log.Printf("Failed to get author average rating! ERROR: %v", err)
 		return err
@@ -124,15 +124,26 @@ func (r *ratingsHelper) UpdateRating(recipeId, authorId string) error {
 }
 
 func (r *ratingsHelper) GetRecipeRatings(recipeId string, lastKey map[string]types.AttributeValue) (*getRatingsOutput, error) {
+	keyCondition := expression.KeyEqual(
+		expression.Key("pk"),
+		expression.Value(utils.AddPrefix(recipeId, models.RatingPkPrefix)),
+	).And(expression.KeyBeginsWith(
+		expression.Key("sk"),
+		models.RatingSkPrefix,
+	))
+	expr, err := expression.NewBuilder().WithKeyCondition(keyCondition).Build()
+	if err != nil {
+		println("Failed to build get rating item expression")
+	}
+
 	input := &dynamodb.QueryInput{
-		TableName:              &utils.GetDependencies().MainTableName,
-		KeyConditionExpression: aws.String("pk = :pk AND begins_with(sk, :sk)"),
-		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":pk": &types.AttributeValueMemberS{Value: utils.AddPrefix(recipeId, models.RatingPkPrefix)},
-			":sk": &types.AttributeValueMemberS{Value: models.RatingSkPrefix},
-		},
-		Limit:             aws.Int32(backend.MAX_RECIPES_DUMP),
-		ExclusiveStartKey: lastKey,
+		TableName:                 &utils.GetDependencies().MainTableName,
+		KeyConditionExpression:    expr.KeyCondition(),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		ConsistentRead:            aws.Bool(true),
+		Limit:                     aws.Int32(backend.MAX_RECIPES_DUMP),
+		ExclusiveStartKey:         lastKey,
 	}
 
 	result, err := utils.GetDependencies().DbClient.Query(r.Ctx, input)
