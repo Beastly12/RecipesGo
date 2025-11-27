@@ -174,7 +174,6 @@ function RecipeDetailPage() {
     }
   };
 
-<<<<<<< HEAD
   useEffect(() => {
     async function LikeStatus() {
       try {
@@ -187,8 +186,6 @@ function RecipeDetailPage() {
     LikeStatus();
   }, [id]);
 
-=======
->>>>>>> real/main
   const handleShare = () => {
     const url = window.location.href;
     navigator.clipboard.writeText(url);
