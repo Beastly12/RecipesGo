@@ -4,6 +4,10 @@ import RecipesList from '../components/RecipeList';
 import { Link, useParams } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import { getUserDetails } from '../services/UserService.mjs';
+<<<<<<< HEAD
+=======
+import { getFavoritesRecipes, getMyRecipes } from '../services/RecipesService.mjs';
+>>>>>>> real/main
 import axios from 'axios';
 
 export default function Profile() {
@@ -65,21 +69,34 @@ export default function Profile() {
         setUserId(String(user.userid));
 
         // Fetch user's recipes
+<<<<<<< HEAD
         const recipesPage = await axios.get('/recipes', {
           params: { by: profileUserId },
         });
+=======
+        const recipesPage = await getMyRecipes()
+        console.log(recipesPage)
+>>>>>>> real/main
 
         if (!on) return;
 
         const allRecipes = recipesPage.data.message ?? [];
+<<<<<<< HEAD
         const userRecipes = allRecipes.filter((r) => String(r.authorId) === profileUserId);
+=======
+        const userRecipes = allRecipes;
+>>>>>>> real/main
 
         setMyRecipes(userRecipes);
         setMyCursor(recipesPage.data.last ?? null);
 
         // Fetch user's favorites (only if owner)
         if (isOwner) {
+<<<<<<< HEAD
           const favsPage = await axios.get('/favorites');
+=======
+          const favsPage = await getFavoritesRecipes();
+>>>>>>> real/main
           if (on) {
             setFavs(favsPage.data.message ?? []);
             setFavCursor(favsPage.data.last ?? null);

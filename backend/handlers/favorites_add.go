@@ -51,5 +51,5 @@ func handleAddToFavorite(ctx context.Context, req events.APIGatewayV2HTTPRequest
 	utils.BasicLog("calling helper to add new favorite", nil)
 	helpers.NewFavoritesHelper(ctx).Add(fav, recipe.AuthorId)
 
-	return models.SuccessfulRequestResponse("Added to favorites", false), nil
+	return models.SuccessfulPostRequestResponse(fav), nil
 }

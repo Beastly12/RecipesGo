@@ -38,11 +38,15 @@ func (f *Favorite) ApplyPrefixes() {
 	f.Category = utils.AddPrefix(f.Category, FavoriteGsiPrefix)
 }
 
+func (f *Favorite) RemovePrefixes() {
+	f.UserId = strings.TrimPrefix(f.UserId, FavoritePkPrefix)
+	f.RecipeId = strings.TrimPrefix(f.RecipeId, FavoriteSkPrefix)
+	f.Category = strings.TrimPrefix(f.Category, FavoriteGsiPrefix)
+}
+
 func DbItemsToFavoriteStructs(items *[]map[string]types.AttributeValue) *[]Favorite {
 	return utils.DatabaseItemsToStructs(items, func(f *Favorite) {
-		f.UserId = strings.TrimPrefix(f.UserId, FavoritePkPrefix)
-		f.RecipeId = strings.TrimPrefix(f.RecipeId, FavoriteSkPrefix)
-		f.Category = strings.TrimPrefix(f.Category, FavoriteGsiPrefix)
+		f.RemovePrefixes()
 	})
 }
 

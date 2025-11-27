@@ -17,9 +17,15 @@ import {
   favoriteRecipe,
   getAllRatings,
   getRecipebyId,
+<<<<<<< HEAD
   rateRecipe,
   deleteFavoriteRecipe,
   favoriteCheck,
+=======
+  getUserbyId,
+  rateRecipe,
+  deleteFavoriteRecipe,
+>>>>>>> real/main
 } from '../services/RecipesDetailsService.mjs';
 
 function RecipeDetailPage() {
@@ -117,7 +123,10 @@ function RecipeDetailPage() {
       setMore(Boolean(data.last));
       setLastkey(data.last);
       setLikes(recipeData.Likes);
+<<<<<<< HEAD
       console.log('Backend data:', data.message);
+=======
+>>>>>>> real/main
     } catch (error) {
       console.error('Failed to fetch details for recipe:', error);
     } finally {
@@ -165,6 +174,7 @@ function RecipeDetailPage() {
     }
   };
 
+<<<<<<< HEAD
   useEffect(() => {
     async function LikeStatus() {
       try {
@@ -177,6 +187,8 @@ function RecipeDetailPage() {
     LikeStatus();
   }, [id]);
 
+=======
+>>>>>>> real/main
   const handleShare = () => {
     const url = window.location.href;
     navigator.clipboard.writeText(url);
@@ -293,6 +305,12 @@ function RecipeDetailPage() {
               starRating={starRating} //pop up
               setStarRating={setStarRating} // pop up
               handleComment={handleComment} // pop up
+<<<<<<< HEAD
+=======
+              handleRatings={handleRatings}
+              recipeId={id}
+              lastKey={lastKey}
+>>>>>>> real/main
             />
           </div>
         </div>

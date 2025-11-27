@@ -63,5 +63,5 @@ func handleAddRatings(ctx context.Context, req events.APIGatewayV2HTTPRequest) (
 		return models.ServerSideErrorResponse("Failed to add rating, try again.", err), nil
 	}
 
-	return models.SuccessfulRequestResponse("Rated recipe successfully!", true), nil
+	return models.SuccessfulPostRequestResponse(newRating), nil
 }

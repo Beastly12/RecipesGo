@@ -1,11 +1,13 @@
 package helpers
 
 import (
+	"backend"
 	"backend/models"
 	"backend/utils"
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
@@ -47,7 +49,7 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 		},
 		{
 			Update: &types.Update{
-				Key:                       *models.UserKey(recipe.Id),
+				Key:                       *models.UserKey(recipe.AuthorId),
 				TableName:                 &utils.GetDependencies().MainTableName,
 				UpdateExpression:          expr.Update(),
 				ExpressionAttributeNames:  expr.Names(),
@@ -83,6 +85,7 @@ func (r *recipeHelper) getRecipes(lastKey map[string]types.AttributeValue, keyCo
 		ExpressionAttributeNames:  expr.Names(),
 		ExpressionAttributeValues: expr.Values(),
 		ScanIndexForward:          aws.Bool(false),
+		Limit:                     aws.Int32(backend.MAX_RECIPES_DUMP),
 	}
 
 	result, err := utils.GetDependencies().DbClient.Query(r.Ctx, input)
@@ -97,7 +100,7 @@ func (r *recipeHelper) getRecipes(lastKey map[string]types.AttributeValue, keyCo
 		}, nil
 	}
 
-	recipes := models.DatabaseItemsToRecipeStructs(&result.Items, utils.GetDependencies().CloudFrontDomainName)
+	recipes := models.DatabaseItemsToRecipeStructs(&result.Items)
 
 	postProcess(recipes)
 
@@ -115,7 +118,7 @@ func (r *recipeHelper) GetRecipes(lastKey map[string]types.AttributeValue, categ
 
 	if category != "" {
 		index = "gsiIndex2"
-		keyCondition = expression.KeyEqual(expression.Key("gsi2"), expression.Value(models.RecipeCategoryKey(category))).And(
+		keyCondition = expression.KeyEqual(expression.Key("gsi2"), expression.Value(models.RecipeCategoryKey(strings.ToLower(category)))).And(
 			expression.KeyBeginsWith(expression.Key("lsi"), models.RecipesLsiPrefix),
 		)
 	}
@@ -232,7 +235,7 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 		return nil, nil
 	}
 
-	recipe := (*models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, utils.GetDependencies().CloudFrontDomainName))[0]
+	recipe := (*models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}))[0]
 
 	user, err := NewUserHelper(this.Ctx).GetDisplayDetails(recipe.AuthorId)
 	if err != nil || user == nil {
@@ -466,7 +469,7 @@ func (r *recipeHelper) SearchRecipe(str string) (*[]models.Recipe, error) {
 		return nil, err
 	}
 
-	matchingRecipes := models.DatabaseItemsToRecipeStructs(found, utils.GetDependencies().CloudFrontDomainName)
+	matchingRecipes := models.DatabaseItemsToRecipeStructs(found)
 
 	return matchingRecipes, nil
 }

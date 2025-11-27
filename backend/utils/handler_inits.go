@@ -111,3 +111,8 @@ func InitHandlerDependencies(opts ...option) {
 		opt(&handlerDependencies, cfg)
 	}
 }
+
+func TEST_InitCloudFrontDependencies() {
+	// init cloudfront always
+	handlerDependencies.CloudFrontDomainName = "https://123abc.cloudfront.net"
+}
