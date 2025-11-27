@@ -79,7 +79,21 @@ Cypress.Commands.add('searchRecipes', (text) => {
   });
 });
 
+<<<<<<< HEAD
 Cypress.Commands.add('getPublicRecipes', (category = '') => {
+=======
+Cypress.Commands.add("getRecipeAuto", () => {
+  const recipeId = Cypress.env('testStore').recipeIds.slice(-1)[0];
+
+  return cy.request({
+    method: "GET",
+    url: `${Cypress.env("api")}/recipes/${recipeId}`,
+    headers: authHeaders(),
+  });
+});
+
+Cypress.Commands.add("getPublicRecipes", (category = "") => {
+>>>>>>> real/main
   return cy.request({
     method: 'GET',
     url: `${Cypress.env('api')}/recipes?category=${category ? category : ''}`,

@@ -155,11 +155,19 @@ describe('Recipe Management Flow', () => {
     });
   });
 
+<<<<<<< HEAD
   it('updates user location', () => {
     cy.updateUser({ location: 'Southampton, UK' });
 
     cy.getCurrentUser().then((res) => {
       expect(res.body.message.location).to.equal('Southampton, UK');
+=======
+  it("updates user location", () => {
+    cy.updateUser({ location: "Southampton, UK" });
+
+    cy.getCurrentUser().then(res => {
+      expect(res.body.message.location).to.equal("Southampton, UK");
+>>>>>>> real/main
     });
   });
 
