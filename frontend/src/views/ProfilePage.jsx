@@ -4,10 +4,7 @@ import RecipesList from '../components/RecipeList';
 import { Link, useParams } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import { getUserDetails } from '../services/UserService.mjs';
-<<<<<<< HEAD
-=======
 import { getFavoritesRecipes, getMyRecipes } from '../services/RecipesService.mjs';
->>>>>>> real/main
 import axios from 'axios';
 
 export default function Profile() {
