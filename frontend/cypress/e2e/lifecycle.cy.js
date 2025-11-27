@@ -58,7 +58,7 @@ describe("Recipe Management Flow", () => {
 
   it("rates the first recipe with 2 stars", () => {
     cy.rateRecipeAuto(2);
-    
+
     cy.then(() => {
       const firstRecipeId = Cypress.env('testStore').recipeIds[0];
       cy.getRatings(firstRecipeId).then(res => {
@@ -74,7 +74,7 @@ describe("Recipe Management Flow", () => {
 
   it("rates the second recipe with 5 stars", () => {
     cy.rateRecipeAuto(5);
-    
+
     cy.then(() => {
       const secondRecipeId = Cypress.env('testStore').recipeIds[1];
       cy.getRatings(secondRecipeId).then(res => {
@@ -122,7 +122,7 @@ describe("Recipe Management Flow", () => {
 
   it("removes the last rating", () => {
     cy.removeRatingAuto();
-    
+
     cy.then(() => {
       const secondRecipeId = Cypress.env('testStore').recipeIds[1];
       cy.getRatings(secondRecipeId).then(res => {
@@ -158,7 +158,7 @@ describe("Recipe Management Flow", () => {
 
   it("updates user location", () => {
     cy.updateUser({ location: "Southampton, UK" });
-    
+
     cy.getCurrentUser().then(res => {
       expect(res.body.message.location).to.equal("Southampton, UK");
     });
