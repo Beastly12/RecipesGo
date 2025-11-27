@@ -123,10 +123,6 @@ function RecipeDetailPage() {
       setMore(Boolean(data.last));
       setLastkey(data.last);
       setLikes(recipeData.Likes);
-<<<<<<< HEAD
-      console.log('Backend data:', data.message);
-=======
->>>>>>> real/main
     } catch (error) {
       console.error('Failed to fetch details for recipe:', error);
     } finally {
