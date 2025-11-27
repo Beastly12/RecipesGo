@@ -272,9 +272,7 @@ function RecipeDetailPage() {
               visibleComments={visibleComment}
               hasMore={hasMore}
               handleViewMore={handleViewMore}
-              handlePopupOpen={handlePopupOpen} // po upo
               handlePopupClosed={handlePopupClosed}
-              isPopupOpen={isPopupOpen}
               comment={newComment}
               setComment={setNewComment} // pop up
               starRating={starRating} //pop up
