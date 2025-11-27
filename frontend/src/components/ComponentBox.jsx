@@ -18,7 +18,7 @@ const CommentBox = ({
   setComment,
   starRating,
   setStarRating,
-  handleComment
+  handleComment,
 }) => {
   const { openModal, closeModal } = useModal();
 
