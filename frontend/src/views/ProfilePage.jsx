@@ -66,8 +66,8 @@ export default function Profile() {
         setUserId(String(user.userid));
 
         // Fetch user's recipes
-        const recipesPage = await getMyRecipes();
-        console.log(recipesPage);
+        const recipesPage = await getMyRecipes()
+        console.log(recipesPage)
 
         if (!on) return;
 
