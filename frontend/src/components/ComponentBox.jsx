@@ -44,7 +44,7 @@ const CommentBox = ({
             <button
               key={star}
               onClick={() => setStarRating(star)}
-              className={`px-4 py-2 rounded-lg hover:bg-[#ff6b6b] ${
+              className={`px-4 py-2 rounded-lg hover:bg-[#ff6b6b] ${git 
                 star <= starRating ? 'bg-[#ff6b6b] text-white' : 'bg-white'
               }`}
             >
