@@ -271,6 +271,10 @@ Resources:
       CodeUri: bin/main_function/main_function.zip
       Handler: bootstrap
       Description: Lambda function that will trigger the correct other function
+      Environment:
+        Variables:
+          USER_POOL_ID: !Ref CognitoUserPool
+          USER_POOL_CLIENT_ID: !Ref CognitoUserPoolClient
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref MainTable
