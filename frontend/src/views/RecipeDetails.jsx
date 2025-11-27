@@ -17,15 +17,9 @@ import {
   favoriteRecipe,
   getAllRatings,
   getRecipebyId,
-<<<<<<< HEAD
   rateRecipe,
   deleteFavoriteRecipe,
   favoriteCheck,
-=======
-  getUserbyId,
-  rateRecipe,
-  deleteFavoriteRecipe,
->>>>>>> real/main
 } from '../services/RecipesDetailsService.mjs';
 
 function RecipeDetailPage() {
