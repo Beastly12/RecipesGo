@@ -302,12 +302,6 @@ function RecipeDetailPage() {
               starRating={starRating} //pop up
               setStarRating={setStarRating} // pop up
               handleComment={handleComment} // pop up
-<<<<<<< HEAD
-=======
-              handleRatings={handleRatings}
-              recipeId={id}
-              lastKey={lastKey}
->>>>>>> real/main
             />
           </div>
         </div>
