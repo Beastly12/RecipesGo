@@ -145,6 +145,10 @@ func (u *userHelper) RecalculateRecipesOverallRatings(userId string) (float32, e
 		recipeCount++
 	}
 
+	if ratings == 0 || recipeCount == 0 {
+		return 0, nil
+	}
+
 	return ratings / float32(recipeCount), nil
 }
 
