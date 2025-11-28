@@ -20,7 +20,9 @@ import {
   getUserbyId,
   rateRecipe,
   deleteFavoriteRecipe,
+  deleteRatingRecipe,
 } from '../services/RecipesDetailsService.mjs';
+import { message } from 'antd';
 
 function RecipeDetailPage() {
   const { id } = useParams();
@@ -30,11 +32,12 @@ function RecipeDetailPage() {
   const [ratings, setRatings] = useState([]);
   const [hasMore, setMore] = useState(false);
   const [lastKey, setLastkey] = useState('');
-  const [isPopupOpen, setPopupOpen] = useState(false);
   const [likes, setLikes] = useState(0);
   const [newComment, setNewComment] = useState('');
   const [starRating, setStarRating] = useState(0);
   const [liked, setLiked] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchRecipe() {
@@ -53,13 +56,7 @@ function RecipeDetailPage() {
     setVisibleComment((prev) => prev + 2);
   };
 
-  const handlePopupOpen = () => {
-    setPopupOpen(true);
-  };
 
-  const handlePopupClosed = () => {
-    setPopupOpen(false);
-  };
 
   const handleRatings = async (id) => {
     setLoading(true);
@@ -73,6 +70,7 @@ function RecipeDetailPage() {
         profilePic: rating.dpUrl,
         name: rating.name,
         posted: rating.dateAdded,
+        authorId: rating.userId,
       }));
       console.log(ratingsData);
 
@@ -110,8 +108,9 @@ function RecipeDetailPage() {
         AuthorID: detail.authorId,
         AuthorName: detail.authorName,
         Likes: detail.likes,
+        isFavorited: detail.isFavorite,
       };
-
+      setLiked(recipeData.isFavorited);
       setRecipe(recipeData);
       setMore(Boolean(data.last));
       setLastkey(data.last);
@@ -125,14 +124,14 @@ function RecipeDetailPage() {
 
   const handleComment = async () => {
     if (!starRating === 0) {
-      alert('Please enter a comment and select a star rating.');
+      message.error('Please enter a comment and select a star rating.');
       return;
     }
 
     try {
       await rateRecipe(id, starRating, newComment);
 
-      alert('Comment added successfully!');
+      message.success('Comment added successfully!');
       handleRatings(id, lastKey);
 
       setNewComment('');
@@ -140,27 +139,27 @@ function RecipeDetailPage() {
       setPopupOpen(false);
     } catch (error) {
       console.error('Failed to add comment:', error);
-      alert('Failed to add comment');
+      message.error('An error occurred while adding your comment.');
     }
   };
 
   const handleLike = async () => {
     try {
-      await favoriteRecipe(id);
+      // await favoriteRecipe(id);
       if (!liked) {
         await favoriteRecipe(id);
         setLikes((prev) => prev + 1);
         setLiked(true);
-        alert('LIKED SUCCESSFULLY');
+        message.success('Recipe liked!');
       } else {
         await deleteFavoriteRecipe(id);
         setLikes((prev) => prev - 1);
         setLiked(false);
-        alert('UNLIKED SUCCESSFULLY');
+        message.success('Recipe unliked!');
       }
     } catch (error) {
       console.error('Error LIKING RECIPE:', error);
-      alert('FAILED TO LIKE');
+      message.error('An error occurred while liking the recipe.');
     }
   };
 
@@ -168,7 +167,21 @@ function RecipeDetailPage() {
     const url = window.location.href;
     navigator.clipboard.writeText(url);
     console.log('Current URL:', url);
-    alert('Link copied to clipboard!');
+    message.success('Link copied to clipboard!');
+  };
+
+  const handleDeleteComment = async () => {
+    setIsDeleting(true)
+    try {
+      await deleteRatingRecipe(id)
+      message.success('Comment deleted successfully!');
+      handleRatings(id, lastKey);
+    } catch (error) {
+      message.error('An error occurred while deleting the comment.');
+    }finally {
+      setIsDeleting(false);
+    }
+
   };
 
   if (loading) return <p className="text-center mt-10">Loading recipe....</p>;
@@ -272,9 +285,6 @@ function RecipeDetailPage() {
               visibleComments={visibleComment}
               hasMore={hasMore}
               handleViewMore={handleViewMore}
-              handlePopupOpen={handlePopupOpen} // po upo
-              handlePopupClosed={handlePopupClosed}
-              isPopupOpen={isPopupOpen}
               comment={newComment}
               setComment={setNewComment} // pop up
               starRating={starRating} //pop up
@@ -283,6 +293,8 @@ function RecipeDetailPage() {
               handleRatings={handleRatings}
               recipeId={id}
               lastKey={lastKey}
+              handleDelete={handleDeleteComment}
+              isDeleting={isDeleting}
             />
           </div>
         </div>

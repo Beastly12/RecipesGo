@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Skull, Loader2 } from 'lucide-react';
 import useDarkMode from '../hooks/useDarkMode';
 import { Modal } from 'antd';
 import { editUserDetails, handleDeleteUser, getUser } from '../services/UserService.mjs';
 import { getUploadUrl } from '../services/ImageUploadService.mjs';
 import axios from 'axios';
+import { Button } from 'antd';
 
 const { confirm } = Modal;
 
@@ -24,7 +25,7 @@ export default function ProfileSettings() {
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-
+ const navigate = useNavigate();
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -226,9 +227,9 @@ export default function ProfileSettings() {
     <div className="bg-[#fafafa] text-[#1a1a1a] min-h-screen font-sans dark:bg-[#0a0a0a] dark:text-[#e5e5e5]">
       <div className="lg:max-w-[900px] py-10 lg:mx-auto px-5 lg:px-10">
         <div className="mb-5">
-          <Link to={'/'} className="text-xl dark:text-[#e5e5e5]">
+          <Button onClick={()=>navigate('/', { state: { profileUpdated: true } })} className="text-xl dark:text-[#e5e5e5]">
             ← Back to Profile
-          </Link>
+          </Button>
         </div>
 
         <h1 className="text-4xl font-semibold py-3 dark:text-white">Profile Settings</h1>

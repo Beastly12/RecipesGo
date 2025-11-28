@@ -5,6 +5,7 @@ import { Link, useParams } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 import { getUserDetails } from "../services/UserService.mjs";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const [activeTab, setActiveTab] = useState("myRecipes");
@@ -42,7 +43,7 @@ useEffect(() => {
   if((!profileUserId || profileUserId.trim() === "") && loggedInUser?.userId){
     navigate(`/profile/${loggedInUser.userId}`);
   }
-}, [profileUserId,loggedInUser, navigate])
+}, [profileUserId,loggedInUser])
 useEffect(() =>{
 if (!profileUserId) return;
   let on = true;

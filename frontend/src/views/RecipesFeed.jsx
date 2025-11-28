@@ -9,9 +9,10 @@ import { useAuthContext } from '../context/AuthContext';
 import { getUserDetails } from '../services/UserService.mjs';
 import About from '../components/Footer';
 import Footer from '../components/Footer';
+import { useLocation } from 'react-router-dom';
 
 export default function RecipeFeed() {
-  const { user, userDetails, loading: authLoading } = useAuthContext();
+  const { user, userDetails, loading: authLoading,setUserDetails } = useAuthContext();
 
   const [recipes, setRecipes] = useState([]);
   const [hasMore, setMore] = useState(false);
@@ -19,6 +20,18 @@ export default function RecipeFeed() {
   const [lastKey, setLastkey] = useState('');
   const [loading, setLoading] = useState(false);
   const [colorTheme, setTheme] = useDarkMode();
+
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.profileUpdated && user?.userId) {
+      // Refresh user details
+      getUserDetails(user.userId).then((response) => {
+        setUserDetails(response);
+      });
+    }
+  }, [location.state]);
 
   useEffect(() => {
     let isMounted = true;
