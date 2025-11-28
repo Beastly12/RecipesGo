@@ -53,7 +53,7 @@ func WithRecalculateRatingsAction(recipeId string) QueueAction {
 func (q *queueHelper) PutInQueue(action QueueAction) error {
 	msg, err := json.Marshal(action)
 	if err != nil {
-		panic("Failed to marshal queue action!")
+		panic("Failed to convert queue action to json!")
 	}
 
 	input := &sqs.SendMessageInput{

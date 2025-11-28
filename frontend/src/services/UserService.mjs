@@ -37,7 +37,6 @@ export async function getUserDetails(userId) {
   return res.data.message;
 }
 
-
 export async function getUser() {
   const res = await axios.get(`/users`);
   return res.data.message;

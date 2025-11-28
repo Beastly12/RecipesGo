@@ -19,6 +19,7 @@ func HandleUserActions(ctx context.Context, req events.APIGatewayV2HTTPRequest) 
 	switch reqMethod {
 	case "get":
 		return handleGetUsers(ctx, req)
+
 	case "put":
 		var updateBody updateDpBody
 		if err := json.Unmarshal([]byte(req.Body), &updateBody); err == nil {
@@ -27,6 +28,9 @@ func HandleUserActions(ctx context.Context, req events.APIGatewayV2HTTPRequest) 
 			}
 		}
 		return handleEditUser(ctx, req)
+
+	case "delete":
+		return handleDeleteUser(ctx, req)
 
 	default:
 		return models.InvalidRequestErrorResponse("Invalid HTTP method!"), nil

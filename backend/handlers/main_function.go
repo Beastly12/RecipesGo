@@ -45,6 +45,9 @@ func HandleMainFunction(ctx context.Context, req events.APIGatewayV2HTTPRequest)
 	case "users":
 		return HandleUserActions(ctx, req)
 
+	case "search":
+		return handleSearchRecipe(ctx, req)
+
 	default:
 		return models.InvalidRequestErrorResponse("Invalid resource url!"), nil
 	}

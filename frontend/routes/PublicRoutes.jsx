@@ -7,7 +7,7 @@ const Protected = () => {
 
   if (loading) return <Spin />;
 
-  return user ? <Navigate to="/" />:<Outlet />;
+  return user ? <Navigate to="/" /> : <Outlet />;
 };
 
 export default Protected;

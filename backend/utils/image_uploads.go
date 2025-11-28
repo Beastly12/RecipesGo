@@ -2,10 +2,13 @@ package utils
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
 )
+
+const imgStorageKey = "images/" // PLEASE DO NOT TOUCH
 
 func IsValidImageExtension(ext string) bool {
 	validExtensions := map[string]bool{
@@ -24,12 +27,12 @@ func GenerateImageKey(userID, extension string) string {
 	uniqueID := uuid.New().String()[:8]
 
 	// format: images/{userID}/{timestamp}_{uniqueID}.{ext}
-	return fmt.Sprintf("images/%s/%d_%s.%s", userID, timestamp, uniqueID, extension)
+	return fmt.Sprintf("%s%s/%d_%s.%s", imgStorageKey, userID, timestamp, uniqueID, extension)
 }
 
 func GenerateStaticImageKey(imageId, extension string) string {
 	// format: images/{id}.{ext}
-	return fmt.Sprintf("images/%s.%s", imageId, extension)
+	return fmt.Sprintf("%s%s.%s", imgStorageKey, imageId, extension)
 }
 
 // returns the MIME type for the file extension
@@ -49,14 +52,11 @@ func GetContentType(extension string) string {
 }
 
 // creates the cloudfront url for viewing the image
-func GenerateViewURL(imageKey, cloudfrontDomain string) string {
-	if cloudfrontDomain == "" {
-		panic("YOU NEED TO PROVIDE A CLOUDFRONT DOMAIN NAME")
-	}
+func GenerateViewURL(imageKey string) string {
+	domainParts := strings.Split(GetDependencies().CloudFrontDomainName, "//")
+	cloudfrontDomain := "https://" + domainParts[len(domainParts)-1] + "/"
 
-	if imageKey == "" {
-		panic("YOU NEED TO PROVIDE AN IMAGE KEY")
-	}
-
-	return fmt.Sprintf("https://%s/%s", cloudfrontDomain, imageKey)
+	keyParts := strings.Split(imageKey, imgStorageKey)
+	imageKey = imgStorageKey + keyParts[len(keyParts)-1]
+	return cloudfrontDomain + imageKey
 }

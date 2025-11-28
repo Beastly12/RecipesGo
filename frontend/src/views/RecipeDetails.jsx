@@ -13,7 +13,14 @@ import { Accordion } from '../components/Accordion';
 import InstructionBox from '../components/InstructionBox';
 import IngredientsBox from '../components/IngredientsBox';
 import CommentBox from '../components/ComponentBox';
-import { favoriteRecipe, getAllRatings, getRecipebyId, getUserbyId, rateRecipe, deleteFavoriteRecipe} from '../services/RecipesDetailsService.mjs';
+import {
+  favoriteRecipe,
+  getAllRatings,
+  getRecipebyId,
+  getUserbyId,
+  rateRecipe,
+  deleteFavoriteRecipe,
+} from '../services/RecipesDetailsService.mjs';
 
 function RecipeDetailPage() {
   const { id } = useParams();
@@ -28,7 +35,7 @@ function RecipeDetailPage() {
   const [newComment, setNewComment] = useState('');
   const [starRating, setStarRating] = useState(0);
   const [liked, setLiked] = useState(false);
-  
+
   useEffect(() => {
     async function fetchRecipe() {
       try {
@@ -48,27 +55,26 @@ function RecipeDetailPage() {
 
   const handlePopupOpen = () => {
     setPopupOpen(true);
-  }
+  };
 
   const handlePopupClosed = () => {
     setPopupOpen(false);
-  }
+  };
 
   const handleRatings = async (id) => {
     setLoading(true);
     try {
-      const { data } = await getAllRatings({ recipeId: id});
+      const { data } = await getAllRatings({ recipeId: id });
 
       const ratingsData = data.message.map((rating) => ({
         key: rating.RecipeId,
         stars: rating.stars,
         text: rating.comment,
-        profilePic:rating.dpUrl,
-        name:rating.name,
-        posted:rating.dateAdded
-
+        profilePic: rating.dpUrl,
+        name: rating.name,
+        posted: rating.dateAdded,
       }));
-      console.log(ratingsData)
+      console.log(ratingsData);
 
       setRatings(ratingsData);
       setMore(Boolean(data.last));
@@ -80,10 +86,9 @@ function RecipeDetailPage() {
     }
   };
 
-  useEffect(()=>{
-    handleRatings(id)
-
-  },[]);
+  useEffect(() => {
+    handleRatings(id);
+  }, []);
 
   const handleDetails = async (id) => {
     setLoading(true);
@@ -104,13 +109,13 @@ function RecipeDetailPage() {
         Difficulty: detail.difficulty,
         AuthorID: detail.authorId,
         AuthorName: detail.authorName,
-        Likes: detail.likes
+        Likes: detail.likes,
       };
 
       setRecipe(recipeData);
       setMore(Boolean(data.last));
       setLastkey(data.last);
-      setLikes(recipeData.Likes)
+      setLikes(recipeData.Likes);
     } catch (error) {
       console.error('Failed to fetch details for recipe:', error);
     } finally {
@@ -123,13 +128,13 @@ function RecipeDetailPage() {
       alert('Please enter a comment and select a star rating.');
       return;
     }
-  
+
     try {
       await rateRecipe(id, starRating, newComment);
 
       alert('Comment added successfully!');
-      handleRatings(id, lastKey); 
-  
+      handleRatings(id, lastKey);
+
       setNewComment('');
       setStarRating(0);
       setPopupOpen(false);
@@ -144,12 +149,12 @@ function RecipeDetailPage() {
       await favoriteRecipe(id);
       if (!liked) {
         await favoriteRecipe(id);
-        setLikes(prev => prev + 1);
+        setLikes((prev) => prev + 1);
         setLiked(true);
         alert('LIKED SUCCESSFULLY');
       } else {
         await deleteFavoriteRecipe(id);
-        setLikes(prev => prev - 1);
+        setLikes((prev) => prev - 1);
         setLiked(false);
         alert('UNLIKED SUCCESSFULLY');
       }
@@ -158,14 +163,13 @@ function RecipeDetailPage() {
       alert('FAILED TO LIKE');
     }
   };
-  
+
   const handleShare = () => {
     const url = window.location.href;
     navigator.clipboard.writeText(url);
-    console.log("Current URL:", url);
+    console.log('Current URL:', url);
     alert('Link copied to clipboard!');
   };
-  
 
   if (loading) return <p className="text-center mt-10">Loading recipe....</p>;
   if (!recipe) return <p className="text-center mt-10">Recipe not found.</p>;
@@ -214,20 +218,20 @@ function RecipeDetailPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3 dark:text-[#fafafa]">
                 {/* Likes Button */}
-                <button className={`cursor-pointer flex items-center justify-center gap-2 py-2 px-4 sm:px-6 rounded-3xl text-sm transition-all duration-300 w-full dark:text-[#fafafa]
-                                   ${liked ? "bg-[#ff6b6b] text-white hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]" : "bg-white text-[#ff6b6b] border border-[#ff6b6b] hover:shadow-md"}`}
-                         onClick={handleLike}
+                <button
+                  className={`cursor-pointer flex items-center justify-center gap-2 py-2 px-4 sm:px-6 rounded-3xl text-sm transition-all duration-300 w-full dark:text-[#fafafa]
+                                   ${liked ? 'bg-[#ff6b6b] text-white hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]' : 'bg-white text-[#ff6b6b] border border-[#ff6b6b] hover:shadow-md'}`}
+                  onClick={handleLike}
                 >
                   <Heart className="w-5 h-5" />
                   <span>Likes ({likes})</span>
                 </button>
-                
 
                 {/* Share Button */}
                 <button
                   className=" cursor-pointer flex items-center justify-center gap-2 bg-gray-100 text-gray-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm
                  hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full dark:bg-[#2a2a2a] dark:text-gray-300 "
-                 onClick={handleShare}
+                  onClick={handleShare}
                 >
                   <ExternalLink className="w-5 h-5" />
                   <span>Share</span>
@@ -268,19 +272,18 @@ function RecipeDetailPage() {
               visibleComments={visibleComment}
               hasMore={hasMore}
               handleViewMore={handleViewMore}
-              handlePopupOpen = {handlePopupOpen}// po upo
-              handlePopupClosed = {handlePopupClosed}
+              handlePopupOpen={handlePopupOpen} // po upo
+              handlePopupClosed={handlePopupClosed}
               isPopupOpen={isPopupOpen}
               comment={newComment}
-              setComment={setNewComment}// pop up
-              starRating={starRating}//pop up
-              setStarRating={setStarRating}// pop up
-              handleComment={handleComment}// pop up 
-              handleRatings = {handleRatings}
+              setComment={setNewComment} // pop up
+              starRating={starRating} //pop up
+              setStarRating={setStarRating} // pop up
+              handleComment={handleComment} // pop up
+              handleRatings={handleRatings}
               recipeId={id}
               lastKey={lastKey}
-            /> 
-             
+            />
           </div>
         </div>
       </div>
@@ -289,5 +292,3 @@ function RecipeDetailPage() {
 }
 
 export default RecipeDetailPage;
-
-                        

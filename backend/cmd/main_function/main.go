@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	utils.InitHandlerDependencies(utils.WithDatabase())
+	utils.InitHandlerDependencies(utils.WithDatabase(), utils.WithCognito())
 }
 
 func main() {

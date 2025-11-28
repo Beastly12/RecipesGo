@@ -53,12 +53,13 @@ func TestNewRecipe(t *testing.T) {
 }
 
 func TestDbItemToRecipesStruct(t *testing.T) {
+	utils.TEST_InitCloudFrontDependencies()
 	d := utils.GetTimeNow()
 	expect := Recipe{
 		Id:      "123",
 		SortKey: "RECIPE",
 		RecipeDetails: RecipeDetails{
-			ImageUrl:        "https://cdn.com/test.jpg",
+			ImageUrl:        "https://123abc.cloudfront.net/images/test.jpg",
 			Name:            "White rice",
 			AuthorName:      "johnny_test",
 			Description:     "Plain white rice",
@@ -79,7 +80,7 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 		{
 			"pk":          &types.AttributeValueMemberS{Value: "RECIPE#123"},
 			"sk":          &types.AttributeValueMemberS{Value: "RECIPE"},
-			"imageUrl":    &types.AttributeValueMemberS{Value: "test.jpg"},
+			"imageUrl":    &types.AttributeValueMemberS{Value: "images/test.jpg"},
 			"name":        &types.AttributeValueMemberS{Value: "White rice"},
 			"description": &types.AttributeValueMemberS{Value: "Plain white rice"},
 			"authorName":  &types.AttributeValueMemberS{Value: "johnny_test"},
@@ -99,7 +100,7 @@ func TestDbItemToRecipesStruct(t *testing.T) {
 		},
 	}
 
-	res := DatabaseItemsToRecipeStructs(&items, "cdn.com")
+	res := DatabaseItemsToRecipeStructs(&items)
 	result := (*res)[0]
 
 	if !reflect.DeepEqual(result, expect) {

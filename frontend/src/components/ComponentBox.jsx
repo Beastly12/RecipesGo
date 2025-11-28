@@ -1,6 +1,8 @@
 import React from 'react';
 // import Modal from 'react-modal';
 import { useEffect } from 'react';
+import { useModal } from '../context/CustomModalContext';
+import CustomInput from './CustomInput';
 
 // Modal.setAppElement('#root');
 
@@ -19,31 +21,22 @@ const CommentBox = ({
   handleComment,
   handleRatings,
   recipeId,
-  lastKey
+  lastKey,
 }) => {
 
+  const {openModal, closeModal} = useModal()
+
   return (
-  
     <div className="bg-white dark:bg-[#1e1e1e] mt-14 p-7 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_24px_rgba(255,255,255,0.05)] mb-8 transition-colors duration-500">
       <div className="flex justify-between items-center mb-10">
         <h2 className="font-bold text-3xl text-gray-800 dark:text-gray-100">
           Comments ({totalComments.length})
         </h2>
         <button
-          onClick={handlePopupOpen}
-          className="px-4 py-2 bg-[#ff6b6b] text-white rounded-xl hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]"
-        >
-          DROP A COMMENT!
-        </button>
-      </div>
-
-      {/* <Modal
-        isOpen={isPopupOpen}
-        onRequestClose={handlePopupClosed}
-        className="bg-white dark:bg-[#1e1e1e] p-6 rounded-xl shadow-xl max-w-md mx-auto mt-24 outline-none"
-        overlayClassName="fixed inset-0 bg-black/50 flex justify-center items-start z-50"
-      >
-        <h2 className="text-xl font-bold dark:text-white">DROP A COMMENT</h2>
+          onClick={() => {
+            openModal(
+              <div>
+                <h2 className="text-xl font-bold dark:text-white">DROP A COMMENT</h2>
         <div className="flex mb-4">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
@@ -83,18 +76,21 @@ const CommentBox = ({
             Cancel
           </button>
         </div>
-      </Modal> */}
+              </div>
+            )
+          }}
+          className="px-4 py-2 bg-[#ff6b6b] text-white rounded-xl hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]"
+        >
+          DROP A COMMENT!
+        </button>
+      </div>
 
       {totalComments?.slice(0, visibleComments).map((comment) => (
         <div
           key={comment.key}
           className="flex items-start gap-3 bg-gray-50 dark:bg-[#2a2a2a] p-3 rounded-lg mb-3 border-b border-gray-300 dark:border-gray-700 transition-colors duration-500"
         >
-          <img
-            src={comment.profilePic}
-            alt={comment.name}
-            className="w-10 h-10 rounded-full"
-          />
+          <img src={comment.profilePic} alt={comment.name} className="w-10 h-10 rounded-full" />
           <div>
             <h4 className="font-medium text-gray-800 dark:text-gray-100">{comment.name}</h4>
             <p className="text-sm text-gray-500 dark:text-gray-400">{comment.posted}</p>

@@ -1,11 +1,13 @@
 package helpers
 
 import (
+	"backend"
 	"backend/models"
 	"backend/utils"
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
@@ -30,9 +32,6 @@ func NewRecipeHelper(ctx context.Context) *recipeHelper {
 
 // adds recipe to db
 func (this *recipeHelper) Add(recipe *models.Recipe) error {
-	authored := models.NewAuthoredRecipe(recipe.AuthorId, recipe.Id, recipe.RecipeDetails)
-	recipeSearchIndexTrans := newSearchHelper().getRecipeSearchIndexTransactions(recipe)
-
 	update := expression.Add(expression.Name("recipeCount"), expression.Value(1))
 
 	expr, err := expression.NewBuilder().WithUpdate(update).Build()
@@ -44,19 +43,13 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 	transactions := []types.TransactWriteItem{
 		{
 			Put: &types.Put{
-				Item:      *utils.ToDatabaseFormat(authored),
-				TableName: &utils.GetDependencies().MainTableName,
-			},
-		},
-		{
-			Put: &types.Put{
 				Item:      *utils.ToDatabaseFormat(recipe),
 				TableName: &utils.GetDependencies().MainTableName,
 			},
 		},
 		{
 			Update: &types.Update{
-				Key:                       *models.UserKey(authored.UserId),
+				Key:                       *models.UserKey(recipe.AuthorId),
 				TableName:                 &utils.GetDependencies().MainTableName,
 				UpdateExpression:          expr.Update(),
 				ExpressionAttributeNames:  expr.Names(),
@@ -64,7 +57,6 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 			},
 		},
 	}
-	transactions = append(transactions, recipeSearchIndexTrans...)
 	input := &dynamodb.TransactWriteItemsInput{
 		TransactItems: transactions,
 	}
@@ -93,6 +85,7 @@ func (r *recipeHelper) getRecipes(lastKey map[string]types.AttributeValue, keyCo
 		ExpressionAttributeNames:  expr.Names(),
 		ExpressionAttributeValues: expr.Values(),
 		ScanIndexForward:          aws.Bool(false),
+		Limit:                     aws.Int32(backend.MAX_RECIPES_DUMP),
 	}
 
 	result, err := utils.GetDependencies().DbClient.Query(r.Ctx, input)
@@ -107,7 +100,7 @@ func (r *recipeHelper) getRecipes(lastKey map[string]types.AttributeValue, keyCo
 		}, nil
 	}
 
-	recipes := models.DatabaseItemsToRecipeStructs(&result.Items, utils.GetDependencies().CloudFrontDomainName)
+	recipes := models.DatabaseItemsToRecipeStructs(&result.Items)
 
 	postProcess(recipes)
 
@@ -125,7 +118,7 @@ func (r *recipeHelper) GetRecipes(lastKey map[string]types.AttributeValue, categ
 
 	if category != "" {
 		index = "gsiIndex2"
-		keyCondition = expression.KeyEqual(expression.Key("gsi2"), expression.Value(models.RecipeCategoryKey(category))).And(
+		keyCondition = expression.KeyEqual(expression.Key("gsi2"), expression.Value(models.RecipeCategoryKey(strings.ToLower(category)))).And(
 			expression.KeyBeginsWith(expression.Key("lsi"), models.RecipesLsiPrefix),
 		)
 	}
@@ -242,7 +235,7 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 		return nil, nil
 	}
 
-	recipe := (*models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, utils.GetDependencies().CloudFrontDomainName))[0]
+	recipe := (*models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}))[0]
 
 	user, err := NewUserHelper(this.Ctx).GetDisplayDetails(recipe.AuthorId)
 	if err != nil || user == nil {
@@ -331,12 +324,6 @@ func (r *recipeHelper) Delete(recipe models.Recipe) error {
 			},
 		},
 		{
-			Delete: &types.Delete{
-				Key:       models.AuthoredKey(recipe.AuthorId, recipe.Id),
-				TableName: &utils.GetDependencies().MainTableName,
-			},
-		},
-		{
 			Update: &types.Update{
 				Key:                       *models.UserKey(recipe.AuthorId),
 				TableName:                 &utils.GetDependencies().MainTableName,
@@ -355,17 +342,6 @@ func (r *recipeHelper) Delete(recipe models.Recipe) error {
 	_, err = utils.GetDependencies().DbClient.TransactWriteItems(r.Ctx, input)
 	if err != nil {
 		return err
-	}
-
-	// del search indexes
-	keysToDelete := models.GetSearchItemKeys(recipe.Name, recipe.Id, models.SEARCH_ITEM_TYPE_RECIPE)
-
-	helper := newHelper(r.Ctx)
-	for _, key := range *keysToDelete {
-		err := helper.deleteFromDb(&key)
-		if err != nil {
-			log.Printf("An error occurred while trying to delete recipe search index! ERROR: %v", err)
-		}
 	}
 
 	return nil
@@ -464,4 +440,36 @@ func (r *recipeHelper) RecipeLikesMinus1(userId, recipeId string) error {
 	}
 
 	return nil
+}
+
+func (r *recipeHelper) SearchRecipe(str string) (*[]models.Recipe, error) {
+	keyCondition := expression.KeyEqual(
+		expression.Key("gsi"),
+		expression.Value(utils.AddPrefix(models.RecipeItemType, models.RecipesGsiPrefix)),
+	)
+
+	expr, err := expression.NewBuilder().WithKeyCondition(keyCondition).Build()
+	if err != nil {
+		println("Failed to build query expression")
+		return nil, err
+	}
+
+	input := &dynamodb.QueryInput{
+		TableName:                 &utils.GetDependencies().MainTableName,
+		KeyConditionExpression:    expr.KeyCondition(),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		IndexName:                 aws.String("gsiIndex"),
+		ScanIndexForward:          aws.Bool(false),
+	}
+
+	found, err := newHelper(r.Ctx).searchDb(input, "name", str)
+	if err != nil {
+		println("ERROR OCCURRED WHILE SEARCHING RECIPES")
+		return nil, err
+	}
+
+	matchingRecipes := models.DatabaseItemsToRecipeStructs(found)
+
+	return matchingRecipes, nil
 }

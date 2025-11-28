@@ -271,11 +271,21 @@ Resources:
       CodeUri: bin/main_function/main_function.zip
       Handler: bootstrap
       Description: Lambda function that will trigger the correct other function
+      Environment:
+        Variables:
+          USER_POOL_ID: !Ref CognitoUserPool
+          USER_POOL_CLIENT_ID: !Ref CognitoUserPoolClient
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref MainTable
         - SQSSendMessagePolicy:
             QueueName: !GetAtt RecipesQueue.QueueName
+        - Statement:
+            Effect: Allow
+            Action:
+              - cognito-idp:AdminGetUser
+              - cognito-idp:AdminDeleteUser
+            Resource: "*"
       Events:
 
         # favorites
@@ -397,6 +407,22 @@ Resources:
             ApiId: !Ref RecipeApi
             Auth:
               Authorizer: CognitoAuthorizer
+        DeleteUser:
+          Type: HttpApi
+          Properties:
+            Path: /users
+            Method: DELETE
+            ApiId: !Ref RecipeApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+
+        # search
+        SearchRecipe:
+          Type: HttpApi
+          Properties:
+            Path: /search
+            Method: GET
+            ApiId: !Ref RecipeApi
 
   # to generate presigned url for image uploads
   GetUploadUrl:

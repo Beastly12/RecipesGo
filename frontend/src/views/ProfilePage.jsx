@@ -1,33 +1,35 @@
-import React, { useState, useEffect, useMemo} from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ArrowLeft, Settings } from "lucide-react";
 import RecipesList from "../components/RecipeList";
-import { useNavigate, Link} from "react-router-dom";
-import axios from '../services/Axios.mjs'
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
-
-
+import { getUserDetails } from "../services/UserService.mjs";
+import axios from "axios";
 
 export default function Profile() {
-  const navigate =useNavigate();
   const [activeTab, setActiveTab] = useState("myRecipes");
+
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [location, setLocation] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("https://randomuser.me/api/portraits/lego/6.jpg")
+  const [avatarUrl, setAvatarUrl] = useState(
+    "https://randomuser.me/api/portraits/lego/6.jpg"
+  );
 
 const [myRecipes, setMyRecipes] = useState([]);
 const [myCursor, setMyCursor] = useState(undefined);
 const [favs, setFavs] = useState([]);
 const [favCursor, setFavCursor] = useState(undefined);
 
-const [loading , setLoading] = useState(true); 
-const [error, setError] = useState(null);
-const [loadingMore, setLoadingMore]= useState(false);
-const [userId, setUserId] = useState(null);
-const {id: profileUserIdRaw} = useParams();
-const {user: loggedInUser} = useAuthContext();
-const profileUserId = profileUserIdRaw ? String(profileUserIdRaw) : "";
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  const [userId, setUserId] = useState(null);
+
+  const { id: profileUserIdRaw } = useParams();
+  const { user: loggedInUser, userDetails } = useAuthContext();
+  const profileUserId = profileUserIdRaw ? String(profileUserIdRaw) : "";
 
 const isOwner = String(loggedInUser?.userId) === profileUserId;
 
@@ -49,102 +51,121 @@ if (!profileUserId) return;
       setLoading(true);
       setError(null);
 
-  const userRes = await axios.get(`/users/${profileUserId}`);
-  console.log("USER RES DATA:", userRes.data)
-  const user = userRes.data.message;
+        let user;
 
-    setDisplayName(user.name ?? "");
-    setBio(user.bio ?? "");
-    setLocation(user.location ?? "")
-    setAvatarUrl(
-      user.dpUrl && user.dpUrl.length > 0 
-      ? user.dpUrl 
-      : "https://randomuser.me/api/portraits/lego/6.jpg"
-    );
-    setUserId(String(user.userid));
-    
-  const recipesPage = await axios.get("/recipes", {
-    params: {by: profileUserId},
-  });
-  console.log("USER:",user);
-  console.log("RECIPES RESPONSE:", recipesPage.data);
-      if (!on) return;
-      const allRecipes = recipesPage.data.message ?? [];
-      if (allRecipes.length  > 0) {
-        console.log("FIRST RECIPE OBJECT:", allRecipes[0]);
-        console.log("FIRST RECIPE KEYS:", Object.keys(allRecipes[0]))
+        // If viewing own profile, use userDetails from context
+        if (isOwner && userDetails) {
+          user = userDetails;
+        } else {
+          // Otherwise, fetch the user details using the service
+          const userRes = await getUserDetails(profileUserId);
+          user = userRes;
+        }
+
+        if (!user) throw new Error("User not found.");
+
+        setDisplayName(user.name ?? "");
+        setBio(user.bio ?? "");
+        setLocation(user.location ?? "");
+        setAvatarUrl(
+          user.dpUrl && user.dpUrl.length > 0
+            ? user.dpUrl
+            : "https://randomuser.me/api/portraits/lego/6.jpg"
+        );
+        setUserId(String(user.userid));
+
+        // Fetch user's recipes
+        const recipesPage = await axios.get("/recipes", {
+          params: { by: profileUserId },
+        });
+
+        if (!on) return;
+
+        const allRecipes = recipesPage.data.message ?? [];
+        const userRecipes = allRecipes.filter(
+          (r) => String(r.authorId) === profileUserId
+        );
+
+        setMyRecipes(userRecipes);
+        setMyCursor(recipesPage.data.last ?? null);
+
+        // Fetch user's favorites (only if owner)
+        if (isOwner) {
+          const favsPage = await axios.get("/favorites");
+          if (on) {
+            setFavs(favsPage.data.message ?? []);
+            setFavCursor(favsPage.data.last ?? null);
+          }
+        }
+      } catch (e) {
+        const msg =
+          e.response?.data?.message ||
+          e.message ||
+          "An unexpected error occurred.";
+        if (on) setError(msg);
+      } finally {
+        if (on) setLoading(false);
       }
-      const userRecipes = allRecipes.filter(r => String (r.authorId) === profileUserId);
-      setMyRecipes(userRecipes);
-      setMyCursor(recipesPage.data.last ?? null);
+    })();
 
-      const favsPage = await axios.get("/favorites");
-      if (!on) return;
-      setFavs(favsPage.data.message ?? []);
-      setFavCursor(favsPage.data.last ?? null);
-    } catch (e){
-      const msg =
-      e.response?.data?.message || 
-      `${e.response?.status || ""} ${e.response?.statusText || ""}`.trim() ||
-      e.message || 
-      "Something went wrong";
-      if (on) setError(msg);
-    } finally{
-      if (on) setLoading(false);
-    }
-    }) (); 
     return () => {
       on = false;
     };
 }, []);
 
-async function loadMore(){
-  const usingMy = activeTab === "myRecipes";
-  const cursor = usingMy ? myCursor : favCursor;
-  if (!cursor) return;
+  // -----------------------------------------
+  // Pagination (Load More)
+  // -----------------------------------------
+  async function loadMore() {
+    const usingMy = activeTab === "myRecipes";
+    const cursor = usingMy ? myCursor : favCursor;
+    if (!cursor) return;
 
-  setLoadingMore(true);
-  try{
-    const params = {last: cursor};
-    if (usingMy && userId){
-      params.by = userId;
+    setLoadingMore(true);
+    try {
+      const params = { last: cursor };
+      if (usingMy && userId) params.by = userId;
+
+      const page = await axios.get(usingMy ? "/recipes" : "/favorites", {
+        params,
+      });
+
+      let items = page.data.message ?? [];
+      const last = page.data.last ?? null;
+
+      if (usingMy) {
+        items = items.filter((r) => String(r.authorId) === userId);
+        setMyRecipes((prev) => [...prev, ...items]);
+        setMyCursor(last);
+      } else {
+        setFavs((prev) => [...prev, ...items]);
+        setFavCursor(last);
+      }
+    } catch (e) {
+      setError(
+        e.response?.data?.message ||
+          e.message ||
+          "Could not load more items."
+      );
+    } finally {
+      setLoadingMore(false);
     }
-    const page = await axios.get(usingMy ? "/recipes" : "/favorites", {params});
-    console.log("LOAD MORE RAW PAGE:", page.data)
-    let items = page.data.message ?? [];
-    const last = page.data.last ?? null;
-    if(usingMy) {
-      items = items.filter (r => String(r.authorId) === userId);
-      setMyRecipes((prev) => [...prev, ...items]);
-      setMyCursor(last);
-    } else {
-      setFavs((prev) => [...prev, ...items]);
-      setFavCursor(last)
-    }
-  } catch (e){
-    const msg = e.response?.data?.message || 
-    `${e.response?.status || ""} ${e.response?.statusText || ""}`.trim() ||
-    e.message ||
-    "Could not load more";
-    setError(msg);
-  } finally {
-    setLoadingMore(false)
   }
-}
 
-const listForUI = useMemo(()=> {
-  const src  = activeTab ==="myRecipes" ? myRecipes : favs;
-  return src.map((r, idx) => ({
-    key: r.id ?? idx,
-    title: r.name,
-    author: activeTab === "myRecipes" ? "You" : r.authorName || "Unknown",
-    likes: r.likes ?? 0,
-    profilePic: avatarUrl,
-    img: r.imageUrl ?? "",
-  }));
-}, [activeTab, myRecipes, favs, avatarUrl]);
+  const listForUI = useMemo(() => {
+    const src = activeTab === "myRecipes" ? myRecipes : favs;
 
-const hasMore = activeTab === "myRecipes" ? !!myCursor : !!favCursor;
+    return src.map((r, idx) => ({
+      key: r.id ?? idx,
+      title: r.name,
+      author: activeTab === "myRecipes" ? "You" : r.authorName || "Unknown",
+      likes: r.likes ?? 0,
+      profilePic: activeTab === "myRecipes" ? avatarUrl : r.authorDp || "",
+      img: r.imageUrl ?? "",
+    }));
+  }, [activeTab, myRecipes, favs, avatarUrl]);
+
+  const hasMore = activeTab === "myRecipes" ? !!myCursor : !!favCursor;
 
 
   return (
@@ -188,10 +209,10 @@ const hasMore = activeTab === "myRecipes" ? !!myCursor : !!favCursor;
 
             <div className="flex items-center space-x-7 mt-8">
               <div>
-                <p className="font-bold text-xl">{myRecipes.length}</p>
-                <p className="text-[#1a1a1a] dark:text-[#fafafa] text-xl">
-                  Recipes
+                <p className="font-bold text-xl text-gray-600">
+                  {myRecipes.length}
                 </p>
+                <p className="text-xl">Recipes</p>
               </div>
               <div>
                 <p className="font-bold text-xl">{Math.max(0, myRecipes.reduce((a, r) => a + (r.likes ?? 0), 0)
@@ -215,40 +236,48 @@ const hasMore = activeTab === "myRecipes" ? !!myCursor : !!favCursor;
         <div className="flex space-x-20 mt-4 text-[#1a1a1a] border-b border-b-gray-600 dark:text-white">
           <button
             onClick={() => setActiveTab("myRecipes")}
-            className={`cursor-pointer pb-2 border-b-2 ${
+            className={`pb-2 text-xl ${
               activeTab === "myRecipes"
-                ? "border-b-[#ff6b6b]"
-                : "border-b-transparent hover:border-b-gray-600"
+                ? "border-b-2 border-[#ff6b6b] text-[#ff6b6b]"
+                : "hover:border-b-gray-400 dark:hover:border-white/30"
             }`}
           >
-            My Recipes
+            {isOwner ? "My Recipes" : "Recipes"}
           </button>
-            { isOwner && (
-          <button
-            onClick={() => setActiveTab("favorites")}
-            className={`cursor-pointer pb-2 border-b-2 ${
-              activeTab === "favorites"
-                ? "border-b-[#ff6b6b]"
-                : "border-b-transparent hover:border-b-gray-600"
-            }`}
-          >
-            Favorites
-          </button>
-        )}
+
+          {isOwner && (
+            <button
+              onClick={() => setActiveTab("favorites")}
+              className={`pb-2 text-xl ${
+                activeTab === "favorites"
+                  ? "border-b-2 border-[#ff6b6b] text-[#ff6b6b]"
+                  : "hover:border-b-gray-400 dark:hover:border-white/30"
+              }`}
+            >
+              Favorites
+            </button>
+          )}
         </div>
 
         <div className="m-10 mt-20">
-          <RecipesList recipes={listForUI} />
-          {hasMore && (
-            <div className="mt-8 flex justify-center">
-              <button
-                onClick={loadMore}
-                disabled={loadingMore}
-                className="px-4 py-2 rounded bg-black text-white disabled:opacity-50"
+          {listForUI.length === 0 ? (
+            <p className="text-center text-gray-500">
+              No {activeTab === "myRecipes" ? "recipes" : "favorites"} yet.
+            </p>
+          ) : (
+            <>
+              <RecipesList recipes={listForUI} />
+
+              {hasMore && (
+                <button
+                  disabled={loadingMore}
+                  onClick={loadMore}
+                  className="mt-6 bg-gray-200 dark:bg-gray-700 px-6 py-3 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50"
                 >
-                  {loadingMore ? "Loading...": "Load more"}
-              </button>
-              </div>
+                  {loadingMore ? "Loading..." : "Load More"}
+                </button>
+              )}
+            </>
           )}
         </div>
       </div>

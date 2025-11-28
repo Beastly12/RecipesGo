@@ -19,13 +19,3 @@ export async function getUserRecipes(userId) {
     throw error;
   }
 }
-
-export async function getUserProfile(userId) {
-  try {
-    const res = await axios.get(`users/${userId}/favorites`);
-    return res.data;
-  } catch (error) {
-    console.log('Error fetching user favorites', error);
-    throw error;
-  }
-}
