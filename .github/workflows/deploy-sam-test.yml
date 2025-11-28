@@ -26,6 +26,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.PAT_TOKEN }}
       
       - name: Read build directories
         id: build-dirs
@@ -125,3 +126,5 @@ jobs:
           git merge --no-ff ${{ github.sha }} -m "Auto-merge: Tests passed for ${{ github.ref_name }}"
           git push origin main
         working-directory: .
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
