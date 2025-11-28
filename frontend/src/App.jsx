@@ -1,5 +1,5 @@
 import './App.css';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route,Navigate } from 'react-router-dom';
 import RecipeDetailPage from './views/RecipeDetails';
 import AuthPage from './views/AuthPage';
 import RecipeFeed from './views/RecipesFeed';
@@ -53,6 +53,10 @@ function AppRoutes(){
         
 
           <Route element={<Private />}>
+            <Route 
+            path= "/profile"
+              element={<Navigate to ={`/profile/${loggedInUser?.userId}`} replace/>}
+              />
             <Route path="/profile/:id" element={<Profile />} />
             <Route path="/settings" element={<ProfileSettings />} />
             {/* <Route path="/createRecipe" element={<CreateRecipePage />} /> */}
