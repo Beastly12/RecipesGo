@@ -79,12 +79,12 @@ const CommentBox = ({
           <h2 className="font-bold text-3xl text-gray-800 dark:text-gray-100">
             Comments ({totalComments.length})
           </h2>
-          <button
+         {loggedInUser?.userId&& <button
             onClick={showModal}
             className="px-4 py-2 bg-[#ff6b6b] text-white rounded-xl hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]"
           >
             {totalComments.some(c => c.authorId === loggedInUser?.userId) ? "EDIT YOUR COMMENT" : "DROP A COMMENT!"}
-          </button>
+          </button>}
         </div>
 
         {totalComments?.slice(0, visibleComments).map((comment) => (

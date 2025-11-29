@@ -17,12 +17,12 @@ import {
   favoriteRecipe,
   getAllRatings,
   getRecipebyId,
-  getUserbyId,
   rateRecipe,
   deleteFavoriteRecipe,
   deleteRatingRecipe,
 } from '../services/RecipesDetailsService.mjs';
 import { message } from 'antd';
+import { useAuthContext } from '../context/AuthContext';
 
 function RecipeDetailPage() {
   const { id } = useParams();
@@ -38,6 +38,7 @@ function RecipeDetailPage() {
   const [liked, setLiked] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [isDeleting, setIsDeleting] = useState(false);
+  const { user: loggedInUser, loading: authLoading } = useAuthContext();
 
   useEffect(() => {
     async function fetchRecipe() {
@@ -55,8 +56,6 @@ function RecipeDetailPage() {
   const handleViewMore = () => {
     setVisibleComment((prev) => prev + 2);
   };
-
-
 
   const handleRatings = async (id) => {
     setLoading(true);
@@ -145,7 +144,6 @@ function RecipeDetailPage() {
 
   const handleLike = async () => {
     try {
-      // await favoriteRecipe(id);
       if (!liked) {
         await favoriteRecipe(id);
         setLikes((prev) => prev + 1);
@@ -171,133 +169,152 @@ function RecipeDetailPage() {
   };
 
   const handleDeleteComment = async () => {
-    setIsDeleting(true)
+    setIsDeleting(true);
     try {
-      await deleteRatingRecipe(id)
+      await deleteRatingRecipe(id);
       message.success('Comment deleted successfully!');
       handleRatings(id, lastKey);
     } catch (error) {
       message.error('An error occurred while deleting the comment.');
-    }finally {
+    } finally {
       setIsDeleting(false);
     }
-
   };
 
-  if (loading) return <p className="text-center mt-10">Loading recipe....</p>;
-  if (!recipe) return <p className="text-center mt-10">Recipe not found.</p>;
-
-  // const visibleComments = recipe.comments.slice(0, visibleComment);
-  // const hasMore = visibleComment < recipe.comments.length;
+  if (loading) return <p className="text-center mt-10 dark:text-[#e5e5e5]">Loading recipe....</p>;
+  if (!recipe) return <p className="text-center mt-10 dark:text-[#e5e5e5]">Recipe not found.</p>;
 
   return (
-    <div className="bg-[#fafafa] min-h-screen m-4 text-[#1a1a1a]  dark:bg-[#0a0e27] dark:text-[#fafafa] dark:m-0">
-      <div className=" flex flex-col justify-items-center">
-        {/* Back Button */}
+    <div className="bg-[#fafafa] min-h-screen text-[#1a1a1a] font-sans dark:bg-[#0a0a0a] dark:text-[#e5e5e5]">
+      {contextHolder}
+      
+      {/* Back Button */}
+      <div className="lg:max-w-[900px] lg:mx-auto px-5 lg:px-10 pt-10">
         <Link
           to={'/'}
-          className="flex items-center space-x-5 text-[#1a1a1a] p-2 hover:underline mb-4 dark:text-white ml-5 "
+          className="inline-flex items-center gap-2 text-xl text-[#1a1a1a] hover:underline dark:text-[#e5e5e5] transition-colors"
         >
-          <ArrowLeft /> <span className="text-2xl p-3">Back</span>
+          <ArrowLeft className="w-5 h-5" />
+          <span>Back</span>
         </Link>
       </div>
 
-      <div className="max-w-[900px] my-[40px] mx-[auto] px-[40px] dark:text-[#fafafa]">
-        <div className=" flex flex-col justify-items-center">
-          <div>
-            {/* Image Card */}
-            <div className="rounded-4xl w-full mt-8 mb-8 shadow-[0_12px_24px_rgba(0,0,0,0.12)]">
-              <img
-                className="w-full h-96 object-cover rounded-3xl"
-                src={recipe.Image}
-                alt="Recipe Image"
-              />
-            </div>
-            {/* User Info Card */}
-            <h1 className="text-5xl font-semibold mb-5 mt-8 dark:text-white ">{recipe.Name}</h1>
+      <div className="lg:max-w-[900px] py-10 lg:mx-auto px-5 lg:px-10">
+        {/* Recipe Image */}
+        <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl shadow dark:shadow-lg dark:shadow-black/50 overflow-hidden mb-6">
+          <img
+            className="w-full h-96 object-cover"
+            src={recipe.Image}
+            alt="Recipe Image"
+          />
+        </div>
 
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-1 md:grid-cols-2 text-sm text-gray-500 mb-4 mt-6 p-7 shadow-[0_12px_24px_rgba(0,0,0,0.12)] rounded-2xl  dark:bg-[#fafafa] ">
-              <div className="grid grid-cols-1 gap-3 sm:grid-rows-1 ">
-                <Link to={`/profile/${recipe.AuthorID}`}>
-                  <p className="font-bold text-xl text-gray-800 px-4 cursor-pointer dark:text-gray-600">
-                    {recipe.AuthorName}
-                  </p>
-                </Link>
+        {/* Recipe Title */}
+        <h1 className="text-4xl lg:text-5xl font-semibold mb-6 dark:text-white">
+          {recipe.Name}
+        </h1>
 
-                <p className="text-sm text-gray-500 mb-2 px-4 dark:text-gray-400">
-                  {recipe.Published}
+        {/* Author Info and Actions */}
+        <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl shadow dark:shadow-lg dark:shadow-black/50 p-6 lg:p-8 mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div>
+              <Link to={`/profile/${recipe.AuthorID}`}>
+                <p className="font-bold text-xl text-gray-800 dark:text-white cursor-pointer hover:text-[#ff6b6b] dark:hover:text-[#ff8080] transition-colors">
+                  {recipe.AuthorName}
                 </p>
-              </div>
+              </Link>
+              <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">
+                {recipe.Published}
+              </p>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3 dark:text-[#fafafa]">
-                {/* Likes Button */}
+            <div className="flex flex-wrap gap-3">
+              {/* Likes Button */}
+              {loggedInUser?.userId && (
                 <button
-                  className={`cursor-pointer flex items-center justify-center gap-2 py-2 px-4 sm:px-6 rounded-3xl text-sm transition-all duration-300 w-full dark:text-[#fafafa]
-                                   ${liked ? 'bg-[#ff6b6b] text-white hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]' : 'bg-white text-[#ff6b6b] border border-[#ff6b6b] hover:shadow-md'}`}
+                  className={`flex items-center justify-center gap-2 py-3 px-6 rounded-xl text-sm font-semibold transition-all duration-300
+                    ${liked 
+                      ? 'bg-[#ff6b6b] text-white dark:bg-[#ff6b6b]/70 hover:bg-[#ff5252] dark:hover:bg-[#ff6b6b]/80' 
+                      : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                    }`}
                   onClick={handleLike}
                 >
-                  <Heart className="w-5 h-5" />
+                  <Heart className={`w-5 h-5 ${liked ? 'fill-current' : ''}`} />
                   <span>Likes ({likes})</span>
                 </button>
+              )}
 
-                {/* Share Button */}
-                <button
-                  className=" cursor-pointer flex items-center justify-center gap-2 bg-gray-100 text-gray-600 border py-2 px-4 sm:px-6 rounded-3xl text-sm
-                 hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 w-full dark:bg-[#2a2a2a] dark:text-gray-300 "
-                  onClick={handleShare}
-                >
-                  <ExternalLink className="w-5 h-5" />
-                  <span>Share</span>
-                </button>
-              </div>
+              {/* Share Button */}
+              <button
+                className="flex items-center justify-center gap-2 bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300 py-3 px-6 rounded-xl text-sm font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-300"
+                onClick={handleShare}
+              >
+                <ExternalLink className="w-5 h-5" />
+                <span>Share</span>
+              </button>
             </div>
-
-            <Accordion sections={[{ id: 1, text: recipe.Description }]} />
-
-            <div className="grid md:grid-cols-2 gap-10 mt-10">
-              <div>
-                {/* Cards: Time / Category / Difficulty */}
-                <div className="grid sm:grid-cols-3 gap-6 mb-6">
-                  <div className="flex flex-col items-center bg-gray-50 dark:bg-[#1a1a1a] shadow-md rounded-2xl p-6">
-                    <Clock className="bg-[#ff6b6b] text-white rounded-2xl p-1" />
-                    <p className="font-semibold mt-2">{recipe.Time}</p>
-                  </div>
-                  <div className="flex flex-col items-center bg-gray-50 dark:bg-[#1a1a1a] shadow-md rounded-2xl p-6">
-                    <Utensils className="bg-[#ff6b6b] text-white rounded-2xl p-1" />
-                    <p className="font-semibold mt-2">{recipe.Category}</p>
-                  </div>
-                  <div className="flex flex-col items-center bg-gray-50 dark:bg-[#1a1a1a] shadow-md rounded-2xl p-6">
-                    <ChartNoAxesColumn className="bg-[#ff6b6b] text-white rounded-2xl p-1" />
-                    <p className="font-semibold mt-2">{recipe.Difficulty}</p>
-                  </div>
-                </div>
-
-                {/* Ingredients */}
-                <IngredientsBox ingredients={recipe.Ingredients} />
-              </div>
-
-              {/* Instructions */}
-              <InstructionBox instructions={recipe.Instructions} />
-            </div>
-
-            <CommentBox
-              totalComments={ratings}
-              visibleComments={visibleComment}
-              hasMore={hasMore}
-              handleViewMore={handleViewMore}
-              comment={newComment}
-              setComment={setNewComment} // pop up
-              starRating={starRating} //pop up
-              setStarRating={setStarRating} // pop up
-              handleComment={handleComment} // pop up
-              handleRatings={handleRatings}
-              recipeId={id}
-              lastKey={lastKey}
-              handleDelete={handleDeleteComment}
-              isDeleting={isDeleting}
-            />
           </div>
         </div>
+
+        {/* Description */}
+        <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl shadow dark:shadow-lg dark:shadow-black/50 p-6 lg:p-8 mb-6">
+          <Accordion sections={[{ id: 1, text: recipe.Description }]} />
+        </div>
+
+        {/* Recipe Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div className="bg-white dark:bg-[#1a1a1a] shadow dark:shadow-lg dark:shadow-black/50 rounded-2xl p-6 flex flex-col items-center justify-center">
+            <div className="bg-[#ff6b6b] dark:bg-[#ff6b6b]/30 p-3 rounded-xl mb-3">
+              <Clock className="w-6 h-6 text-white dark:text-[#ff8080]" />
+            </div>
+            <p className="font-semibold text-gray-800 dark:text-white">{recipe.Time}</p>
+            <p className="text-sm text-slate-400 dark:text-slate-500">Prep Time</p>
+          </div>
+
+          <div className="bg-white dark:bg-[#1a1a1a] shadow dark:shadow-lg dark:shadow-black/50 rounded-2xl p-6 flex flex-col items-center justify-center">
+            <div className="bg-[#ff6b6b] dark:bg-[#ff6b6b]/30 p-3 rounded-xl mb-3">
+              <Utensils className="w-6 h-6 text-white dark:text-[#ff8080]" />
+            </div>
+            <p className="font-semibold text-gray-800 dark:text-white">{recipe.Category}</p>
+            <p className="text-sm text-slate-400 dark:text-slate-500">Category</p>
+          </div>
+
+          <div className="bg-white dark:bg-[#1a1a1a] shadow dark:shadow-lg dark:shadow-black/50 rounded-2xl p-6 flex flex-col items-center justify-center">
+            <div className="bg-[#ff6b6b] dark:bg-[#ff6b6b]/30 p-3 rounded-xl mb-3">
+              <ChartNoAxesColumn className="w-6 h-6 text-white dark:text-[#ff8080]" />
+            </div>
+            <p className="font-semibold text-gray-800 dark:text-white">{recipe.Difficulty}</p>
+            <p className="text-sm text-slate-400 dark:text-slate-500">Difficulty</p>
+          </div>
+        </div>
+
+        {/* Ingredients and Instructions Grid */}
+        <div className="grid md:grid-cols-2 gap-6 mb-6">
+          {/* Ingredients */}
+            <IngredientsBox ingredients={recipe.Ingredients} />
+          
+
+          {/* Instructions */}
+            <InstructionBox instructions={recipe.Instructions} />
+        </div>
+
+        {/* Comments Section */}
+          <CommentBox
+            totalComments={ratings}
+            visibleComments={visibleComment}
+            hasMore={hasMore}
+            handleViewMore={handleViewMore}
+            comment={newComment}
+            setComment={setNewComment}
+            starRating={starRating}
+            setStarRating={setStarRating}
+            handleComment={handleComment}
+            handleRatings={handleRatings}
+            recipeId={id}
+            lastKey={lastKey}
+            handleDelete={handleDeleteComment}
+            isDeleting={isDeleting}
+          />
       </div>
     </div>
   );
