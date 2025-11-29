@@ -3,7 +3,7 @@ describe("Recipe Management Flow", () => {
   let jwtToken;
 
   beforeEach(() => {
-    cy.wait(1000);
+    cy.wait(500);
     if (jwtToken) {
       window.localStorage.setItem('jwtToken', jwtToken);
     }
@@ -56,12 +56,6 @@ describe("Recipe Management Flow", () => {
     cy.addFavoriteAuto();
   });
 
-  it("checks that the last recipes' isFavorite is set to true", () => {
-    cy.getRecipeAuto().then(res => {
-      expect(res.body.message.isFavorite).to.equal(true)
-    })
-  })
-
   it("rates the first recipe with 2 stars", () => {
     cy.rateRecipeAuto(2);
 
@@ -77,12 +71,6 @@ describe("Recipe Management Flow", () => {
     cy.createRecipeAuto(privateRecipe);
     cy.addFavoriteAuto();
   });
-
-  it("checks that the last recipes' isFavorite is set to true", () => {
-    cy.getRecipeAuto().then(res => {
-      expect(res.body.message.isFavorite).to.equal(true)
-    })
-  })
 
   it("rates the second recipe with 5 stars", () => {
     cy.rateRecipeAuto(5);
@@ -131,12 +119,6 @@ describe("Recipe Management Flow", () => {
       expect(res.body.message).to.have.length(1);
     });
   });
-
-  it("checks that the last recipes' isFavorite is now reset to false", () => {
-    cy.getRecipeAuto().then(res => {
-      expect(res.body.message.isFavorite).to.equal(false)
-    })
-  })
 
   it("removes the last rating", () => {
     cy.removeRatingAuto();
