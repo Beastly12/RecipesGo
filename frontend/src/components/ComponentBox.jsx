@@ -7,10 +7,7 @@ const CommentBox = ({
   visibleComments,
   hasMore,
   handleViewMore,
-<<<<<<< HEAD
   handlePopupClosed,
-=======
->>>>>>> real/main
   comment,
   setComment,
   starRating,
