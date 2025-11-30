@@ -12,7 +12,7 @@ import Footer from '../components/Footer';
 import { useLocation } from 'react-router-dom';
 
 export default function RecipeFeed() {
-  const { user, userDetails, loading: authLoading,setUserDetails } = useAuthContext();
+  const { user, userDetails, loading: authLoading, setUserDetails } = useAuthContext();
 
   const [recipes, setRecipes] = useState([]);
   const [hasMore, setMore] = useState(false);
@@ -20,7 +20,6 @@ export default function RecipeFeed() {
   const [lastKey, setLastkey] = useState('');
   const [loading, setLoading] = useState(false);
   const [colorTheme, setTheme] = useDarkMode();
-
 
   const location = useLocation();
 

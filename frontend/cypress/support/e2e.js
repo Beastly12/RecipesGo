@@ -82,14 +82,16 @@ Cypress.Commands.add('searchRecipes', (text) => {
 Cypress.Commands.add('getRecipeAuto', () => {
   const recipeId = Cypress.env('testStore').recipeIds.slice(-1)[0];
 
-  return cy.request({
-    method: 'GET',
-    url: `${Cypress.env('api')}/recipes/${recipeId}`,
-    headers: authHeaders(),
-  }).then(res => {
-    Cypress.log({ message: JSON.stringify(res.body.message) });
-    return res;
-  });
+  return cy
+    .request({
+      method: 'GET',
+      url: `${Cypress.env('api')}/recipes/${recipeId}`,
+      headers: authHeaders(),
+    })
+    .then((res) => {
+      Cypress.log({ message: JSON.stringify(res.body.message) });
+      return res;
+    });
 });
 
 Cypress.Commands.add('getPublicRecipes', (category = '') => {
