@@ -92,8 +92,8 @@ const CommentBox = ({
                   key={star}
                   onClick={() => setStarRating(star)}
                   className={`px-4 py-2 rounded-lg transition-colors ${
-                    star <= starRating 
-                      ? 'bg-[#ff6b6b] text-white hover:bg-[#ff5252]' 
+                    star <= starRating
+                      ? 'bg-[#ff6b6b] text-white hover:bg-[#ff5252]'
                       : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600'
                   }`}
                 >
@@ -104,9 +104,7 @@ const CommentBox = ({
           </div>
 
           <div className="mb-6">
-            <label className="block mb-2 font-medium">
-              Write your comment:
-            </label>
+            <label className="block mb-2 font-medium">Write your comment:</label>
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
