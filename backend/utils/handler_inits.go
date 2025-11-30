@@ -22,15 +22,16 @@ const (
 )
 
 type handlerDependenciesType struct {
-	DbClient             *dynamodb.Client
-	CognitoClient        *cognitoidentityprovider.Client
-	S3Client             *s3.Client
-	SqsClient            *sqs.Client
-	BucketName           string
-	MainTableName        string
-	UserPoolId           string
-	CloudFrontDomainName string
-	QueueUrl             string
+	DbClient                   *dynamodb.Client
+	CognitoClient              *cognitoidentityprovider.Client
+	S3Client                   *s3.Client
+	SqsClient                  *sqs.Client
+	BucketName                 string
+	MainTableName              string
+	UserPoolId                 string
+	CloudFrontDomainName       string
+	QueueUrl                   string
+	CurrentAuthenticatedUserId string
 }
 
 var handlerDependencies handlerDependenciesType
@@ -87,6 +88,10 @@ func WithCognitoClientOnly() option {
 	return func(hd *handlerDependenciesType, c aws.Config) {
 		hd.CognitoClient = cognitoidentityprovider.NewFromConfig(c)
 	}
+}
+
+func SetCurrentAuthUserid(id string) {
+	handlerDependencies.CurrentAuthenticatedUserId = id
 }
 
 func LateInitUserPoolId(userPoolId string) {

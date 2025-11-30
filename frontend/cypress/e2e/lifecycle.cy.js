@@ -2,7 +2,7 @@ describe('Recipe Management Flow', () => {
   let jwtToken;
 
   beforeEach(() => {
-    cy.wait(1000);
+    cy.wait(500);
     if (jwtToken) {
       window.localStorage.setItem('jwtToken', jwtToken);
     }

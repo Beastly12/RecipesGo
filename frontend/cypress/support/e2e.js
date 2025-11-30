@@ -86,6 +86,9 @@ Cypress.Commands.add('getRecipeAuto', () => {
     method: 'GET',
     url: `${Cypress.env('api')}/recipes/${recipeId}`,
     headers: authHeaders(),
+  }).then(res => {
+    Cypress.log({ message: JSON.stringify(res.body.message) });
+    return res;
   });
 });
 
