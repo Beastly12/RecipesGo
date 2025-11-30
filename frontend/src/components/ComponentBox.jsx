@@ -1,15 +1,6 @@
-<<<<<<< HEAD
-import React from 'react';
-import Modal from 'react-modal';
-import { useModal } from '../context/CustomModalContext';
-import CustomInput from './CustomInput';
-
-Modal.setAppElement('#root');
-=======
 import React, { useState } from 'react';
 import { Modal, Popconfirm } from 'antd';
 import { useAuthContext } from '../context/AuthContext';
->>>>>>> real/main
 
 const CommentBox = ({
   totalComments,
