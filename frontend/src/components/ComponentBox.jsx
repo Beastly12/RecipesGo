@@ -132,7 +132,7 @@ const CommentBox = ({
           </div>
         </div>
       </Modal>
-    </>
+    </div>
   );
 };
 
