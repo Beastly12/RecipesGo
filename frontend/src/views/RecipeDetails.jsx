@@ -253,50 +253,6 @@ function RecipeDetailPage() {
                 <span>Share</span>
               </button>
             </div>
-<<<<<<< HEAD
-
-            <Accordion sections={[{ id: 1, text: recipe.Description }]} />
-
-            <div className="grid md:grid-cols-2 gap-10 mt-10">
-              <div>
-                {/* Cards: Time / Category / Difficulty */}
-                <div className="grid sm:grid-cols-3 gap-6 mb-6">
-                  <div className="flex flex-col items-center bg-gray-50 dark:bg-[#1a1a1a] shadow-md rounded-2xl p-6">
-                    <Clock className="bg-[#ff6b6b] text-white rounded-2xl p-1" />
-                    <p className="font-semibold mt-2">{recipe.Time}</p>
-                  </div>
-                  <div className="flex flex-col items-center bg-gray-50 dark:bg-[#1a1a1a] shadow-md rounded-2xl p-6">
-                    <Utensils className="bg-[#ff6b6b] text-white rounded-2xl p-1" />
-                    <p className="font-semibold mt-2">{recipe.Category}</p>
-                  </div>
-                  <div className="flex flex-col items-center bg-gray-50 dark:bg-[#1a1a1a] shadow-md rounded-2xl p-6">
-                    <ChartNoAxesColumn className="bg-[#ff6b6b] text-white rounded-2xl p-1" />
-                    <p className="font-semibold mt-2">{recipe.Difficulty}</p>
-                  </div>
-                </div>
-
-                {/* Ingredients */}
-                <IngredientsBox ingredients={recipe.Ingredients} />
-              </div>
-
-              {/* Instructions */}
-              <InstructionBox instructions={recipe.Instructions} />
-            </div>
-
-            <CommentBox
-              totalComments={ratings}
-              visibleComments={visibleComment}
-              hasMore={hasMore}
-              handleViewMore={handleViewMore}
-              handlePopupClosed={handlePopupClosed}
-              comment={newComment}
-              setComment={setNewComment} // pop up
-              starRating={starRating} //pop up
-              setStarRating={setStarRating} // pop up
-              handleComment={handleComment} // pop up
-            />
-=======
->>>>>>> real/main
           </div>
         </div>
 
