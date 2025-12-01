@@ -9,10 +9,6 @@ RecipeGo is a modern, social recipe sharing platform built with a serverless arc
 ## 🚀 Live Application
 <img width="800" alt="RecipeGo Homepage Screenshot" src="https://github.com/Beastly12/RecipesGo/main/frontend/src/assets/homepage_figma.png" />
 
-### Repository Visualization
-[Replace with publicly hosted link for Screenshot 2025-11-14 at 09 55 18]
-> **
-
 Experience RecipeGo live:
 👉 **[https://prepify-nu.vercel.app](https://prepify-nu.vercel.app)**
 
