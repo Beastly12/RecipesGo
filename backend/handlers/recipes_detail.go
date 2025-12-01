@@ -5,7 +5,6 @@ import (
 	"backend/models"
 	"backend/utils"
 	"context"
-	"log"
 
 	"github.com/aws/aws-lambda-go/events"
 )
@@ -41,10 +40,7 @@ func handleGetRecipeDetails(ctx context.Context, req events.APIGatewayV2HTTPRequ
 
 	utils.BasicLog("Recipe details gotten successfully! Ending function execution", response)
 
-	liked, err := helpers.NewFavoritesHelper(ctx).RecipeInFavorites(recipeId, utils.GetAuthUserId(req))
-	if err != nil {
-		log.Printf("Failed to check if recipe is in users favorites: %v", err)
-	}
+	liked := response.IsFavorite
 
 	details := recipeData{
 		*response,

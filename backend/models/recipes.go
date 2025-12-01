@@ -43,6 +43,7 @@ type RecipeDetails struct {
 	Difficulty      string   `dynamodbav:"difficulty" json:"difficulty"`
 	Instructions    []string `dynamodbav:"instructions" json:"instructions"`
 	IsPublic        bool     `dynamodbav:"isPublic" json:"isPublic"`
+	IsFavorite      bool     `dynamodbav:"-" json:"isFavorite"`
 	Likes           int      `dynamodbav:"likes" json:"likes"`
 	Rating          float64  `dynamodbav:"rating" json:"rating"`
 	Views           int      `dynamodbav:"views" json:"views"`
