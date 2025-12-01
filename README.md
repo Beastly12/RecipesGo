@@ -40,18 +40,6 @@ Our development and deployment pipeline leverages a modern DevOps toolchain to e
 | **GitHub Projects** | Agile planning, Kanban tracking, and sprint coordination. |
 | **Cypress** | Automated end-to-end testing for frontend quality assurance. |
 
-## 🖼️ Application Overview
-
-**NOTE: Please replace the placeholder links below with publicly accessible image links.**
-
-### Main Feature Screenshot
-[Replace with publicly hosted link for Screenshot 2025-11-14 at 09 53 53]
-> **
-
-### Repository Visualization
-[Replace with publicly hosted link for Screenshot 2025-11-14 at 09 55 18]
-> **
-
 ---
 
 ## 🔑 Authentication
