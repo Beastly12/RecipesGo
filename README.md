@@ -1,80 +1,114 @@
-# RecipesGo
+# 👩‍🍳 RecipesGo: Social Recipe Sharing Platform
 
-RecipeGo is a full-stack, social recipe sharing platform built with a modern, serverless architecture. It demonstrates a DevOps pratice and production ready development workflow emphasizing scalability, testing, and automated deployment.
+## A Full-Stack, Serverless, and Production-Ready Application
 
-<img width="800" alt="Screenshot 2025-11-14 at 09 53 53" src="https://github.com/user-attachments/assets/24fca441-c354-4c44-8880-2aedbb34a734" />
-
-
-# Prerequisites
-To develop or run RecipeShare locally, ensure you have:
-Node.js ≥ 18, npm ≥ 8, Docker ≥ 20
-An AWS account with:
-A configured Cognito User Pool
-A DynamoDB table
-Amplify app configured (optional for local dev)
-
-# RecipesGO link
-- https://prepify-nu.vercel.app
-
-## 👥 Collaborators
-
-| Name | Username |
-|------|----------------|
-| **Adam Ali** | [2alia](https://github.com/2alia) |
-| **David A** | [dayv-exe](https://github.com/dayv-exe) |
-| **Dafe** | [Beastly12](https://github.com/Beastly12) |
-| **Daniel** | [danielsauuce](https://github.com/danielsauuce) |
-| **Zhihan** | [2LIUZ98](https://github.com/2LIUZ98) |
+RecipeGo is a modern, social recipe sharing platform built with a serverless architecture. This project serves as a showcase for robust DevOps practices and a production-ready development workflow, emphasizing **scalability, end-to-end testing, and automated deployment**.
 
 ---
-## 🧱 Technology Stack
 
-| Component      | Tech Stack        |
-|----------------|-------------------|
-| Frontend       | React             |
-| Styling        | Tailwind CSS      |
-| Authentication | AWS Cognito       |
-| Database       | AWS DynamoDB      |
-| Deployment     | Vercel            |
-| E2E Testing    | Cypress           |
+## 🚀 Live Application
+<img width="800" alt="RecipeGo Homepage Screenshot" src="https://github.com/Beastly12/RecipesGo/main/frontend/src/assets/homepage_figma.png" />
+
+### Repository Visualization
+[Replace with publicly hosted link for Screenshot 2025-11-14 at 09 55 18]
+> **
+
+Experience RecipeGo live:
+👉 **[https://prepify-nu.vercel.app](https://prepify-nu.vercel.app)**
+
+## 💻 Technology Stack
+
+RecipeGo is built with a modern, serverless stack. The following icons represent the core technologies used across the project:
+
+| Component | Tech Stack | Logo |
+| :--- | :--- | :---: |
+| **Frontend** | React | <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React Logo" /> |
+| **Styling** | Tailwind CSS | <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS Logo" /> |
+| **Authentication** | AWS Cognito | <img src="https://img.shields.io/badge/Amazon_Cognito-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="AWS Cognito Logo" /> |
+| **Database** | AWS DynamoDB | <img src="https://img.shields.io/badge/DynamoDB-4053D6?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="AWS DynamoDB Logo" /> |
+| **Deployment** | Vercel | <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel Logo" /> |
+| **E2E Testing** | Cypress | <img src="https://img.shields.io/badge/Cypress-17202C?style=for-the-badge&logo=cypress&logoColor=white" alt="Cypress Logo" /> |
+
+---
+
+## 🛠️ DevOps & Tooling
+
+Our development and deployment pipeline leverages a modern DevOps toolchain to ensure reliability, consistency, and automation across the project.
+
+| Tool | Purpose |
+| :--- | :--- |
+| **GitHub Actions** | Continuous Integration and Continuous Delivery (CI/CD) workflows. |
+| **Docker** | Containerization for consistent development and production environments. |
+| **AWS SAM CLI** | Infrastructure-as-Code (IaC) and serverless application deployment. |
+| **AWS CloudWatch** | Centralized logging, monitoring, and performance metrics. |
+| **GitHub Projects** | Agile planning, Kanban tracking, and sprint coordination. |
+| **Cypress** | Automated end-to-end testing for frontend quality assurance. |
+
+## 🖼️ Application Overview
+
+**NOTE: Please replace the placeholder links below with publicly accessible image links.**
+
+### Main Feature Screenshot
+[Replace with publicly hosted link for Screenshot 2025-11-14 at 09 53 53]
+> **
+
+### Repository Visualization
+[Replace with publicly hosted link for Screenshot 2025-11-14 at 09 55 18]
+> **
+
+---
 
 ## 🔑 Authentication
 
-Authentication was handled using **AWS Cognito**, providing secure user sign-up, sign-in, and access control across the application.
+Authentication is securely handled using **AWS Cognito**, which provides robust features for user sign-up, sign-in, and managing access control throughout the application.
 
-## 🛠️ Development Workflow
-Our team follows a standard **fork-and-pull-request** workflow to ensure clean collaboration and code quality:
+## 🧑‍💻 Development Workflow
 
-1. **Fork** the repository to your personal GitHub account.  
-2. **Create a feature branch** in your fork and commit your changes.  
-3. **Push your branch** and open a Pull Request (PR) to the `main` branch of the upstream repository.  
-4. Ensure **all merge conflicts are resolved** before requesting a review.  
-5. A team member will review and approve the PR before it is merged into `main`.  
+Our team adheres to a standard **fork-and-pull-request** workflow to maintain code quality and facilitate clean collaboration:
 
+1.  **Fork** the repository to your personal GitHub account.
+2.  **Create a feature branch** (e.g., `feat/add-dark-mode`) in your fork and commit your changes.
+3.  **Push your branch** and open a **Pull Request (PR)** to the `main` branch of the upstream repository.
+4.  Ensure **all merge conflicts are resolved** before requesting a review.
+5.  A team member will review and approve the PR before it is merged into `main`.
 
-# 🧹 Code Linting & Formatting
+## ⚙️ Prerequisites for Local Development
+
+To develop or run RecipeGo locally, you must have the following dependencies:
+
+* **Node.js** $\ge 18$
+* **npm** $\ge 8$
+* **Docker** $\ge 20$
+
+### AWS Account Configuration
+
+A properly configured AWS environment is required for full functionality:
+
+* A configured **Cognito User Pool**.
+* A dedicated **DynamoDB table** for recipe data.
+* An **AWS Amplify** app configured (optional for basic local development).
+
+## 🧽 Code Linting & Formatting
+
+We use standard tooling to enforce high code quality and consistency.
 
 | Command | Purpose |
-|---------|----------|
-| `npm run lint` | Checks code and style quality. Runs during development but does not break on errors. |
-| `npm run format` | Automatically fixes common linting and formatting issues. |
+| :--- | :--- |
+| `npm run lint` | Checks code and style quality against defined rules (non-breaking during development). |
+| `npm run format` | **Automatically fixes** common linting and formatting issues across the codebase. |
 
-# 🌑 Dark Mode Support
-This project natively supports Dark Mode styling. By default, the application adheres to the user's color preference as set on their operating system or device.
-### **DevOps & Tooling**
+## 🌑 Dark Mode Support
 
-Our development and deployment pipeline leverages a modern DevOps toolchain to ensure reliability, consistency, and automation across the project:
+This project natively supports Dark Mode styling. Ensuring a pleasant viewing experience in all lighting conditions.
 
-- **GitHub Actions** – Continuous integration and delivery workflows  
-- **Docker** – Containerised development and production environments  
-- **AWS SAM CLI** – Infrastructure-as-code and serverless application deployment  
-- **AWS CloudWatch** – Centralised logging, monitoring, and metrics  
-- **GitHub Projects** – Agile planning, Kanban tracking, and sprint coordination  
-- **Cypress** – Automated end-to-end testing for frontend quality assurance
+---
 
-## 📊 Repository Visualization
+## 👥 Collaborators
 
-<img width="800" alt="Screenshot 2025-11-14 at 09 55 18" src="https://github.com/user-attachments/assets/6f02aea1-dc58-472a-a99c-4b22ae6f2e6f" />
-
-
-
+| Role | Name | GitHub Profile |
+| :--- | :--- | :--- |
+| **Developer** | Adam Ali | [@2alia](https://github.com/2alia) |
+| **Developer** | David A | [@dayv-exe](https://github.com/dayv-exe) |
+| **Developer** | Dafe | [@Beastly12](https://github.com/Beastly12) |
+| **Developer** | Daniel | [@danielsauuce](https://github.com/danielsauuce) |
+| **Developer** | Zhihan | [@2LIUZ98](https://github.com/2LIUZ98) |
