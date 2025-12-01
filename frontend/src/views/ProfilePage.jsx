@@ -44,11 +44,11 @@ export default function Profile() {
 
         let user;
 
-        // If viewing own profile, use userDetails from context
+        
         if (isOwner && userDetails) {
           user = userDetails;
         } else {
-          // Otherwise, fetch the user details using the service
+         
           const userRes = await getUserDetails(profileUserId);
           user = userRes;
         }

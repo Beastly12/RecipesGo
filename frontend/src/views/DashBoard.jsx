@@ -149,7 +149,7 @@ const DashBoard = () => {
               <Link to="/dashboard">Dashboard</Link>
             </Menu.Item>
             <Menu.Item key="profile" icon={<UserOutlined />}>
-              <Link to="/profile">Profile</Link>
+              <Link to={`/profile/${user?.userId}`}>Profile</Link>
             </Menu.Item>
             <Menu.Item key="settings" icon={<SettingOutlined />}>
               <Link to="/settings">Settings</Link>
