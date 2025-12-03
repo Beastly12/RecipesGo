@@ -54,10 +54,7 @@ export default function Profile() {
         }
 
         if (!user) throw new Error('User not found.');
-<<<<<<< HEAD
-=======
         // console.log(user);
->>>>>>> real/main
 
         setDisplayName(user.name ?? '');
         setBio(user.bio ?? '');
