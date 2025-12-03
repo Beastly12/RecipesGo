@@ -188,7 +188,7 @@ function RecipeDetailPage() {
   return (
     <div className="bg-[#fafafa] min-h-screen text-[#1a1a1a] font-sans dark:bg-[#0a0a0a] dark:text-[#e5e5e5]">
       {contextHolder}
-
+      
       {/* Back Button */}
       <div className="lg:max-w-[900px] lg:mx-auto px-5 lg:px-10 pt-10">
         <Link
@@ -203,11 +203,17 @@ function RecipeDetailPage() {
       <div className="lg:max-w-[900px] py-10 lg:mx-auto px-5 lg:px-10">
         {/* Recipe Image */}
         <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl shadow dark:shadow-lg dark:shadow-black/50 overflow-hidden mb-6">
-          <img className="w-full h-96 object-cover" src={recipe.Image} alt="Recipe Image" />
+          <img
+            className="w-full h-96 object-cover"
+            src={recipe.Image}
+            alt="Recipe Image"
+          />
         </div>
 
         {/* Recipe Title */}
-        <h1 className="text-4xl lg:text-5xl font-semibold mb-6 dark:text-white">{recipe.Name}</h1>
+        <h1 className="text-4xl lg:text-5xl font-semibold mb-6 dark:text-white">
+          {recipe.Name}
+        </h1>
 
         {/* Author Info and Actions */}
         <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl shadow dark:shadow-lg dark:shadow-black/50 p-6 lg:p-8 mb-6">
@@ -218,7 +224,9 @@ function RecipeDetailPage() {
                   {recipe.AuthorName}
                 </p>
               </Link>
-              <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">{recipe.Published}</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">
+                {recipe.Published}
+              </p>
             </div>
 
             <div className="flex flex-wrap gap-3">
@@ -226,10 +234,9 @@ function RecipeDetailPage() {
               {loggedInUser?.userId && (
                 <button
                   className={`flex items-center justify-center gap-2 py-3 px-6 rounded-xl text-sm font-semibold transition-all duration-300
-                    ${
-                      liked
-                        ? 'bg-[#ff6b6b] text-white dark:bg-[#ff6b6b]/70 hover:bg-[#ff5252] dark:hover:bg-[#ff6b6b]/80'
-                        : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                    ${liked 
+                      ? 'bg-[#ff6b6b] text-white dark:bg-[#ff6b6b]/70 hover:bg-[#ff5252] dark:hover:bg-[#ff6b6b]/80' 
+                      : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                     }`}
                   onClick={handleLike}
                 >
@@ -285,29 +292,30 @@ function RecipeDetailPage() {
         {/* Ingredients and Instructions Grid */}
         <div className="grid md:grid-cols-2 gap-6 mb-6">
           {/* Ingredients */}
-          <IngredientsBox ingredients={recipe.Ingredients} />
+            <IngredientsBox ingredients={recipe.Ingredients} />
+          
 
           {/* Instructions */}
-          <InstructionBox instructions={recipe.Instructions} />
+            <InstructionBox instructions={recipe.Instructions} />
         </div>
 
         {/* Comments Section */}
-        <CommentBox
-          totalComments={ratings}
-          visibleComments={visibleComment}
-          hasMore={hasMore}
-          handleViewMore={handleViewMore}
-          comment={newComment}
-          setComment={setNewComment}
-          starRating={starRating}
-          setStarRating={setStarRating}
-          handleComment={handleComment}
-          handleRatings={handleRatings}
-          recipeId={id}
-          lastKey={lastKey}
-          handleDelete={handleDeleteComment}
-          isDeleting={isDeleting}
-        />
+          <CommentBox
+            totalComments={ratings}
+            visibleComments={visibleComment}
+            hasMore={hasMore}
+            handleViewMore={handleViewMore}
+            comment={newComment}
+            setComment={setNewComment}
+            starRating={starRating}
+            setStarRating={setStarRating}
+            handleComment={handleComment}
+            handleRatings={handleRatings}
+            recipeId={id}
+            lastKey={lastKey}
+            handleDelete={handleDeleteComment}
+            isDeleting={isDeleting}
+          />
       </div>
     </div>
   );

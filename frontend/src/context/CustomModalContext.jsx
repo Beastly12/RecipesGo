@@ -20,7 +20,7 @@ export const ModalProvider = ({ children }) => {
     <ModalContext.Provider value={{ openModal, closeModal }}>
       {children}
       {isOpen && (
-        <div
+        <div 
           style={{
             position: 'fixed',
             top: 0,
@@ -31,18 +31,18 @@ export const ModalProvider = ({ children }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            zIndex: 1000,
+            zIndex: 1000
           }}
           onClick={closeModal}
         >
-          <div
+          <div 
             style={{
               backgroundColor: 'white',
               padding: '20px',
               borderRadius: '8px',
               maxWidth: '500px',
               width: '90%',
-              position: 'relative',
+              position: 'relative'
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -55,7 +55,7 @@ export const ModalProvider = ({ children }) => {
                 border: 'none',
                 background: 'none',
                 fontSize: '24px',
-                cursor: 'pointer',
+                cursor: 'pointer'
               }}
             >
               ×
