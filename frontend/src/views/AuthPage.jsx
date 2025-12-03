@@ -4,7 +4,7 @@ import LoginForm from '../components/LoginForm';
 import SignUpForm from '../components/SignUpForm';
 import { LoginService, SignUpService } from '../services/AuthService.mjs';
 import { useNavigate } from 'react-router-dom';
-import { message, Spin, Card, Typography } from 'antd';
+import {  message, Spin, Card,Typography } from 'antd';
 
 const { Title, Text } = Typography;
 

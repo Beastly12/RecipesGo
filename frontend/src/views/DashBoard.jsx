@@ -40,7 +40,7 @@ const DashBoard = () => {
           getUser(),
           // console.log(user),
           // getRecipesByUser(user.userId),
-          getMyRecipes(),
+          getMyRecipes()
           // console.log(user.userId)
         ]);
 
