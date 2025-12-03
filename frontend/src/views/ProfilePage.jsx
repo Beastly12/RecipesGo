@@ -29,19 +29,6 @@ export default function Profile() {
 
   const { id: profileUserIdRaw } = useParams();
   const { user: loggedInUser, userDetails } = useAuthContext();
-<<<<<<< HEAD
-  const profileUserId = profileUserIdRaw ? String(profileUserIdRaw) : '';
-
-  const isOwner = String(loggedInUser?.userId) === profileUserId;
-
-  useEffect(() => {
-    if ((!profileUserId || profileUserId.trim() === '') && loggedInUser?.userId) {
-      navigate(`/profile/${loggedInUser.userId}`);
-    }
-  }, [profileUserId, loggedInUser]);
-  useEffect(() => {
-    if (!profileUserId) return;
-=======
   const profileUserId = profileUserIdRaw ? profileUserIdRaw : '';
 
   const isOwner = loggedInUser?.userId && loggedInUser.userId=== profileUserId;
@@ -49,7 +36,6 @@ export default function Profile() {
   useEffect(() => {
     if (!profileUserId) return;
 
->>>>>>> real/main
     let on = true;
     (async () => {
       try {
