@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Sun, Moon } from 'lucide-react';
 import { Dropdown, Menu, Avatar, Drawer, Button } from 'antd';
 import {
@@ -10,14 +10,59 @@ import {
   MenuOutlined,
   SearchOutlined,
   PlusOutlined,
+  CloseOutlined,
+  LoadingOutlined,
 } from '@ant-design/icons';
 import { handleSignOut } from '../services/AuthService.mjs';
 
-export default function Header({ userId, colorTheme, setTheme, userName, profilePic }) {
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+// Debounce hook
+function useDebounce(callback, delay) {
+  const [timeoutId, setTimeoutId] = useState(null);
 
+  const debouncedFunction = (value) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+    const newTimeoutId = setTimeout(() => {
+      callback(value);
+    }, delay);
+
+    setTimeoutId(newTimeoutId);
+  };
+
+  return debouncedFunction;
+}
+
+export default function Header({ 
+  userId, 
+  colorTheme, 
+  setTheme, 
+  userName, 
+  profilePic,
+  onSearch,
+  isSearching = false,
+  searchTerm = '',
+  setSearchTerm,
+  handleClearSearch
+}) {
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+ 
   const userEmail = userId ? `${userId.substring(0, 10)}...` : '';
 
+  const debouncedSearch = useDebounce((value) => {
+    if (onSearch) {
+      onSearch(value);
+    }
+  }, 500);
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    debouncedSearch(value);
+  };
+
+ 
   const handleLogout = async () => {
     await handleSignOut();
     localStorage.clear();
@@ -148,9 +193,24 @@ export default function Header({ userId, colorTheme, setTheme, userName, profile
           </span>
           <input
             type="text"
+            value={searchTerm}
+            onChange={handleSearchChange}
             placeholder="Search recipes, ingredients, or chefs..."
-            className="w-full pl-12 pr-4 py-3 rounded-full border-2 border-gray-200 dark:border-gray-700 dark:bg-[#2a2a2a] dark:text-white text-sm focus:outline-none focus:border-[#ff6b6b] focus:ring-2 focus:ring-[#ff6b6b]/20 transition-all"
+            className="w-full pl-12 pr-12 py-3 rounded-full border-2 border-gray-200 dark:border-gray-700 dark:bg-[#2a2a2a] dark:text-white text-sm focus:outline-none focus:border-[#ff6b6b] focus:ring-2 focus:ring-[#ff6b6b]/20 transition-all"
           />
+          {/* Loading or Clear button */}
+          <span className="absolute right-4 top-1/2 -translate-y-1/2">
+            {isSearching && searchTerm ? (
+              <LoadingOutlined className="text-[#ff6b6b]" spin />
+            ) : searchTerm ? (
+              <button
+                onClick={handleClearSearch}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
+                <CloseOutlined />
+              </button>
+            ) : null}
+          </span>
         </div>
 
         <div className="flex items-center gap-4">
@@ -225,9 +285,24 @@ export default function Header({ userId, colorTheme, setTheme, userName, profile
             </span>
             <input
               type="text"
+              value={searchTerm}
+              onChange={handleSearchChange}
               placeholder="Search..."
-              className="w-full pl-10 pr-3 py-2 rounded-full bg-gray-100 dark:bg-[#2a2a2a] dark:text-white border-none text-sm focus:outline-none focus:ring-2 focus:ring-[#ff6b6b]/30"
+              className="w-full pl-10 pr-9 py-2 rounded-full bg-gray-100 dark:bg-[#2a2a2a] dark:text-white border-none text-sm focus:outline-none focus:ring-2 focus:ring-[#ff6b6b]/30"
             />
+            {/* Loading or Clear button for mobile */}
+            <span className="absolute right-3 top-1/2 -translate-y-1/2">
+              {isSearching && searchTerm ? (
+                <LoadingOutlined className="text-[#ff6b6b] text-xs" spin />
+              ) : searchTerm ? (
+                <button
+                  onClick={handleClearSearch}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  <CloseOutlined style={{ fontSize: '12px' }} />
+                </button>
+              ) : null}
+            </span>
           </div>
 
           <div className="flex items-center gap-2">

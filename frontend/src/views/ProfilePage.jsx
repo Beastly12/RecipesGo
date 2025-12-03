@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { ArrowLeft, Settings } from 'lucide-react';
 import RecipesList from '../components/RecipeList';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import { getUserDetails } from '../services/UserService.mjs';
 import { getFavoritesRecipes, getMyRecipes, getRecipesByUser } from '../services/RecipesService.mjs';
@@ -32,6 +32,7 @@ export default function Profile() {
   const profileUserId = profileUserIdRaw ? profileUserIdRaw : '';
 
   const isOwner = loggedInUser?.userId && loggedInUser.userId=== profileUserId;
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!profileUserId) return;
@@ -139,9 +140,9 @@ export default function Profile() {
     return src.map((r, idx) => ({
       key: r.id ?? idx,
       title: r.name,
-      author: activeTab === 'myRecipes' ? 'You' : r.authorName || 'Unknown',
+      author: r.authorName===userDetails.name? 'You' : r.authorName,
       likes: r.likes ?? 0,
-      profilePic: activeTab === 'myRecipes' ? avatarUrl : r.authorDp || '',
+      authorDpUrl : activeTab === 'myRecipes' ? avatarUrl : r.authorDp || '',
       img: r.imageUrl ?? '',
     }));
   }, [activeTab, myRecipes, favs, avatarUrl]);
@@ -166,12 +167,12 @@ export default function Profile() {
 
   return (
     <div className="min-h-100vh bg-[#fafafa] m-4 text-[#1a1a1a] dark:bg-[#0a0a0a] dark:text-[#e5e5e5] dark:m-0">
-      <Link to="/">
+      <button onClick={() => navigate(-1)}>
         <div className="flex m-4 p-3 space-x-3 dark:m-0">
           <ArrowLeft className="cursor-pointer" />
           <button className="text-xl font-medium hover:underline">Back</button>
         </div>
-      </Link>
+      </button>
 
       <div className="max-w-[900px] mx-auto my-10 px-10">
         <div className="w-full rounded-2xl mb-6 flex bg-white dark:bg-[#1a1a1a] shadow-md">
@@ -248,17 +249,7 @@ export default function Profile() {
             </p>
           ) : (
             <>
-              <RecipesList recipes={listForUI} />
-
-              {hasMore && (
-                <button
-                  disabled={loadingMore}
-                  onClick={loadMore}
-                  className="mt-6 bg-gray-200 dark:bg-gray-700 px-6 py-3 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50"
-                >
-                  {loadingMore ? 'Loading...' : 'Load More'}
-                </button>
-              )}
+              <RecipesList recipes={listForUI} hasmore={hasMore} handlePagination={loadMore} loading={loadingMore} />
             </>
           )}
        </div>
