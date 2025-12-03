@@ -227,7 +227,10 @@ export default function ProfileSettings() {
     <div className="bg-[#fafafa] text-[#1a1a1a] min-h-screen font-sans dark:bg-[#0a0a0a] dark:text-[#e5e5e5]">
       <div className="lg:max-w-[900px] py-10 lg:mx-auto px-5 lg:px-10">
         <div className="mb-5">
-          <button onClick={()=>navigate('/', { state: { profileUpdated: true } })} className="text-xl dark:text-[#e5e5e5] cursor-pointer ">
+          <button
+            onClick={() => navigate('/', { state: { profileUpdated: true } })}
+            className="text-xl dark:text-[#e5e5e5] cursor-pointer "
+          >
             ← Back to Profile
           </button>
         </div>
