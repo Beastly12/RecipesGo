@@ -4,13 +4,8 @@ import RecipesList from '../components/RecipeList';
 import { Link, useParams } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import { getUserDetails } from '../services/UserService.mjs';
-<<<<<<< HEAD
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-=======
 import { getFavoritesRecipes, getMyRecipes, getRecipesByUser } from '../services/RecipesService.mjs';
 import axios from '../services/Axios.mjs';
->>>>>>> real/main
 
 export default function Profile() {
   const [activeTab, setActiveTab] = useState('myRecipes');
