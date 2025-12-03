@@ -55,8 +55,9 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
 
   const statusTheme = (isPublic) => (
     <span
-      className={`p-1 inline-flex rounded ${isPublic ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'
-        }`}
+      className={`p-1 inline-flex rounded ${
+        isPublic ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'
+      }`}
     >
       {isPublic ? <Globe size={14} /> : <Lock size={14} />}
       {isPublic ? 'Public' : 'Private'}
@@ -154,7 +155,7 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
 
       <ul className="divide-y divide-gray-200 dark:divide-white">
         {filteredRecipes.slice(0, visible).map((recipe) => {
-          console.log(recipe.imageUrl)
+          console.log(recipe.imageUrl);
           return (
             <li
               key={recipe.id}
