@@ -135,19 +135,6 @@ export default function Profile() {
 
     setLoadingMore(true);
     try {
-<<<<<<< HEAD
-      const params = { last: cursor };
-      if (usingMy && userId) params.by = userId;
-
-      const page = await axios.get(usingMy ? '/recipes' : '/favorites', {
-        params,
-      });
-
-      let items = page.data.message ?? [];
-      const last = page.data.last ?? null;
-
-=======
->>>>>>> real/main
       if (usingMy) {
         // Use the service function with userId and cursor
         const page = await getMyRecipes(userId, cursor);
