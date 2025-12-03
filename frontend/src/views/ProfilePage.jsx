@@ -16,16 +16,10 @@ export default function Profile() {
   const [avatarUrl, setAvatarUrl] = useState('https://randomuser.me/api/portraits/lego/6.jpg');
 
   const [myRecipes, setMyRecipes] = useState([]);
-<<<<<<< HEAD
-  const [myCursor, setMyCursor] = useState(undefined);
-  const [favs, setFavs] = useState([]);
-  const [favCursor, setFavCursor] = useState(undefined);
-=======
   const [myCursor, setMyCursor] = useState(null);
 
   const [favs, setFavs] = useState([]);
   const [favCursor, setFavCursor] = useState(null);
->>>>>>> real/main
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
