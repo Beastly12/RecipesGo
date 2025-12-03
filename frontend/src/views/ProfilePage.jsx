@@ -4,8 +4,13 @@ import RecipesList from '../components/RecipeList';
 import { Link, useParams } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import { getUserDetails } from '../services/UserService.mjs';
+<<<<<<< HEAD
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+=======
+import { getFavoritesRecipes, getMyRecipes, getRecipesByUser } from '../services/RecipesService.mjs';
+import axios from '../services/Axios.mjs';
+>>>>>>> real/main
 
 export default function Profile() {
   const [activeTab, setActiveTab] = useState('myRecipes');
@@ -16,9 +21,16 @@ export default function Profile() {
   const [avatarUrl, setAvatarUrl] = useState('https://randomuser.me/api/portraits/lego/6.jpg');
 
   const [myRecipes, setMyRecipes] = useState([]);
+<<<<<<< HEAD
   const [myCursor, setMyCursor] = useState(undefined);
   const [favs, setFavs] = useState([]);
   const [favCursor, setFavCursor] = useState(undefined);
+=======
+  const [myCursor, setMyCursor] = useState(null);
+
+  const [favs, setFavs] = useState([]);
+  const [favCursor, setFavCursor] = useState(null);
+>>>>>>> real/main
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,6 +40,7 @@ export default function Profile() {
 
   const { id: profileUserIdRaw } = useParams();
   const { user: loggedInUser, userDetails } = useAuthContext();
+<<<<<<< HEAD
   const profileUserId = profileUserIdRaw ? String(profileUserIdRaw) : '';
 
   const isOwner = String(loggedInUser?.userId) === profileUserId;
@@ -39,6 +52,15 @@ export default function Profile() {
   }, [profileUserId, loggedInUser]);
   useEffect(() => {
     if (!profileUserId) return;
+=======
+  const profileUserId = profileUserIdRaw ? profileUserIdRaw : '';
+
+  const isOwner = loggedInUser?.userId && loggedInUser.userId=== profileUserId;
+
+  useEffect(() => {
+    if (!profileUserId) return;
+
+>>>>>>> real/main
     let on = true;
     (async () => {
       try {
@@ -47,16 +69,20 @@ export default function Profile() {
 
         let user;
 
-        // If viewing own profile, use userDetails from context
+        
         if (isOwner && userDetails) {
           user = userDetails;
         } else {
-          // Otherwise, fetch the user details using the service
+         
           const userRes = await getUserDetails(profileUserId);
           user = userRes;
         }
 
         if (!user) throw new Error('User not found.');
+<<<<<<< HEAD
+=======
+        // console.log(user);
+>>>>>>> real/main
 
         setDisplayName(user.name ?? '');
         setBio(user.bio ?? '');
@@ -66,24 +92,21 @@ export default function Profile() {
             ? user.dpUrl
             : 'https://randomuser.me/api/portraits/lego/6.jpg'
         );
-        setUserId(String(user.userid));
+        setUserId(user.userid);
 
-        // Fetch user's recipes
-        const recipesPage = await axios.get('/recipes', {
-          params: { by: profileUserId },
-        });
+        // Fetch user's recipes - PASS THE USER ID
+        const recipesPage = await getRecipesByUser(user.userid);
+        console.log(recipesPage);
 
         if (!on) return;
 
         const allRecipes = recipesPage.data.message ?? [];
-        const userRecipes = allRecipes.filter((r) => String(r.authorId) === profileUserId);
-
-        setMyRecipes(userRecipes);
+        setMyRecipes(allRecipes);
         setMyCursor(recipesPage.data.last ?? null);
 
         // Fetch user's favorites (only if owner)
         if (isOwner) {
-          const favsPage = await axios.get('/favorites');
+          const favsPage = await getFavoritesRecipes();
           if (on) {
             setFavs(favsPage.data.message ?? []);
             setFavCursor(favsPage.data.last ?? null);
@@ -100,7 +123,7 @@ export default function Profile() {
     return () => {
       on = false;
     };
-  }, []);
+  }, [profileUserId, isOwner, userDetails]);
 
   // -----------------------------------------
   // Pagination (Load More)
@@ -112,6 +135,7 @@ export default function Profile() {
 
     setLoadingMore(true);
     try {
+<<<<<<< HEAD
       const params = { last: cursor };
       if (usingMy && userId) params.by = userId;
 
@@ -122,11 +146,24 @@ export default function Profile() {
       let items = page.data.message ?? [];
       const last = page.data.last ?? null;
 
+=======
+>>>>>>> real/main
       if (usingMy) {
-        items = items.filter((r) => String(r.authorId) === userId);
+        // Use the service function with userId and cursor
+        const page = await getMyRecipes(userId, cursor);
+        const items = page.data.message ?? [];
+        const last = page.data.last ?? null;
+        
         setMyRecipes((prev) => [...prev, ...items]);
         setMyCursor(last);
       } else {
+        // For favorites, use the favorites endpoint
+        const page = await axios.get('/favorites', {
+          params: { last: cursor },
+        });
+        const items = page.data.message ?? [];
+        const last = page.data.last ?? null;
+        
         setFavs((prev) => [...prev, ...items]);
         setFavCursor(last);
       }
@@ -151,28 +188,46 @@ export default function Profile() {
   }, [activeTab, myRecipes, favs, avatarUrl]);
 
   const hasMore = activeTab === 'myRecipes' ? !!myCursor : !!favCursor;
+<<<<<<< HEAD
+=======
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#fafafa] dark:bg-[#1a1a1a] flex items-center justify-center">
+        <p className="text-xl">Loading profile...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#fafafa] dark:bg-[#1a1a1a] flex items-center justify-center">
+        <p className="text-xl text-red-500">{error}</p>
+      </div>
+    );
+  }
+>>>>>>> real/main
 
   return (
-    <div className="min-h-screen  bg-[#fafafa] m-4 text-[#1a1a1a] dark:bg-[#1a1a1a] dark:text-[#fafafa] dark:m-0">
-      <Link variant="ghost" onClick={() => navigate(-1)}>
+    <div className="min-h-100vh bg-[#fafafa] m-4 text-[#1a1a1a] dark:bg-[#0a0a0a] dark:text-[#e5e5e5] dark:m-0">
+      <Link to="/">
         <div className="flex m-4 p-3 space-x-3 dark:m-0">
           <ArrowLeft className="cursor-pointer" />
-          <button className=" text-xl font-medium cursor-pointer hover:underline md:font-light">
-            Back
-          </button>
+          <button className="text-xl font-medium hover:underline">Back</button>
         </div>
       </Link>
 
-      <div className="max-w-[900px] my-[40px] mx-[auto] px-[40px]">
-        <div className="w-full rounded-2xl mb-6 flex space-x-2 bg-white dark:bg-[#1a1a1a] shadow-md dark:shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
-          <div className="mt-8 mb-8 p-8 mr-5 sm:mr-4 md:mr-6">
+      <div className="max-w-[900px] mx-auto my-10 px-10">
+        <div className="w-full rounded-2xl mb-6 flex bg-white dark:bg-[#1a1a1a] shadow-md">
+          <div className="mt-8 mb-8 p-8 mr-6">
             <img
-              className=" rounded-full border w-[200px] h-[200px] object-cover sm:rounded-full md:rounded-full"
+              className="rounded-full w-48 h-48 object-cover ring-2 ring-gray-200 dark:ring-white/10"
               src={avatarUrl}
               alt="Profile"
             />
           </div>
 
+<<<<<<< HEAD
           <div className="space-y-4 mt-4">
             <div>
               <p className="text-sm font-semibold text-gray-500">Name</p>
@@ -192,11 +247,20 @@ export default function Profile() {
             )}
 
             <div className="flex items-center space-x-7 mt-8">
+=======
+          <div className="m-6 md:space-y-10">
+            <h3 className="font-bold text-5xl">{displayName}</h3>
+
+            <p className="text-gray-700 dark:text-gray-300 mt-4">{bio}</p>
+
+            <div className="flex items-center space-x-10 mt-8">
+>>>>>>> real/main
               <div>
                 <p className="font-bold text-xl text-gray-600">{myRecipes.length}</p>
                 <p className="text-xl">Recipes</p>
               </div>
               <div>
+<<<<<<< HEAD
                 <p className="font-bold text-xl">
                   {Math.max(
                     0,
@@ -213,12 +277,30 @@ export default function Profile() {
               >
                 <Settings size={16} strokeWidth={1.75} />
                 Settings
+=======
+                <p className="font-bold text-xl text-gray-600">
+                  {myRecipes.reduce((acc, r) => acc + (r.likes || 0), 0)}
+                </p>
+                <p className="text-xl">Total Likes</p>
+              </div>
+            </div>
+
+            {isOwner && (
+              <button className="flex items-center bg-[#ff6b6b] text-white rounded-xl p-3 mt-4">
+                <Settings size={16} />
+                <Link to={"/settings"} className="ml-2">Settings</Link>
+>>>>>>> real/main
               </button>
             )}
           </div>
         </div>
 
-        <div className="flex space-x-20 mt-4 text-[#1a1a1a] border-b border-b-gray-600 dark:text-white">
+    
+       
+      </div>
+      <div className='mx-auto max-w-[1000px] px-10'>
+        {/* TABS */}
+        <div className="flex space-x-20 border-b dark:border-white/10">
           <button
             onClick={() => setActiveTab('myRecipes')}
             className={`pb-2 text-xl ${
@@ -244,7 +326,7 @@ export default function Profile() {
           )}
         </div>
 
-        <div className="m-10 mt-20">
+       <div className="m-10 mt-20">
           {listForUI.length === 0 ? (
             <p className="text-center text-gray-500">
               No {activeTab === 'myRecipes' ? 'recipes' : 'favorites'} yet.
@@ -264,8 +346,10 @@ export default function Profile() {
               )}
             </>
           )}
-        </div>
+       </div>
+
       </div>
+          
     </div>
   );
 }

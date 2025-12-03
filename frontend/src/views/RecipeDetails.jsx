@@ -110,6 +110,7 @@ function RecipeDetailPage() {
         isFavorited: detail.isFavorite,
       };
       setLiked(recipeData.isFavorited);
+      console.log('Recipe Details:', recipeData);
       setRecipe(recipeData);
       setMore(Boolean(data.last));
       setLastkey(data.last);
