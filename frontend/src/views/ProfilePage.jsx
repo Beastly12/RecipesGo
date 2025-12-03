@@ -147,8 +147,6 @@ export default function Profile() {
   }, [activeTab, myRecipes, favs, avatarUrl]);
 
   const hasMore = activeTab === 'myRecipes' ? !!myCursor : !!favCursor;
-<<<<<<< HEAD
-=======
 
   if (loading) {
     return (
@@ -165,7 +163,6 @@ export default function Profile() {
       </div>
     );
   }
->>>>>>> real/main
 
   return (
     <div className="min-h-100vh bg-[#fafafa] m-4 text-[#1a1a1a] dark:bg-[#0a0a0a] dark:text-[#e5e5e5] dark:m-0">
