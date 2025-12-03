@@ -183,34 +183,12 @@ export default function Profile() {
             />
           </div>
 
-<<<<<<< HEAD
-          <div className="space-y-4 mt-4">
-            <div>
-              <p className="text-sm font-semibold text-gray-500">Name</p>
-              <p className="text-xl font-medium">{displayName}</p>
-            </div>
-
-            <div>
-              <p className="text-sm font-semibold text-gray-500">Bio</p>
-              <p className="text-base">{bio}</p>
-            </div>
-
-            {location && (
-              <div>
-                <p className="text-sm font-semibold text-gray-500">Location</p>
-                <p className="text-base">{location}</p>
-              </div>
-            )}
-
-            <div className="flex items-center space-x-7 mt-8">
-=======
           <div className="m-6 md:space-y-10">
             <h3 className="font-bold text-5xl">{displayName}</h3>
 
             <p className="text-gray-700 dark:text-gray-300 mt-4">{bio}</p>
 
             <div className="flex items-center space-x-10 mt-8">
->>>>>>> real/main
               <div>
                 <p className="font-bold text-xl text-gray-600">{myRecipes.length}</p>
                 <p className="text-xl">Recipes</p>
