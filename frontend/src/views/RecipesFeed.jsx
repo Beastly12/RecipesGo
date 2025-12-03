@@ -162,6 +162,14 @@ export default function RecipeFeed() {
     }
   };
 
+  function handleClearSearch() {
+  return () => {
+    setSearchTerm('');
+    handleFilter('All');
+  };
+}
+
+
   if (authLoading) {
     return (
       <div className="bg-[#fafafa] text-[#1a1a1a] min-h-screen font-sans dark:bg-[#0a0a0a] dark:text-[#e5e5e5]">
@@ -188,10 +196,7 @@ export default function RecipeFeed() {
         onSearch={handleSearch}
         setSearchTerm={setSearchTerm}
         searchTerm={searchTerm}
-        handleClearSearch={() => {
-          setSearchTerm('');
-          handleFilter('All'); // Reset to all recipes
-        }}
+        handleClearSearch={handleClearSearch}
       />
 
       <HeroSection />
@@ -207,10 +212,7 @@ export default function RecipeFeed() {
               <span className="text-xs text-gray-500">({recipes.length} results)</span>
             </div>
             <button
-              onClick={() => {
-                setSearchTerm('');
-                handleFilter('All'); // Reset to all recipes
-              }}
+              onClick={handleClearSearch}
               className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
             >
               Clear search
@@ -234,3 +236,4 @@ export default function RecipeFeed() {
     </div>
   );
 }
+
