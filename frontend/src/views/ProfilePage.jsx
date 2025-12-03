@@ -194,24 +194,6 @@ export default function Profile() {
                 <p className="text-xl">Recipes</p>
               </div>
               <div>
-<<<<<<< HEAD
-                <p className="font-bold text-xl">
-                  {Math.max(
-                    0,
-                    myRecipes.reduce((a, r) => a + (r.likes ?? 0), 0)
-                  )}
-                </p>
-                <p className="text-[#1a1a1a] dark:text-[#fafafa] text-xl">Total Likes</p>
-              </div>
-            </div>
-            {isOwner && (
-              <button
-                onClick={() => navigate('/settings')}
-                className="font-bold flex items-center bg-[#ff6b6b] text-white hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)] transition-all duration-300 rounded-xl p-3 mt-4 "
-              >
-                <Settings size={16} strokeWidth={1.75} />
-                Settings
-=======
                 <p className="font-bold text-xl text-gray-600">
                   {myRecipes.reduce((acc, r) => acc + (r.likes || 0), 0)}
                 </p>
@@ -223,7 +205,6 @@ export default function Profile() {
               <button className="flex items-center bg-[#ff6b6b] text-white rounded-xl p-3 mt-4">
                 <Settings size={16} />
                 <Link to={"/settings"} className="ml-2">Settings</Link>
->>>>>>> real/main
               </button>
             )}
           </div>
