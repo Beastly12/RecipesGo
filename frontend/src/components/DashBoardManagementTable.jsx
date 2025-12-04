@@ -155,7 +155,7 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
 
       <ul className="divide-y divide-gray-200 dark:divide-white">
         {filteredRecipes.slice(0, visible).map((recipe) => {
-          console.log(recipe.imageUrl);
+          // console.log(recipe.imageUrl);
           return (
             <li
               key={recipe.id}

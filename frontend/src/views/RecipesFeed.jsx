@@ -229,7 +229,7 @@ export default function RecipeFeed() {
         handlePagination={handlePagination}
         loading={loading}
       />
-      <Footer />
+      <Footer userId={userDetails?.userid} />
     </div>
   );
 }
