@@ -163,12 +163,10 @@ export default function RecipeFeed() {
   };
 
   function handleClearSearch() {
-  return () => {
-    setSearchTerm('');
-    handleFilter('All');
-  };
-}
+      setSearchTerm('');
+      handleFilter('All');
 
+  }
 
   if (authLoading) {
     return (
@@ -236,4 +234,3 @@ export default function RecipeFeed() {
     </div>
   );
 }
-
