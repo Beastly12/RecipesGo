@@ -1,5 +1,5 @@
-import {useContext} from 'react'
-import ModalContext from '../context/CustomModalContext.jsx'
+import { useContext } from 'react';
+import ModalContext from '../context/CustomModalContext.jsx';
 
 // Custom Hook
 export const useModal = () => {

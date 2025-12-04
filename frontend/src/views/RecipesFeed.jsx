@@ -163,9 +163,8 @@ export default function RecipeFeed() {
   };
 
   function handleClearSearch() {
-      setSearchTerm('');
-      handleFilter('All');
-
+    setSearchTerm('');
+    handleFilter('All');
   }
 
   if (authLoading) {

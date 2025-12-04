@@ -4,7 +4,11 @@ import RecipesList from '../components/RecipeList';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import { getUserDetails } from '../services/UserService.mjs';
-import { getFavoritesRecipes, getMyRecipes, getRecipesByUser } from '../services/RecipesService.mjs';
+import {
+  getFavoritesRecipes,
+  getMyRecipes,
+  getRecipesByUser,
+} from '../services/RecipesService.mjs';
 import axios from '../services/Axios.mjs';
 
 export default function Profile() {
@@ -31,7 +35,7 @@ export default function Profile() {
   const { user: loggedInUser, userDetails } = useAuthContext();
   const profileUserId = profileUserIdRaw ? profileUserIdRaw : '';
 
-  const isOwner = loggedInUser?.userId && loggedInUser.userId=== profileUserId;
+  const isOwner = loggedInUser?.userId && loggedInUser.userId === profileUserId;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,11 +49,9 @@ export default function Profile() {
 
         let user;
 
-        
         if (isOwner && userDetails) {
           user = userDetails;
         } else {
-         
           const userRes = await getUserDetails(profileUserId);
           user = userRes;
         }
@@ -113,7 +115,7 @@ export default function Profile() {
         const page = await getMyRecipes(userId, cursor);
         const items = page.data.message ?? [];
         const last = page.data.last ?? null;
-        
+
         setMyRecipes((prev) => [...prev, ...items]);
         setMyCursor(last);
       } else {
@@ -123,7 +125,7 @@ export default function Profile() {
         });
         const items = page.data.message ?? [];
         const last = page.data.last ?? null;
-        
+
         setFavs((prev) => [...prev, ...items]);
         setFavCursor(last);
       }
@@ -140,9 +142,9 @@ export default function Profile() {
     return src.map((r, idx) => ({
       key: r.id ?? idx,
       title: r.name,
-      author: r.authorName===userDetails.name? 'You' : r.authorName,
+      author: r.authorName === userDetails.name ? 'You' : r.authorName,
       likes: r.likes ?? 0,
-      authorDpUrl : activeTab === 'myRecipes' ? avatarUrl : r.authorDp || '',
+      authorDpUrl: activeTab === 'myRecipes' ? avatarUrl : r.authorDp || '',
       img: r.imageUrl ?? '',
     }));
   }, [activeTab, myRecipes, favs, avatarUrl]);
@@ -205,16 +207,15 @@ export default function Profile() {
             {isOwner && (
               <button className="flex items-center bg-[#ff6b6b] text-white rounded-xl p-3 mt-4">
                 <Settings size={16} />
-                <Link to={"/settings"} className="ml-2">Settings</Link>
+                <Link to={'/settings'} className="ml-2">
+                  Settings
+                </Link>
               </button>
             )}
           </div>
         </div>
-
-    
-       
       </div>
-      <div className='mx-auto max-w-[1000px] px-10'>
+      <div className="mx-auto max-w-[1000px] px-10">
         {/* TABS */}
         <div className="flex space-x-20 border-b dark:border-white/10">
           <button
@@ -242,20 +243,23 @@ export default function Profile() {
           )}
         </div>
 
-       <div className="m-10 mt-20">
+        <div className="m-10 mt-20">
           {listForUI.length === 0 ? (
             <p className="text-center text-gray-500">
               No {activeTab === 'myRecipes' ? 'recipes' : 'favorites'} yet.
             </p>
           ) : (
             <>
-              <RecipesList recipes={listForUI} hasmore={hasMore} handlePagination={loadMore} loading={loadingMore} />
+              <RecipesList
+                recipes={listForUI}
+                hasmore={hasMore}
+                handlePagination={loadMore}
+                loading={loadingMore}
+              />
             </>
           )}
-       </div>
-
+        </div>
       </div>
-          
     </div>
   );
 }

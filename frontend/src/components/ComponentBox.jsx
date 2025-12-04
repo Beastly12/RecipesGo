@@ -19,7 +19,6 @@ const CommentBox = ({
   loading: commentsLoading,
   isDeleting,
 }) => {
-
   const { user: loggedInUser, loading: authLoading } = useAuthContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -33,7 +32,6 @@ const CommentBox = ({
     setStarRating(0);
     setComment('');
     setIsModalOpen(false);
-
   };
 
   const handleSave = async () => {
@@ -41,7 +39,6 @@ const CommentBox = ({
     setStarRating(0);
     setComment('');
     setIsModalOpen(false);
-
   };
 
   if (isLoading || isDeleting) {
@@ -79,12 +76,16 @@ const CommentBox = ({
           <h2 className="font-bold text-3xl text-gray-800 dark:text-gray-100">
             Comments ({totalComments.length})
           </h2>
-         {loggedInUser?.userId&& <button
-            onClick={showModal}
-            className="px-4 py-2 bg-[#ff6b6b] text-white rounded-xl hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]"
-          >
-            {totalComments.some(c => c.authorId === loggedInUser?.userId) ? "EDIT YOUR COMMENT" : "DROP A COMMENT!"}
-          </button>}
+          {loggedInUser?.userId && (
+            <button
+              onClick={showModal}
+              className="px-4 py-2 bg-[#ff6b6b] text-white rounded-xl hover:shadow-[0_6px_16px_rgba(255,107,107,0.4)]"
+            >
+              {totalComments.some((c) => c.authorId === loggedInUser?.userId)
+                ? 'EDIT YOUR COMMENT'
+                : 'DROP A COMMENT!'}
+            </button>
+          )}
         </div>
 
         {totalComments?.slice(0, visibleComments).map((comment) => (
@@ -106,9 +107,9 @@ const CommentBox = ({
                     onConfirm={() => handleDelete(comment.key)}
                     okText="Yes"
                     cancelText="No"
-                    okButtonProps={{ 
+                    okButtonProps={{
                       danger: true,
-                      className: 'bg-red-500 hover:bg-red-600'
+                      className: 'bg-red-500 hover:bg-red-600',
                     }}
                   >
                     <button
@@ -154,8 +155,8 @@ const CommentBox = ({
                   key={star}
                   onClick={() => setStarRating(star)}
                   className={`px-4 py-2 rounded-lg transition-colors ${
-                    star <= starRating 
-                      ? 'bg-[#ff6b6b] text-white hover:bg-[#ff5252]' 
+                    star <= starRating
+                      ? 'bg-[#ff6b6b] text-white hover:bg-[#ff5252]'
                       : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600'
                   }`}
                 >
@@ -166,9 +167,7 @@ const CommentBox = ({
           </div>
 
           <div className="mb-6">
-            <label className="block mb-2 font-medium">
-              Write your comment:
-            </label>
+            <label className="block mb-2 font-medium">Write your comment:</label>
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
