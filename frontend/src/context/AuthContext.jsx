@@ -2,7 +2,7 @@ import { createContext, useState, useEffect, useContext } from 'react';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { getUserDetails } from '../services/UserService.mjs';
 
-const AuthContext = createContext({ user: null, userName: null, loading: true });
+const AuthContext = createContext({ user: null, userName: null, loading: true , setUserDetails: null});
 
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -30,7 +30,7 @@ export default function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, userName, userDetails, loading }}>
+    <AuthContext.Provider value={{ user, userName, userDetails, loading, setUserDetails }}>
       {children}
     </AuthContext.Provider>
   );

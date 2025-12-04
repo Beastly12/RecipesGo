@@ -7,11 +7,13 @@ import { getAllRecipes, searchRecipes } from '../services/RecipesService.mjs';
 import Header from '../components/Header';
 import { useAuthContext } from '../context/AuthContext';
 import { getUserDetails } from '../services/UserService.mjs';
-import About from '../components/Footer';
 import Footer from '../components/Footer';
+import { useLocation } from 'react-router-dom';
+import { message } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 
 export default function RecipeFeed() {
-  const { user, userDetails, loading: authLoading } = useAuthContext();
+  const { user, userDetails, loading: authLoading, setUserDetails } = useAuthContext();
 
   const [recipes, setRecipes] = useState([]);
   const [hasMore, setMore] = useState(false);
@@ -19,6 +21,19 @@ export default function RecipeFeed() {
   const [lastKey, setLastkey] = useState('');
   const [loading, setLoading] = useState(false);
   const [colorTheme, setTheme] = useDarkMode();
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const location = useLocation();
+  const [messageApi, contextHolder] = message.useMessage();
+
+  useEffect(() => {
+    if (location.state?.profileUpdated && user?.userId) {
+      // Refresh user details
+      getUserDetails(user.userId).then((response) => {
+        setUserDetails(response);
+      });
+    }
+  }, [location.state]);
 
   useEffect(() => {
     let isMounted = true;
@@ -33,7 +48,7 @@ export default function RecipeFeed() {
           title: recipe.name,
           author: recipe.authorName,
           likes: recipe.likes,
-          profilePic: recipe.authorDpUrl,
+          authorDpUrl: recipe.authorDpUrl,
           img: recipe.imageUrl,
         }));
 
@@ -108,7 +123,7 @@ export default function RecipeFeed() {
         title: recipe.name,
         author: recipe.authorName,
         likes: recipe.likes,
-        profilePic: recipe.authorDpUrl,
+        authorDpUrl: recipe.authorDpUrl,
         img: recipe.imageUrl,
       }));
 
@@ -124,19 +139,34 @@ export default function RecipeFeed() {
     }
   };
 
-  const handleSeqarch = async (searchTerm) => {
-    const response = await searchRecipes(searchTerm);
+  const handleSearch = async () => {
+    if (!searchTerm || searchTerm.trim() === '') {
+      handleFilter('All');
+      return;
+    }
+    try {
+      const response = await searchRecipes(searchTerm);
 
-    const formatted = response.data.message.map((recipe) => ({
-      key: recipe.id,
-      title: recipe.name,
-      author: recipe.authorName,
-      likes: recipe.likes,
-      profilePic: recipe.authorDpUrl,
-      img: recipe.imageUrl,
-    }));
-    setRecipes(formatted);
+      const formatted = response.data.message.map((recipe) => ({
+        key: recipe.id,
+        title: recipe.name,
+        author: recipe.authorName,
+        likes: recipe.likes,
+        authorDpUrl: recipe.authorDpUrl,
+        img: recipe.imageUrl,
+      }));
+      setMore(Boolean(response.data.last));
+      setRecipes(formatted);
+    } catch (error) {
+      message.error('Search failed. Please try again.');
+    }
   };
+
+  function handleClearSearch() {
+      setSearchTerm('');
+      handleFilter('All');
+
+  }
 
   if (authLoading) {
     return (
@@ -154,19 +184,45 @@ export default function RecipeFeed() {
 
   return (
     <div className="bg-[#fafafa] dark:bg-[#1a1a1a] text-[#1a1a1a] dark:text-[#fafafa] min-h-screen font-sans transition-colors duration-300">
+      {contextHolder}
       <Header
         userId={user?.userId ?? null}
         colorTheme={colorTheme}
         setTheme={setTheme}
         userName={userDetails ? userDetails.name : ''}
         profilePic={userDetails ? userDetails.dpUrl : ''}
+        onSearch={handleSearch}
+        setSearchTerm={setSearchTerm}
+        searchTerm={searchTerm}
+        handleClearSearch={handleClearSearch}
       />
 
       <HeroSection />
 
-      <div className="sticky top-15 md:top-20 z-30 bg-[#fafafa] dark:bg-[#1a1a1a] transition-colors duration-300">
-        <FilterTab filterData={filterOptions} onTabClick={handleFilter} />
-      </div>
+      {searchTerm && (
+        <div className="lg:max-w-[900px] lg:mx-auto px-5 lg:px-10 py-4">
+          <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 px-4 py-3 rounded-lg">
+            <div className="flex items-center gap-2">
+              <SearchOutlined className="text-blue-600 dark:text-blue-400" />
+              <span className="text-sm text-gray-700 dark:text-gray-300">
+                Searching for: <strong>"{searchTerm}"</strong>
+              </span>
+              <span className="text-xs text-gray-500">({recipes.length} results)</span>
+            </div>
+            <button
+              onClick={handleClearSearch}
+              className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
+            >
+              Clear search
+            </button>
+          </div>
+        </div>
+      )}
+      {!searchTerm && (
+        <div className="sticky top-15 md:top-20 z-30 bg-[#fafafa] dark:bg-[#1a1a1a]">
+          <FilterTab filterData={filterOptions} onTabClick={handleFilter} />
+        </div>
+      )}
 
       <RecipesList
         recipes={recipes}

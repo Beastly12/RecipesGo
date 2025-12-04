@@ -53,21 +53,9 @@ func (r *favoritesHelper) getFavorite(userId, recipeId string) (*models.Favorite
 	return &(*favs)[0], nil
 }
 
-func (r *favoritesHelper) recipeInUserFavorites(userId, recipeId string) (bool, error) {
-	input := &dynamodb.GetItemInput{
-		Key:       *models.FavoriteKey(userId, recipeId),
-		TableName: &utils.GetDependencies().MainTableName,
-	}
-	result, err := utils.GetDependencies().DbClient.GetItem(r.Ctx, input)
-	if err != nil {
-		log.Printf("failed to check if user already has current recipe in favorites! ERROR: %v", err)
-		return false, err
-	}
-
-	return len(result.Item) > 0, nil
-}
-
 func (r *favoritesHelper) RecipeInFavorites(recipeId, userId string) (bool, error) {
+	recipeId = utils.RemovePrefix(recipeId, "#")
+	userId = utils.RemovePrefix(userId, "#")
 	input := &dynamodb.GetItemInput{
 		Key:       *models.FavoriteKey(userId, recipeId),
 		TableName: &utils.GetDependencies().MainTableName,
@@ -81,7 +69,7 @@ func (r *favoritesHelper) RecipeInFavorites(recipeId, userId string) (bool, erro
 }
 
 func (this *favoritesHelper) Add(favorite *models.Favorite, recipeAuthorId string) error {
-	recipeInFavorites, err := this.recipeInUserFavorites(favorite.UserId, favorite.RecipeId)
+	recipeInFavorites, err := this.RecipeInFavorites(favorite.UserId, favorite.RecipeId)
 	if err != nil {
 		return err
 	}
@@ -173,10 +161,11 @@ func (this *favoritesHelper) GetAll(userId string, lastEvalKey map[string]types.
 			log.Printf("Failed to get recipe details for %v, ERROR: %v", fav.RecipeId, err)
 			continue
 		}
-		if r == nil || !r.IsPublic {
-			// recipe has been deleted or is no longer public
+		if r == nil {
+			// recipe has been deleted
 			continue
 		}
+		r.IsFavorite = true
 		recipes = append(recipes, *r)
 	}
 

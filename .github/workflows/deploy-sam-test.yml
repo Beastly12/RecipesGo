@@ -10,11 +10,11 @@ on:
       
 permissions:
   id-token: write
-  contents: read
+  contents: write
   
 jobs:
   build-and-deploy:
-    if: github.repository_owner == 'Beastly12'    
+    if: github.repository_owner == 'Beastly12'
     runs-on: ubuntu-latest
     
     defaults:
@@ -24,6 +24,9 @@ jobs:
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT_TOKEN }}
       
       - name: Read build directories
         id: build-dirs
@@ -104,3 +107,24 @@ jobs:
             --parameter-overrides EnvironmentName=test \
             --no-confirm-changeset \
             --no-fail-on-empty-changeset
+      
+      - name: Run Cypress E2E tests
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: frontend
+          spec: cypress/e2e/lifecycle.cy.js
+          wait-on: ${{ secrets.TEST_ENVIRONMENT_URL }}
+          wait-on-timeout: 120
+      
+      - name: Push to main if tests pass
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout main
+          git merge --no-ff ${{ github.sha }} -m "Auto-merge: Tests passed for ${{ github.ref_name }}"
+          git push origin main
+        working-directory: .
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}

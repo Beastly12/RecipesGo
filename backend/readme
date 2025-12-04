@@ -84,13 +84,13 @@ To get all ratings on a recipe:
 	To get next batch:
 		GET /ratings/{id of recipe}?last={last key returned}
 
-To get current user details (not yet working):
+To get current user details:
 	GET /users
 
-To get any users details (not yet working):
+To get any users details:
 	GET /users/{id}
 
-To edit user details (NOT YET WORKING):
+To edit user details:
 	PUT /users
 	JSON:
 		(only include properties to update not all of them)
@@ -103,5 +103,5 @@ To get url to post pictures to:
 	GET /upload-url?ext={the file extension of the image e.g .jpg, .png, .gif, etc}
 			/upload-url?id={recipe or user id}&ext={file extension of image}
 
-To search for a recipe (not yet working):
+To search for a recipe:
 	GET /search?recipe={search string}

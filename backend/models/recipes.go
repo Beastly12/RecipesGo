@@ -43,6 +43,7 @@ type RecipeDetails struct {
 	Difficulty      string   `dynamodbav:"difficulty" json:"difficulty"`
 	Instructions    []string `dynamodbav:"instructions" json:"instructions"`
 	IsPublic        bool     `dynamodbav:"isPublic" json:"isPublic"`
+	IsFavorite      bool     `dynamodbav:"-" json:"isFavorite"`
 	Likes           int      `dynamodbav:"likes" json:"likes"`
 	Rating          float64  `dynamodbav:"rating" json:"rating"`
 	Views           int      `dynamodbav:"views" json:"views"`
@@ -89,6 +90,17 @@ func (r *Recipe) ApplyPrefixes() {
 	r.DateCreated = GetRecipeDateWithPrefix(*r)
 }
 
+func (r *Recipe) RemovePrefixes() {
+	r.Id = strings.TrimPrefix(r.Id, RecipesPkPrefix)
+	r.ItemType = strings.TrimPrefix(r.ItemType, RecipesGsiPrefix)
+	r.Category = strings.TrimPrefix(r.Category, RecipesGsi2Prefix)
+	r.DateCreated = utils.RemovePrefix(r.DateCreated, "#")
+	r.AuthorIdGsi = utils.RemovePrefix(r.AuthorIdGsi, "#")
+	if r.ImageUrl != "" {
+		r.ImageUrl = utils.GenerateViewURL(r.ImageUrl)
+	}
+}
+
 func GetRecipeDateWithPrefix(r Recipe) string {
 	if r.IsPublic {
 		// RECIPE_DATE#2025-11-18 18:08:42
@@ -105,16 +117,9 @@ func PrivateRecipeLsiBeginsWith(userId string) string {
 }
 
 // Converts db items to recipe structs
-func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue, cloudfrontDomainName string) *[]Recipe {
+func DatabaseItemsToRecipeStructs(items *[]map[string]types.AttributeValue) *[]Recipe {
 	return utils.DatabaseItemsToStructs(items, func(r *Recipe) {
-		r.Id = strings.TrimPrefix(r.Id, RecipesPkPrefix)
-		r.ItemType = strings.TrimPrefix(r.ItemType, RecipesGsiPrefix)
-		r.Category = strings.TrimPrefix(r.Category, RecipesGsi2Prefix)
-		r.DateCreated = utils.RemovePrefix(r.DateCreated, "#")
-		r.AuthorIdGsi = utils.RemovePrefix(r.AuthorIdGsi, "#")
-		if r.ImageUrl != "" {
-			r.ImageUrl = utils.GenerateViewURL(r.ImageUrl, cloudfrontDomainName)
-		}
+		r.RemovePrefixes()
 	})
 }
 

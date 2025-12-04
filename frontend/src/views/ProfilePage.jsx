@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
 import { ArrowLeft, Settings } from 'lucide-react';
 import RecipesList from '../components/RecipeList';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import { getUserDetails } from '../services/UserService.mjs';
-import axios from 'axios';
+import { getFavoritesRecipes, getMyRecipes, getRecipesByUser } from '../services/RecipesService.mjs';
+import axios from '../services/Axios.mjs';
 
 export default function Profile() {
   const [activeTab, setActiveTab] = useState('myRecipes');
@@ -28,9 +29,10 @@ export default function Profile() {
 
   const { id: profileUserIdRaw } = useParams();
   const { user: loggedInUser, userDetails } = useAuthContext();
-  const profileUserId = profileUserIdRaw ? String(profileUserIdRaw) : '';
+  const profileUserId = profileUserIdRaw ? profileUserIdRaw : '';
 
-  const isOwner = loggedInUser?.userId && String(loggedInUser.userId) === profileUserId;
+  const isOwner = loggedInUser?.userId && loggedInUser.userId=== profileUserId;
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!profileUserId) return;
@@ -43,16 +45,17 @@ export default function Profile() {
 
         let user;
 
-        // If viewing own profile, use userDetails from context
+        
         if (isOwner && userDetails) {
           user = userDetails;
         } else {
-          // Otherwise, fetch the user details using the service
+         
           const userRes = await getUserDetails(profileUserId);
           user = userRes;
         }
 
         if (!user) throw new Error('User not found.');
+        // console.log(user);
 
         setDisplayName(user.name ?? '');
         setBio(user.bio ?? '');
@@ -62,24 +65,21 @@ export default function Profile() {
             ? user.dpUrl
             : 'https://randomuser.me/api/portraits/lego/6.jpg'
         );
-        setUserId(String(user.userid));
+        setUserId(user.userid);
 
-        // Fetch user's recipes
-        const recipesPage = await axios.get('/recipes', {
-          params: { by: profileUserId },
-        });
+        // Fetch user's recipes - PASS THE USER ID
+        const recipesPage = await getRecipesByUser(user.userid);
+        console.log(recipesPage);
 
         if (!on) return;
 
         const allRecipes = recipesPage.data.message ?? [];
-        const userRecipes = allRecipes.filter((r) => String(r.authorId) === profileUserId);
-
-        setMyRecipes(userRecipes);
+        setMyRecipes(allRecipes);
         setMyCursor(recipesPage.data.last ?? null);
 
         // Fetch user's favorites (only if owner)
         if (isOwner) {
-          const favsPage = await axios.get('/favorites');
+          const favsPage = await getFavoritesRecipes();
           if (on) {
             setFavs(favsPage.data.message ?? []);
             setFavCursor(favsPage.data.last ?? null);
@@ -108,21 +108,22 @@ export default function Profile() {
 
     setLoadingMore(true);
     try {
-      const params = { last: cursor };
-      if (usingMy && userId) params.by = userId;
-
-      const page = await axios.get(usingMy ? '/recipes' : '/favorites', {
-        params,
-      });
-
-      let items = page.data.message ?? [];
-      const last = page.data.last ?? null;
-
       if (usingMy) {
-        items = items.filter((r) => String(r.authorId) === userId);
+        // Use the service function with userId and cursor
+        const page = await getMyRecipes(userId, cursor);
+        const items = page.data.message ?? [];
+        const last = page.data.last ?? null;
+        
         setMyRecipes((prev) => [...prev, ...items]);
         setMyCursor(last);
       } else {
+        // For favorites, use the favorites endpoint
+        const page = await axios.get('/favorites', {
+          params: { last: cursor },
+        });
+        const items = page.data.message ?? [];
+        const last = page.data.last ?? null;
+        
         setFavs((prev) => [...prev, ...items]);
         setFavCursor(last);
       }
@@ -139,9 +140,9 @@ export default function Profile() {
     return src.map((r, idx) => ({
       key: r.id ?? idx,
       title: r.name,
-      author: activeTab === 'myRecipes' ? 'You' : r.authorName || 'Unknown',
+      author: r.authorName===userDetails.name? 'You' : r.authorName,
       likes: r.likes ?? 0,
-      profilePic: activeTab === 'myRecipes' ? avatarUrl : r.authorDp || '',
+      authorDpUrl : activeTab === 'myRecipes' ? avatarUrl : r.authorDp || '',
       img: r.imageUrl ?? '',
     }));
   }, [activeTab, myRecipes, favs, avatarUrl]);
@@ -165,15 +166,15 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa] m-4 text-[#1a1a1a] dark:bg-[#1a1a1a] dark:text-[#fafafa] dark:m-0">
-      <Link to="/">
+    <div className="min-h-100vh bg-[#fafafa] m-4 text-[#1a1a1a] dark:bg-[#0a0a0a] dark:text-[#e5e5e5] dark:m-0">
+      <button onClick={() => navigate(-1)}>
         <div className="flex m-4 p-3 space-x-3 dark:m-0">
           <ArrowLeft className="cursor-pointer" />
           <button className="text-xl font-medium hover:underline">Back</button>
         </div>
-      </Link>
+      </button>
 
-      <div className="max-w-[900px] mx-auto my-[40px] px-[40px]">
+      <div className="max-w-[900px] mx-auto my-10 px-10">
         <div className="w-full rounded-2xl mb-6 flex bg-white dark:bg-[#1a1a1a] shadow-md">
           <div className="mt-8 mb-8 p-8 mr-6">
             <img
@@ -204,12 +205,16 @@ export default function Profile() {
             {isOwner && (
               <button className="flex items-center bg-[#ff6b6b] text-white rounded-xl p-3 mt-4">
                 <Settings size={16} />
-                <span className="ml-2">Settings</span>
+                <Link to={"/settings"} className="ml-2">Settings</Link>
               </button>
             )}
           </div>
         </div>
 
+    
+       
+      </div>
+      <div className='mx-auto max-w-[1000px] px-10'>
         {/* TABS */}
         <div className="flex space-x-20 border-b dark:border-white/10">
           <button
@@ -237,28 +242,20 @@ export default function Profile() {
           )}
         </div>
 
-        <div className="m-10 mt-20">
+       <div className="m-10 mt-20">
           {listForUI.length === 0 ? (
             <p className="text-center text-gray-500">
               No {activeTab === 'myRecipes' ? 'recipes' : 'favorites'} yet.
             </p>
           ) : (
             <>
-              <RecipesList recipes={listForUI} />
-
-              {hasMore && (
-                <button
-                  disabled={loadingMore}
-                  onClick={loadMore}
-                  className="mt-6 bg-gray-200 dark:bg-gray-700 px-6 py-3 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50"
-                >
-                  {loadingMore ? 'Loading...' : 'Load More'}
-                </button>
-              )}
+              <RecipesList recipes={listForUI} hasmore={hasMore} handlePagination={loadMore} loading={loadingMore} />
             </>
           )}
-        </div>
+       </div>
+
       </div>
+          
     </div>
   );
 }

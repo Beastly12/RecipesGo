@@ -1,11 +1,13 @@
 package helpers
 
 import (
+	"backend"
 	"backend/models"
 	"backend/utils"
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
@@ -47,7 +49,7 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 		},
 		{
 			Update: &types.Update{
-				Key:                       *models.UserKey(recipe.Id),
+				Key:                       *models.UserKey(recipe.AuthorId),
 				TableName:                 &utils.GetDependencies().MainTableName,
 				UpdateExpression:          expr.Update(),
 				ExpressionAttributeNames:  expr.Names(),
@@ -69,6 +71,7 @@ func (this *recipeHelper) Add(recipe *models.Recipe) error {
 }
 
 func (r *recipeHelper) getRecipes(lastKey map[string]types.AttributeValue, keyCondition expression.KeyConditionBuilder, indexName string, postProcess func(*[]models.Recipe)) (*getRecipesOutput, error) {
+	userId := utils.GetDependencies().CurrentAuthenticatedUserId
 	expr, err := expression.NewBuilder().WithKeyCondition(keyCondition).Build()
 	if err != nil {
 		println("Failed to build key condition expression")
@@ -83,6 +86,7 @@ func (r *recipeHelper) getRecipes(lastKey map[string]types.AttributeValue, keyCo
 		ExpressionAttributeNames:  expr.Names(),
 		ExpressionAttributeValues: expr.Values(),
 		ScanIndexForward:          aws.Bool(false),
+		Limit:                     aws.Int32(backend.MAX_RECIPES_DUMP),
 	}
 
 	result, err := utils.GetDependencies().DbClient.Query(r.Ctx, input)
@@ -97,7 +101,17 @@ func (r *recipeHelper) getRecipes(lastKey map[string]types.AttributeValue, keyCo
 		}, nil
 	}
 
-	recipes := models.DatabaseItemsToRecipeStructs(&result.Items, utils.GetDependencies().CloudFrontDomainName)
+	recipes := models.DatabaseItemsToRecipeStructs(&result.Items)
+	favoriteHelper := NewFavoritesHelper(r.Ctx)
+	for i, recipe := range *recipes {
+		isFav, err := favoriteHelper.RecipeInFavorites(recipe.Id, userId)
+		if err != nil {
+			log.Printf("Failed to check if recipe is in favorite. Recipe: %v, userId: %v, ERROR: %v", recipe.Id, userId, err)
+			continue
+		}
+
+		(*recipes)[i].IsFavorite = isFav
+	}
 
 	postProcess(recipes)
 
@@ -115,7 +129,7 @@ func (r *recipeHelper) GetRecipes(lastKey map[string]types.AttributeValue, categ
 
 	if category != "" {
 		index = "gsiIndex2"
-		keyCondition = expression.KeyEqual(expression.Key("gsi2"), expression.Value(models.RecipeCategoryKey(category))).And(
+		keyCondition = expression.KeyEqual(expression.Key("gsi2"), expression.Value(models.RecipeCategoryKey(strings.ToLower(category)))).And(
 			expression.KeyBeginsWith(expression.Key("lsi"), models.RecipesLsiPrefix),
 		)
 	}
@@ -217,6 +231,7 @@ func (r *recipeHelper) GetRecipesByUser(lastKey map[string]types.AttributeValue,
 
 // get specific recipe from db
 func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
+	userId := utils.GetDependencies().CurrentAuthenticatedUserId
 	input := &dynamodb.GetItemInput{
 		Key:       *models.RecipeKey(recipeId),
 		TableName: &utils.GetDependencies().MainTableName,
@@ -232,7 +247,7 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 		return nil, nil
 	}
 
-	recipe := (*models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}, utils.GetDependencies().CloudFrontDomainName))[0]
+	recipe := (*models.DatabaseItemsToRecipeStructs(&[]map[string]types.AttributeValue{item.Item}))[0]
 
 	user, err := NewUserHelper(this.Ctx).GetDisplayDetails(recipe.AuthorId)
 	if err != nil || user == nil {
@@ -244,6 +259,14 @@ func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
 
 	recipe.AuthorDpUrl = user.DpUrl
 	recipe.AuthorName = user.Name
+
+	isFav, err := NewFavoritesHelper(this.Ctx).RecipeInFavorites(recipeId, userId)
+	if err != nil {
+		log.Printf("failed to check if recipe is in favs, recipe: %v, userid: %v", recipeId, userId)
+		return nil, err
+	}
+
+	recipe.IsFavorite = isFav
 
 	return &recipe, nil
 }
@@ -440,6 +463,7 @@ func (r *recipeHelper) RecipeLikesMinus1(userId, recipeId string) error {
 }
 
 func (r *recipeHelper) SearchRecipe(str string) (*[]models.Recipe, error) {
+	userId := utils.GetDependencies().CurrentAuthenticatedUserId
 	keyCondition := expression.KeyEqual(
 		expression.Key("gsi"),
 		expression.Value(utils.AddPrefix(models.RecipeItemType, models.RecipesGsiPrefix)),
@@ -466,7 +490,16 @@ func (r *recipeHelper) SearchRecipe(str string) (*[]models.Recipe, error) {
 		return nil, err
 	}
 
-	matchingRecipes := models.DatabaseItemsToRecipeStructs(found, utils.GetDependencies().CloudFrontDomainName)
+	matchingRecipes := models.DatabaseItemsToRecipeStructs(found)
+	for i, recipe := range *matchingRecipes {
+		isFav, err := NewFavoritesHelper(r.Ctx).RecipeInFavorites(recipe.Id, userId)
+		if err != nil {
+			fmt.Println("Failed to check if recipe in favs")
+			continue
+		}
+
+		(*matchingRecipes)[i].IsFavorite = isFav
+	}
 
 	return matchingRecipes, nil
 }

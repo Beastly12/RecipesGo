@@ -22,15 +22,16 @@ const (
 )
 
 type handlerDependenciesType struct {
-	DbClient             *dynamodb.Client
-	CognitoClient        *cognitoidentityprovider.Client
-	S3Client             *s3.Client
-	SqsClient            *sqs.Client
-	BucketName           string
-	MainTableName        string
-	UserPoolId           string
-	CloudFrontDomainName string
-	QueueUrl             string
+	DbClient                   *dynamodb.Client
+	CognitoClient              *cognitoidentityprovider.Client
+	S3Client                   *s3.Client
+	SqsClient                  *sqs.Client
+	BucketName                 string
+	MainTableName              string
+	UserPoolId                 string
+	CloudFrontDomainName       string
+	QueueUrl                   string
+	CurrentAuthenticatedUserId string
 }
 
 var handlerDependencies handlerDependenciesType
@@ -89,6 +90,10 @@ func WithCognitoClientOnly() option {
 	}
 }
 
+func SetCurrentAuthUserid(id string) {
+	handlerDependencies.CurrentAuthenticatedUserId = id
+}
+
 func LateInitUserPoolId(userPoolId string) {
 	// get the user pool id from the event parameter after function is triggered
 	handlerDependencies.UserPoolId = userPoolId
@@ -110,4 +115,9 @@ func InitHandlerDependencies(opts ...option) {
 	for _, opt := range opts {
 		opt(&handlerDependencies, cfg)
 	}
+}
+
+func TEST_InitCloudFrontDependencies() {
+	// init cloudfront always
+	handlerDependencies.CloudFrontDomainName = "https://123abc.cloudfront.net"
 }

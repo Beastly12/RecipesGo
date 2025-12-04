@@ -3,7 +3,7 @@ import DashBoardCard from '../components/DashBoardCard';
 import { HeartIcon, NotebookPen, Eye, MessageCircleMore } from 'lucide-react';
 import DashBoardManagementTable from '../components/DashBoardManagementTable';
 import { getUser } from '../services/UserService.mjs';
-import { getRecipesByUser } from '../services/RecipesService.mjs';
+import { getMyRecipes, getRecipesByUser } from '../services/RecipesService.mjs';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import useDarkMode from '../hooks/useDarkMode';
@@ -39,7 +39,8 @@ const DashBoard = () => {
         const [userStatsRes, userRecipesRes] = await Promise.all([
           getUser(),
           // console.log(user),
-          getRecipesByUser(user.userId),
+          // getRecipesByUser(user.userId),
+          getMyRecipes()
           // console.log(user.userId)
         ]);
 
@@ -148,7 +149,7 @@ const DashBoard = () => {
               <Link to="/dashboard">Dashboard</Link>
             </Menu.Item>
             <Menu.Item key="profile" icon={<UserOutlined />}>
-              <Link to="/profile">Profile</Link>
+              <Link to={`/profile/${user?.userId}`}>Profile</Link>
             </Menu.Item>
             <Menu.Item key="settings" icon={<SettingOutlined />}>
               <Link to="/settings">Settings</Link>

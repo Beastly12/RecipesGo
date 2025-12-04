@@ -33,3 +33,15 @@ textarea {
   transition: all 0.2s;
   background: #f8f9fa;
 }
+
+.custom-input-div{
+  border-radius: 15px!important;
+  border: 2px solid #ff6b6b!important;
+  width: fit-content;
+  padding: 5px 10px;
+}
+
+.custom-input-input{
+  border: none!important;
+  outline: none!important;
+}

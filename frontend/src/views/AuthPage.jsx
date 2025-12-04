@@ -4,7 +4,7 @@ import LoginForm from '../components/LoginForm';
 import SignUpForm from '../components/SignUpForm';
 import { LoginService, SignUpService } from '../services/AuthService.mjs';
 import { useNavigate } from 'react-router-dom';
-import { Form, Input, Button, message, Spin, Card, Flex, Typography } from 'antd';
+import {  message, Spin, Card,Typography } from 'antd';
 
 const { Title, Text } = Typography;
 
@@ -49,7 +49,7 @@ const AuthPage = () => {
         // User requested to navigate to Login after successful signup
         setIsLogin(true);
       } else {
-        messageApi.error('Signup failed. That username or email may already be taken.');
+        messageApi.error('Signup failed. That username or email may already be taken');
       }
     } catch (error) {
       messageApi.error('An unexpected error occurred during signup.');

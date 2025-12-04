@@ -9,6 +9,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
+	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
@@ -70,35 +71,7 @@ func (u *userHelper) GetDisplayDetails(userId string) (*models.User, error) {
 	return &(*models.DbItemsToUserStructs(&[]map[string]types.AttributeValue{result.Item}))[0], nil
 }
 
-func (u *userHelper) UpdateOverallRecipesRating(userId string) error {
-	// calc the new overall rating for author
-	authorRating, err := NewUserHelper(u.Ctx).RecalculateRecipesOverallRatings(userId)
-	if err != nil {
-		log.Printf("Failed to get author average rating! ERROR: %v", err)
-		return err
-	}
-	log.Printf("AUTHORS OVERALL RATING: %v", authorRating)
-
-	// update the author rating
-	update := expression.Set(expression.Name("overallRating"), expression.Value(authorRating))
-	authorExpr, err := expression.NewBuilder().WithUpdate(update).Build()
-	if err != nil {
-		return fmt.Errorf("failed to build author expression: %w", err)
-	}
-
-	input := &dynamodb.UpdateItemInput{
-		Key:                       *models.UserKey(userId),
-		TableName:                 &utils.GetDependencies().MainTableName,
-		UpdateExpression:          authorExpr.Update(),
-		ExpressionAttributeNames:  authorExpr.Names(),
-		ExpressionAttributeValues: authorExpr.Values(),
-	}
-
-	_, err = utils.GetDependencies().DbClient.UpdateItem(u.Ctx, input)
-	return err
-}
-
-func (u *userHelper) RecalculateRecipesOverallRatings(userId string) (float32, error) {
+func (u *userHelper) RecalculateRecipesOverallRatings(userId, newlyRatedRecipeId string, newlyRatedRecipeRating float32) (float32, error) {
 	println("CALCULATING USERS OVERALL RECIPE RATING")
 	condition := expression.KeyEqual(
 		expression.Key("gsi3"),
@@ -131,13 +104,28 @@ func (u *userHelper) RecalculateRecipesOverallRatings(userId string) (float32, e
 	log.Printf("FOUND %v RECIPES CREATED BY THIS USER", len(result))
 
 	// convert to recipe items
-	recipes := models.DatabaseItemsToRecipeStructs(&result, utils.GetDependencies().CloudFrontDomainName)
+	recipes := models.DatabaseItemsToRecipeStructs(&result)
 
-	recipeCount := len(*recipes)
+	recipeCount := 0
 	var ratings float32
 	for _, recipe := range *recipes {
+		// skip getting newly rated recipe here do to read consistency issues
+		if recipe.Rating < 1 || recipe.Id == newlyRatedRecipeId {
+			continue
+		}
 		log.Printf("RECIPE: %v, RATING: %v", recipe.Name, recipe.Rating)
 		ratings += float32(recipe.Rating)
+		recipeCount++
+	}
+
+	if newlyRatedRecipeRating >= 1 {
+		// get newly rated recipe from GetRecipeRatingAverage fn with strong read consistency
+		recipeCount++
+		ratings += float32(newlyRatedRecipeRating)
+	}
+
+	if ratings == 0 || recipeCount == 0 {
+		return 0, nil
 	}
 
 	return ratings / float32(recipeCount), nil
@@ -213,4 +201,28 @@ func (u *userHelper) RemoveUserPicture(userId string) error {
 
 	_, err = utils.GetDependencies().DbClient.UpdateItem(u.Ctx, input)
 	return err
+}
+
+func (u *userHelper) DeleteUser(userid string) error {
+	cognitoInput := &cognitoidentityprovider.AdminDeleteUserInput{
+		UserPoolId: &utils.GetDependencies().UserPoolId,
+		Username:   &userid,
+	}
+
+	dynamodbInput := &dynamodb.DeleteItemInput{
+		Key:       *models.UserKey(userid),
+		TableName: &utils.GetDependencies().MainTableName,
+	}
+
+	_, err := utils.GetDependencies().CognitoClient.AdminDeleteUser(u.Ctx, cognitoInput)
+	if err != nil {
+		return err
+	}
+
+	_, err = utils.GetDependencies().DbClient.DeleteItem(u.Ctx, dynamodbInput)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
