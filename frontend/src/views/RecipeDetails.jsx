@@ -136,7 +136,7 @@ function RecipeDetailPage() {
 
       setNewComment('');
       setStarRating(0);
-      setPopupOpen(false);
+      // setPopupOpen(false);
     } catch (error) {
       console.error('Failed to add comment:', error);
       message.error('An error occurred while adding your comment.');
