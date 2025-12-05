@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { Accordion } from '../components/Accordion';
 import InstructionBox from '../components/InstructionBox';
-import IngredientsBox from '../components/IngredientsBox';
+import IngredientsBox from '../components/IngredientsBox';       
 import CommentBox from '../components/ComponentBox';
 import {
   favoriteRecipe,
