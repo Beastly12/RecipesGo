@@ -1,6 +1,6 @@
 import { Globe, Lock, PenLine, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { deleteRecipe, getMyRecipes } from '../services/RecipesService.mjs';
 
 const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashboardLoading }) => {
@@ -55,8 +55,9 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
 
   const statusTheme = (isPublic) => (
     <span
-      className={`p-1 inline-flex rounded ${isPublic ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'
-        }`}
+      className={`p-1 inline-flex rounded ${
+        isPublic ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'
+      }`}
     >
       {isPublic ? <Globe size={14} /> : <Lock size={14} />}
       {isPublic ? 'Public' : 'Private'}
@@ -154,26 +155,28 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
 
       <ul className="divide-y divide-gray-200 dark:divide-white">
         {filteredRecipes.slice(0, visible).map((recipe) => {
-          console.log(recipe.imageUrl)
+          // console.log(recipe.imageUrl);
           return (
             <li
               key={recipe.id}
               className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-5 hover:bg-gray-50 dark:hover:bg-slate-500/35 transition shadow"
             >
               {/* LEFT: Image + Title */}
-              <div className="flex items-start gap-3 md:w-1/3">
-                <img
-                  src={recipe.imageUrl}
-                  alt="Recipe"
-                  className="w-24 h-24 object-cover rounded-xl shadow flex-shrink-0"
-                />
-                <div>
-                  <h2 className="font-semibold text-gray-700 dark:text-white">{recipe.name}</h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-300">
-                    {recipe.category} • {recipe.difficulty} • {recipe.preparationTime}mins
-                  </p>
+              <Link to={`/recipe/${recipe.id}`}>
+                <div className="flex items-start gap-3 md:w-1/3">
+                  <img
+                    src={recipe.imageUrl}
+                    alt="Recipe"
+                    className="w-24 h-24 object-cover rounded-xl shadow flex-shrink-0"
+                  />
+                  <div>
+                    <h2 className="font-semibold text-gray-700 dark:text-white">{recipe.name}</h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-300">
+                      {recipe.category} • {recipe.difficulty} • {recipe.preparationTime}mins
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </Link>
 
               {/* CENTER: Status + Stats */}
               <div className="flex flex-wrap items-center gap-3 md:justify-center md:w-1/3 text-sm dark:text-gray-200 text-gray-700">
@@ -225,5 +228,6 @@ const DashBoardManagementTable = ({ userId, onRecipeCountChange, loading: dashbo
     </section>
   );
 };
+
 
 export default DashBoardManagementTable;

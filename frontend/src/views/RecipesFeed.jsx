@@ -163,9 +163,8 @@ export default function RecipeFeed() {
   };
 
   function handleClearSearch() {
-      setSearchTerm('');
-      handleFilter('All');
-
+    setSearchTerm('');
+    handleFilter('All');
   }
 
   if (authLoading) {
@@ -230,7 +229,7 @@ export default function RecipeFeed() {
         handlePagination={handlePagination}
         loading={loading}
       />
-      <Footer />
+      <Footer userId={userDetails?.userid} />
     </div>
   );
 }

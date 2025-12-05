@@ -8,10 +8,7 @@ const IngredientsBox = ({ ingredients }) => {
       </h2>
       <ul className="space-y-3 text-sm lg:text-base">
         {ingredients?.map((ingredient, index) => (
-          <li 
-            key={index} 
-            className="flex items-start gap-3 text-gray-700 dark:text-gray-300"
-          >
+          <li key={index} className="flex items-start gap-3 text-gray-700 dark:text-gray-300">
             <span className="text-[#ff6b6b] dark:text-[#ff8080] mt-1.5 text-lg">•</span>
             <span className="leading-relaxed">{ingredient}</span>
           </li>

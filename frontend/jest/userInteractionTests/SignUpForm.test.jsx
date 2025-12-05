@@ -1,9 +1,9 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import SignUpForm from "./SignUpForm";
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import SignUpForm from './SignUpForm';
 
-describe("SignUpForm user interactions", () => {
-  test("user can fill the form and submit", async () => {
+describe('SignUpForm user interactions', () => {
+  test('user can fill the form and submit', async () => {
     const user = userEvent.setup();
     const mockSignup = jest.fn();
 
@@ -13,18 +13,14 @@ describe("SignUpForm user interactions", () => {
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
 
-    await user.type(nameInput, "John Doe");
-    await user.type(emailInput, "john@example.com");
-    await user.type(passwordInput, "pass12345");
+    await user.type(nameInput, 'John Doe');
+    await user.type(emailInput, 'john@example.com');
+    await user.type(passwordInput, 'pass12345');
 
-    await user.click(screen.getByRole("button", { name: /sign up/i }));
+    await user.click(screen.getByRole('button', { name: /sign up/i }));
 
     expect(mockSignup).toHaveBeenCalledTimes(1);
 
-    expect(mockSignup).toHaveBeenCalledWith(
-      "john@example.com",
-      "pass12345",
-      "John Doe"
-    );
+    expect(mockSignup).toHaveBeenCalledWith('john@example.com', 'pass12345', 'John Doe');
   });
 });

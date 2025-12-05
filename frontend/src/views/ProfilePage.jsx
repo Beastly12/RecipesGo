@@ -4,7 +4,11 @@ import RecipesList from '../components/RecipeList';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import { getUserDetails } from '../services/UserService.mjs';
-import { getFavoritesRecipes, getMyRecipes, getRecipesByUser } from '../services/RecipesService.mjs';
+import {
+  getFavoritesRecipes,
+  getMyRecipes,
+  getRecipesByUser,
+} from '../services/RecipesService.mjs';
 import axios from '../services/Axios.mjs';
 
 export default function Profile() {
@@ -31,7 +35,7 @@ export default function Profile() {
   const { user: loggedInUser, userDetails } = useAuthContext();
   const profileUserId = profileUserIdRaw ? profileUserIdRaw : '';
 
-  const isOwner = loggedInUser?.userId && loggedInUser.userId=== profileUserId;
+  const isOwner = loggedInUser?.userId && loggedInUser.userId === profileUserId;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,11 +49,9 @@ export default function Profile() {
 
         let user;
 
-        
         if (isOwner && userDetails) {
           user = userDetails;
         } else {
-         
           const userRes = await getUserDetails(profileUserId);
           user = userRes;
         }
@@ -113,7 +115,7 @@ export default function Profile() {
         const page = await getMyRecipes(userId, cursor);
         const items = page.data.message ?? [];
         const last = page.data.last ?? null;
-        
+
         setMyRecipes((prev) => [...prev, ...items]);
         setMyCursor(last);
       } else {
@@ -123,7 +125,7 @@ export default function Profile() {
         });
         const items = page.data.message ?? [];
         const last = page.data.last ?? null;
-        
+
         setFavs((prev) => [...prev, ...items]);
         setFavCursor(last);
       }
@@ -140,9 +142,9 @@ export default function Profile() {
     return src.map((r, idx) => ({
       key: r.id ?? idx,
       title: r.name,
-      author: r.authorName===userDetails.name? 'You' : r.authorName,
+      author: r.authorName === userDetails.name ? 'You' : r.authorName,
       likes: r.likes ?? 0,
-      authorDpUrl : activeTab === 'myRecipes' ? avatarUrl : r.authorDp || '',
+      authorDpUrl: activeTab === 'myRecipes' ? avatarUrl : r.authorDp || '',
       img: r.imageUrl ?? '',
     }));
   }, [activeTab, myRecipes, favs, avatarUrl]);
@@ -166,63 +168,64 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-100vh bg-[#fafafa] m-4 text-[#1a1a1a] dark:bg-[#0a0a0a] dark:text-[#e5e5e5] dark:m-0">
+    <div className="min-h-screen bg-[#fafafa] m-4 text-[#1a1a1a] dark:bg-[#0a0a0a] dark:text-[#e5e5e5] p-4 md:p-0">
       <button onClick={() => navigate(-1)}>
-        <div className="flex m-4 p-3 space-x-3 dark:m-0">
+        <div className="flex items-center space-x-3 mb-4 md:ml-6 mt-2">
           <ArrowLeft className="cursor-pointer" />
-          <button className="text-xl font-medium hover:underline">Back</button>
+          <button className="text-lg md:text-xl font-medium hover:underline">Back</button>
         </div>
       </button>
 
-      <div className="max-w-[900px] mx-auto my-10 px-10">
-        <div className="w-full rounded-2xl mb-6 flex bg-white dark:bg-[#1a1a1a] shadow-md">
-          <div className="mt-8 mb-8 p-8 mr-6">
+      <div className="max-w-[900px] mx-auto my-6 md:my-10 px-4 md:px-10">
+        <div className="w-full rounded-2xl bg-white dark:bg-[#1a1a1a] shadow-md flex flex-col md:flex-row items-center md:items-start p-6 md:p-10 space-y-6 md:space-y-0">
+          <div className="flex justify-center md:mr-10">
             <img
-              className="rounded-full w-48 h-48 object-cover ring-2 ring-gray-200 dark:ring-white/10"
+              className="rounded-full w-32 h-32 md:w-48 md:h-48 object-cover ring-2 ring-gray-200 dark:ring-white/10"
               src={avatarUrl}
               alt="Profile"
             />
           </div>
 
-          <div className="m-6 md:space-y-10">
-            <h3 className="font-bold text-5xl">{displayName}</h3>
+          <div className="flex-1 space-y-4 md:space-y-8 text-center md:text-left">
+            <h3 className="font-bold text-3xl md:text-5xl break-words">{displayName}</h3>
 
-            <p className="text-gray-700 dark:text-gray-300 mt-4">{bio}</p>
+            <p className="text-gray-700 dark:text-gray-300 text-sm md:text-base px-2 md:px-0">
+              {bio}
+            </p>
 
-            <div className="flex items-center space-x-10 mt-8">
+            <div className="flex justify-center md:justify-start space-x-10 mt-6 md:mt-8">
               <div>
-                <p className="font-bold text-xl text-gray-600">{myRecipes.length}</p>
-                <p className="text-xl">Recipes</p>
+                <p className="font-bold text-lg md:text-xl text-gray-600">{myRecipes.length}</p>
+                <p className="text-base md:text-xl">Recipes</p>
               </div>
               <div>
-                <p className="font-bold text-xl text-gray-600">
+                <p className="font-bold text-lg md:text-xl text-gray-600">
                   {myRecipes.reduce((acc, r) => acc + (r.likes || 0), 0)}
                 </p>
-                <p className="text-xl">Total Likes</p>
+                <p className="text-base md:text-xl">Total Likes</p>
               </div>
             </div>
 
             {isOwner && (
-              <button className="flex items-center bg-[#ff6b6b] text-white rounded-xl p-3 mt-4">
-                <Settings size={16} />
-                <Link to={"/settings"} className="ml-2">Settings</Link>
-              </button>
+              <Link to="/settings" className="flex justify-center md:justify-start">
+                <button className="flex items-center bg-[#ff6b6b] text-white rounded-xl p-2 md:p-3 text-sm md:text-base">
+                  <Settings size={16} />
+                  <span className="ml-2">Settings</span>
+                </button>
+              </Link>
             )}
           </div>
         </div>
-
-    
-       
       </div>
-      <div className='mx-auto max-w-[1000px] px-10'>
+      <div className="mx-auto max-w-[1000px] px-4 md:px-10">
         {/* TABS */}
-        <div className="flex space-x-20 border-b dark:border-white/10">
+        <div className="flex overflow-x-auto space-x-10 border-b dark:border-white/10 pb-2 scrollbar-hide">
           <button
             onClick={() => setActiveTab('myRecipes')}
-            className={`pb-2 text-xl ${
+            className={`pb-2 text-lg md:text-xl whitespace-nowrap ${
               activeTab === 'myRecipes'
                 ? 'border-b-2 border-[#ff6b6b] text-[#ff6b6b]'
-                : 'hover:border-b-gray-400 dark:hover:border-white/30'
+                : 'text-gray-600 dark:text-gray-300'
             }`}
           >
             {isOwner ? 'My Recipes' : 'Recipes'}
@@ -231,10 +234,10 @@ export default function Profile() {
           {isOwner && (
             <button
               onClick={() => setActiveTab('favorites')}
-              className={`pb-2 text-xl ${
+              className={`pb-2 text-lg md:text-xl whitespace-nowrap ${
                 activeTab === 'favorites'
                   ? 'border-b-2 border-[#ff6b6b] text-[#ff6b6b]'
-                  : 'hover:border-b-gray-400 dark:hover:border-white/30'
+                  : 'text-gray-600 dark:text-gray-300'
               }`}
             >
               Favorites
@@ -242,20 +245,23 @@ export default function Profile() {
           )}
         </div>
 
-       <div className="m-10 mt-20">
+        <div className="mt-10 md:mt-20 px-2 md:px-0">
           {listForUI.length === 0 ? (
-            <p className="text-center text-gray-500">
+            <p className="text-center text-gray-500 text-sm md:text-base">
               No {activeTab === 'myRecipes' ? 'recipes' : 'favorites'} yet.
             </p>
           ) : (
             <>
-              <RecipesList recipes={listForUI} hasmore={hasMore} handlePagination={loadMore} loading={loadingMore} />
+              <RecipesList
+                recipes={listForUI}
+                hasmore={hasMore}
+                handlePagination={loadMore}
+                loading={loadingMore}
+              />
             </>
           )}
-       </div>
-
+        </div>
       </div>
-          
     </div>
   );
 }

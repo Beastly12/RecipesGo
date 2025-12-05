@@ -1,47 +1,38 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { MemoryRouter } from "react-router-dom";
-import RecipesList from "./RecipesList";
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
+import RecipesList from './RecipesList';
 
 // Mock skeleton component so tests stay stable
-jest.mock("./RecipeCardSkeleton", () => () =>
-  <div data-testid="skeleton">Loading...</div>
-);
+jest.mock('./RecipeCardSkeleton', () => () => <div data-testid="skeleton">Loading...</div>);
 
 const mockRecipes = [
   {
-    key: "1",
-    title: "Chicken Alfredo",
-    img: "test.jpg",
-    author: "John",
-    likes: 10
+    key: '1',
+    title: 'Chicken Alfredo',
+    img: 'test.jpg',
+    author: 'John',
+    likes: 10,
   },
   {
-    key: "2",
-    title: "Beef Tacos",
-    img: "test2.jpg",
-    author: "Maria",
-    likes: 21
-  }
+    key: '2',
+    title: 'Beef Tacos',
+    img: 'test2.jpg',
+    author: 'Maria',
+    likes: 21,
+  },
 ];
 
-describe("RecipesList user interactions", () => {
-
-  test("shows skeletons when loading", () => {
+describe('RecipesList user interactions', () => {
+  test('shows skeletons when loading', () => {
     render(
-      <RecipesList
-        recipes={[]}
-        loading={true}
-        hasmore={false}
-        handlePagination={jest.fn()}
-      />
+      <RecipesList recipes={[]} loading={true} hasmore={false} handlePagination={jest.fn()} />
     );
 
-    expect(screen.getAllByTestId("skeleton")).toHaveLength(4);
+    expect(screen.getAllByTestId('skeleton')).toHaveLength(4);
   });
 
-
-  test("renders recipes", () => {
+  test('renders recipes', () => {
     render(
       <MemoryRouter>
         <RecipesList
@@ -54,12 +45,11 @@ describe("RecipesList user interactions", () => {
     );
 
     // Both recipe titles appear
-    expect(screen.getByText("Chicken Alfredo")).toBeInTheDocument();
-    expect(screen.getByText("Beef Tacos")).toBeInTheDocument();
+    expect(screen.getByText('Chicken Alfredo')).toBeInTheDocument();
+    expect(screen.getByText('Beef Tacos')).toBeInTheDocument();
   });
 
-
-  test("links navigate to recipe pages", () => {
+  test('links navigate to recipe pages', () => {
     render(
       <MemoryRouter>
         <RecipesList
@@ -71,17 +61,16 @@ describe("RecipesList user interactions", () => {
       </MemoryRouter>
     );
 
-    const links = screen.getAllByRole("link");
+    const links = screen.getAllByRole('link');
 
     // Check first recipe link
-    expect(links[0]).toHaveAttribute("href", "/recipe/1");
+    expect(links[0]).toHaveAttribute('href', '/recipe/1');
 
     // Check second recipe link
-    expect(links[1]).toHaveAttribute("href", "/recipe/2");
+    expect(links[1]).toHaveAttribute('href', '/recipe/2');
   });
 
-
-  test("clicking Load More triggers pagination handler", async () => {
+  test('clicking Load More triggers pagination handler', async () => {
     const user = userEvent.setup();
     const mockPagination = jest.fn();
 
@@ -96,8 +85,8 @@ describe("RecipesList user interactions", () => {
       </MemoryRouter>
     );
 
-    const loadMoreBtn = screen.getByRole("button", {
-      name: /load more/i
+    const loadMoreBtn = screen.getByRole('button', {
+      name: /load more/i,
     });
 
     await user.click(loadMoreBtn);
@@ -105,20 +94,11 @@ describe("RecipesList user interactions", () => {
     expect(mockPagination).toHaveBeenCalledTimes(1);
   });
 
-
-  test("shows empty state when no recipes", () => {
+  test('shows empty state when no recipes', () => {
     render(
-      <RecipesList
-        recipes={[]}
-        loading={false}
-        hasmore={false}
-        handlePagination={jest.fn()}
-      />
+      <RecipesList recipes={[]} loading={false} hasmore={false} handlePagination={jest.fn()} />
     );
 
-    expect(
-      screen.getByText(/no recipes/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/no recipes/i)).toBeInTheDocument();
   });
-
 });

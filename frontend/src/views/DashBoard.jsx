@@ -40,7 +40,7 @@ const DashBoard = () => {
           getUser(),
           // console.log(user),
           // getRecipesByUser(user.userId),
-          getMyRecipes()
+          getMyRecipes(),
           // console.log(user.userId)
         ]);
 
@@ -84,7 +84,7 @@ const DashBoard = () => {
       {/* Desktop Header */}
       <header className="hidden md:flex bg-white dark:bg-[#1a1a1a] px-10 py-4 shadow-sm sticky top-0 z-50 items-center gap-4">
         <button
-          onClick={() => window.history.back()}
+          onClick={() => navigate(-1)}
           className="flex items-center gap-2 px-3 py-2 rounded-md bg-gray-100 dark:bg-[#2a2a2a] hover:bg-gray-200 dark:hover:bg-[#3a3a3a] transition"
         >
           <span className="font-medium text-gray-700 dark:text-[#fafafa]">Back</span>

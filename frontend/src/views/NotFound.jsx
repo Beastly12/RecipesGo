@@ -10,26 +10,28 @@ const NotFound = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Skeleton layout
+  // Skeleton Loader
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#1a1a1a] dark:bg-[#0a0a0a]">
+      <div className="flex min-h-screen items-center justify-center bg-[#fafafa] dark:bg-[#0a0a0a] transition-colors duration-300">
         <div className="text-center px-4 animate-pulse">
-          <div className="mb-4 h-24 w-48 bg-[#ff6b6b] mx-auto rounded-md"></div>
-          <div className="mb-2 h-10 w-64 bg-gray-700 dark:bg-gray-800 mx-auto rounded-md"></div>
-          <div className="mb-8 h-6 w-80 bg-gray-600 dark:bg-gray-700 mx-auto rounded-md"></div>
-          <div className="h-12 w-40 bg-[#ff6b6b] mx-auto rounded-xl"></div>
+          <div className="mb-4 h-24 w-48 bg-[#ff6b6b]/60 mx-auto rounded-md"></div>
+          <div className="mb-2 h-10 w-64 bg-gray-300 dark:bg-gray-700 mx-auto rounded-md"></div>
+          <div className="mb-8 h-6 w-80 bg-gray-200 dark:bg-gray-600 mx-auto rounded-md"></div>
+          <div className="h-12 w-40 bg-[#ff6b6b]/60 mx-auto rounded-xl"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#1a1a1a] dark:bg-[#0a0a0a]">
+    <div className="flex min-h-screen items-center justify-center bg-[#fafafa] dark:bg-[#0a0a0a] transition-colors duration-300">
       <div className="text-center px-4">
         <h1 className="mb-4 text-8xl font-serif font-bold text-[#ff6b6b]">404</h1>
-        <p className="mb-2 text-3xl font-semibold text-white">Page Not Found</p>
-        <p className="mb-8 text-lg text-gray-400 max-w-md mx-auto">
+
+        <p className="mb-2 text-3xl font-semibold text-[#1a1a1a] dark:text-white">Page Not Found</p>
+
+        <p className="mb-8 text-lg text-gray-600 dark:text-gray-400 max-w-md mx-auto">
           The page you're looking for doesn't exist or has been moved.
         </p>
 

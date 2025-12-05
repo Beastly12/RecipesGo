@@ -34,20 +34,20 @@ function useDebounce(callback, delay) {
   return debouncedFunction;
 }
 
-export default function Header({ 
-  userId, 
-  colorTheme, 
-  setTheme, 
-  userName, 
+export default function Header({
+  userId,
+  colorTheme,
+  setTheme,
+  userName,
   profilePic,
   onSearch,
   isSearching = false,
   searchTerm = '',
   setSearchTerm,
-  handleClearSearch
+  handleClearSearch,
 }) {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
- 
+
   const userEmail = userId ? `${userId.substring(0, 10)}...` : '';
 
   const debouncedSearch = useDebounce((value) => {
@@ -62,7 +62,6 @@ export default function Header({
     debouncedSearch(value);
   };
 
- 
   const handleLogout = async () => {
     await handleSignOut();
     localStorage.clear();
