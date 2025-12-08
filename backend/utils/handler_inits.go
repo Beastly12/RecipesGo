@@ -16,6 +16,7 @@ import (
 const (
 	MAIN_TABLE             = "MAIN_TABLE"
 	USER_POOL_ID           = "USER_POOL_ID"
+	CLIENT_ID              = "USER_POOL_CLIENT_ID"
 	CLOUDFRONT_DOMAIN_NAME = "CLOUDFRONT_DOMAIN"
 	MEDIA_BUCKET           = "RECIPE_IMAGES_BUCKET"
 	QUEUE                  = "RECIPES_QUEUE"
@@ -32,6 +33,8 @@ type handlerDependenciesType struct {
 	CloudFrontDomainName       string
 	QueueUrl                   string
 	CurrentAuthenticatedUserId string
+	CurrentForcedAuthUserId    string
+	ClientId                   string
 }
 
 var handlerDependencies handlerDependenciesType
@@ -80,6 +83,7 @@ func WithCognito() option {
 	return func(hd *handlerDependenciesType, c aws.Config) {
 		hd.CognitoClient = cognitoidentityprovider.NewFromConfig(c)
 		hd.UserPoolId = getEnvironmentVariable(USER_POOL_ID)
+		hd.ClientId = getEnvironmentVariable(CLIENT_ID)
 	}
 }
 
@@ -92,6 +96,10 @@ func WithCognitoClientOnly() option {
 
 func SetCurrentAuthUserid(id string) {
 	handlerDependencies.CurrentAuthenticatedUserId = id
+}
+
+func SetForcedAuthUserid(id string) {
+	handlerDependencies.CurrentForcedAuthUserId = id
 }
 
 func LateInitUserPoolId(userPoolId string) {

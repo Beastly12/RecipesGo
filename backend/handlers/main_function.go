@@ -32,6 +32,7 @@ func getPathParam(request events.APIGatewayV2HTTPRequest) string {
 
 func HandleMainFunction(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	utils.SetCurrentAuthUserid(utils.GetAuthUserId(req))
+	utils.SetForcedAuthUserid(utils.ForceGetAuthUserId(req))
 	resource := strings.ToLower(getResource(req))
 
 	switch resource {
