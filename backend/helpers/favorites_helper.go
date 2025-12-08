@@ -56,6 +56,12 @@ func (r *favoritesHelper) getFavorite(userId, recipeId string) (*models.Favorite
 func (r *favoritesHelper) RecipeInFavorites(recipeId, userId string) (bool, error) {
 	recipeId = utils.RemovePrefix(recipeId, "#")
 	userId = utils.RemovePrefix(userId, "#")
+	println("recipe id: ")
+	println(recipeId)
+	println("")
+	println("user id: ")
+	println(userId)
+
 	input := &dynamodb.GetItemInput{
 		Key:       *models.FavoriteKey(userId, recipeId),
 		TableName: &utils.GetDependencies().MainTableName,
@@ -64,6 +70,9 @@ func (r *favoritesHelper) RecipeInFavorites(recipeId, userId string) (bool, erro
 	if err != nil {
 		return false, nil
 	}
+
+	println(result.Item)
+	println(len(result.Item))
 
 	return len(result.Item) > 0, nil
 }

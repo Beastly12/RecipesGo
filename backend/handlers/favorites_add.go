@@ -49,7 +49,10 @@ func handleAddToFavorite(ctx context.Context, req events.APIGatewayV2HTTPRequest
 	// create a new favorite db item and add to db
 	fav := models.NewFavorite(userid, recipe)
 	utils.BasicLog("calling helper to add new favorite", nil)
-	helpers.NewFavoritesHelper(ctx).Add(fav, recipe.AuthorId)
+	err = helpers.NewFavoritesHelper(ctx).Add(fav, recipe.AuthorId)
+	if err != nil {
+		return models.ServerSideErrorResponse("Failed to add recipe to favorites, try again!", err), nil
+	}
 
 	return models.SuccessfulPostRequestResponse(fav), nil
 }
