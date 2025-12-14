@@ -231,7 +231,7 @@ func (r *recipeHelper) GetRecipesByUser(lastKey map[string]types.AttributeValue,
 
 // get specific recipe from db
 func (this *recipeHelper) Get(recipeId string) (*models.Recipe, error) {
-	userId := utils.GetDependencies().CurrentAuthenticatedUserId
+	userId := utils.GetDependencies().CurrentForcedAuthUserId
 	input := &dynamodb.GetItemInput{
 		Key:       *models.RecipeKey(recipeId),
 		TableName: &utils.GetDependencies().MainTableName,
@@ -463,7 +463,7 @@ func (r *recipeHelper) RecipeLikesMinus1(userId, recipeId string) error {
 }
 
 func (r *recipeHelper) SearchRecipe(str string) (*[]models.Recipe, error) {
-	userId := utils.GetDependencies().CurrentAuthenticatedUserId
+	userId := utils.GetDependencies().CurrentForcedAuthUserId
 	keyCondition := expression.KeyEqual(
 		expression.Key("gsi"),
 		expression.Value(utils.AddPrefix(models.RecipeItemType, models.RecipesGsiPrefix)),

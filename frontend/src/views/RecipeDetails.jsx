@@ -3,9 +3,9 @@ import { ArrowLeft, ChartNoAxesColumn, Clock, ExternalLink, Heart, Utensils } fr
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Accordion } from '../components/Accordion';
-import CommentBox from '../components/ComponentBox';
-import IngredientsBox from '../components/IngredientsBox';
 import InstructionBox from '../components/InstructionBox';
+import IngredientsBox from '../components/IngredientsBox';       
+import CommentBox from '../components/ComponentBox';
 import { useAuthContext } from '../context/AuthContext';
 import {
   deleteFavoriteRecipe,

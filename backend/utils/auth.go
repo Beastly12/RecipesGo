@@ -2,6 +2,7 @@ package utils
 
 import (
 	"log"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 )
@@ -32,4 +33,37 @@ func IsAuthenticatedUser(req events.APIGatewayV2HTTPRequest, userId string) bool
 		return false
 	}
 	return sub == userId
+}
+
+func getBearerToken(req events.APIGatewayV2HTTPRequest) string {
+	auth := req.Headers["authorization"]
+	if auth == "" {
+		auth = req.Headers["Authorization"]
+	}
+
+	if auth == "" || !strings.HasPrefix(auth, "Bearer ") {
+		return ""
+	}
+
+	return strings.TrimPrefix(auth, "Bearer ")
+}
+
+func ForceGetAuthUserId(req events.APIGatewayV2HTTPRequest) string {
+	validator := NewValidator(
+		"eu-west-2",
+		GetDependencies().UserPoolId,
+		GetDependencies().ClientId,
+	)
+
+	token := getBearerToken(req)
+	if token == "" {
+		claims, err := validator.Validate(token)
+		if err != nil {
+			return ""
+		}
+
+		return claims.Subject()
+	}
+
+	return ""
 }
