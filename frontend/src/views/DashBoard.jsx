@@ -4,7 +4,7 @@ import { HeartIcon, NotebookPen, Eye, MessageCircleMore } from 'lucide-react';
 import DashBoardManagementTable from '../components/DashBoardManagementTable';
 import { getUser } from '../services/UserService.mjs';
 import { getMyRecipes, getRecipesByUser } from '../services/RecipesService.mjs';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import useDarkMode from '../hooks/useDarkMode';
 import {
@@ -29,6 +29,7 @@ const DashBoard = () => {
   const { user, userName } = useAuthContext();
 
   const userEmail = user?.userId ? `${user.userId.substring(0, 10)}...` : '';
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!user?.userId) return;
